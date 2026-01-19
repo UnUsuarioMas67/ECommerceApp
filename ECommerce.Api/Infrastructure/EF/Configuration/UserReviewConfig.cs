@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Domain.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +11,7 @@ public class UserReviewConfig : IEntityTypeConfiguration<UserReview>
     {
         builder.Property(x => x.Comment)
             .IsRequired()
-            .HasMaxLength(1000);
+            .HasMaxLength(TextLengths.LongText);
 
         builder.Property(x => x.Rating)
             .IsRequired();

@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Domain.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,20 +11,20 @@ public class AddressConfig : IEntityTypeConfiguration<Address>
     {
         builder.Property(x => x.AddressLine1)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(TextLengths.ShortText);
         
         builder.Property(x => x.AddressLine2)
-            .HasMaxLength(100);
+            .HasMaxLength(TextLengths.ShortText);
         
         builder.Property(x => x.City)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(TextLengths.ShortText);
         
         builder.Property(x => x.PostalCode)
             .IsRequired()
-            .HasMaxLength(10);
+            .HasMaxLength(TextLengths.PostalCode);
         
         builder.Property(x => x.Region)
-            .HasMaxLength(50);
+            .HasMaxLength(TextLengths.ShortText);
     }
 }

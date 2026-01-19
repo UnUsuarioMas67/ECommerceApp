@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Domain.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,23 +11,23 @@ public class UserConfig : IEntityTypeConfiguration<User>
     {
         builder.Property(x => x.FirstName)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(TextLengths.Name);
         
         builder.Property(x => x.LastName)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(TextLengths.Name);
         
         builder.Property(x => x.Email)
             .IsRequired()
-            .HasMaxLength(320);
+            .HasMaxLength(TextLengths.Email);
         
         builder.Property(x => x.PasswordHash)
             .IsRequired()
-            .HasMaxLength(255);
+            .HasMaxLength(TextLengths.PasswordHash);
         
         builder.Property(x => x.PhoneNumber)
             .IsRequired()
-            .HasMaxLength(25);
+            .HasMaxLength(TextLengths.PhoneNumber);
 
         builder.Property(x => x.BirthDate)
             .IsRequired();

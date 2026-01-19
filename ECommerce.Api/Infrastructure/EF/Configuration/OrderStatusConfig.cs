@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Domain.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +11,7 @@ public class OrderStatusConfig : IEntityTypeConfiguration<OrderStatus>
     {
         builder.Property(x => x.Status)
             .IsRequired()
-            .HasMaxLength(20);
+            .HasMaxLength(TextLengths.ShortName);
 
         builder.HasData(
             new OrderStatus

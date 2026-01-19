@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Domain.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,15 +11,15 @@ public class ProductConfig : IEntityTypeConfiguration<Product>
     {
         builder.Property(x => x.Sku)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(TextLengths.Sku);
         
         builder.Property(x => x.Description)
             .IsRequired()
-            .HasMaxLength(1000);
-        
+            .HasMaxLength(TextLengths.LongText);
+
         builder.Property(x => x.Price)
             .IsRequired()
-            .HasPrecision(18, 2);
+            .HasMoneyPrecision();
 
         builder.Property(x => x.Stock)
             .IsRequired();

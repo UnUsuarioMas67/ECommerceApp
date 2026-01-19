@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Domain.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,10 +11,10 @@ public class CategoryConfig : IEntityTypeConfiguration<Category>
     {
         builder.Property(x => x.Name)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(TextLengths.Name);
         
         builder.Property(x => x.Description)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(TextLengths.ShortText);
     }
 }

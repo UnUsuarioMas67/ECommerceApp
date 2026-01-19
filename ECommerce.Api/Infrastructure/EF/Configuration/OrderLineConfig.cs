@@ -10,6 +10,6 @@ public class OrderLineConfig : IEntityTypeConfiguration<OrderLine>
     {
         builder.Property(e => e.UnitPrice)
             .IsRequired()
-            .HasPrecision(18, 2);
+            .HasMoneyPrecision();
     }
 }

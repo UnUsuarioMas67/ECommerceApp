@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Domain.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +11,7 @@ public class CountryConfig : IEntityTypeConfiguration<Country>
     {
         builder.Property(x => x.Name)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(TextLengths.Name);
         
         // Add countries
         builder.HasData(new Country
