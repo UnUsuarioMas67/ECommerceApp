@@ -1,8 +1,8 @@
-﻿using ECommerceAPI.Domain.Entities;
+﻿using ECommerce.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ECommerceAPI.Infrastructure.EF.Configuration;
+namespace ECommerce.Api.Infrastructure.EF.Configuration;
 
 public class UserConfig : IEntityTypeConfiguration<User>
 {

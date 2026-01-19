@@ -1,4 +1,4 @@
-﻿namespace ECommerceAPI.Domain.Entities;
+﻿namespace ECommerce.Api.Domain.Entities;
 
 public class OrderLine
 {

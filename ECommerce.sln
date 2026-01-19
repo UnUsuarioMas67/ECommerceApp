@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerceAPI", "ECommerceAPI\ECommerceAPI.csproj", "{087959C7-F277-4DCB-90C9-A40E975B4095}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerce.Api", "ECommerce.Api\ECommerce.Api.csproj", "{087959C7-F277-4DCB-90C9-A40E975B4095}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
