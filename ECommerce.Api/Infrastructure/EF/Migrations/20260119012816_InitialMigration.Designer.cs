@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ECommerce.Api.Migrations
+namespace ECommerce.Api.Infrastructure.EF.Migrations
 {
     [DbContext(typeof(ECommerceContext))]
     [Migration("20260119012816_InitialMigration")]

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ECommerce.Api.Migrations
+namespace ECommerce.Api.Infrastructure.EF.Migrations
 {
     [DbContext(typeof(ECommerceContext))]
     partial class ECommerceContextModelSnapshot : ModelSnapshot
