@@ -5,9 +5,6 @@ namespace ECommerce.Api.Infrastructure.EF.Configuration;
 
 public static class PropertyBuilderExtensions
 {
-    public static PropertyBuilder<decimal> HasMoneyPrecision(this PropertyBuilder<decimal> builder)
-    {
-        builder.HasPrecision(MoneyPrecision.Precision, MoneyPrecision.Scale);
-        return builder;
-    }
+    public static PropertyBuilder<decimal> HasMoneyPrecision(this PropertyBuilder<decimal> builder) 
+        => builder.HasPrecision(MoneyPrecision.Precision, MoneyPrecision.Scale);
 }
