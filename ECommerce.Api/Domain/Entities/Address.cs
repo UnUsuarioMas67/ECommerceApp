@@ -4,7 +4,7 @@ public class Address
 {
     public int Id { get; set; }
     public int CountryId { get; set; }
-    public int ClientId { get; set; }
+    public int? ClientId { get; set; }
     
     public string AddressLine1 { get; set; }
     public string? AddressLine2 { get; set; }
@@ -13,5 +13,5 @@ public class Address
     public string? Region { get; set; }
 
     public Country Country { get; set; }
-    public Client Client { get; set; }
+    public Client? Client { get; set; }
 }
