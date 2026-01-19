@@ -1,4 +1,4 @@
-﻿namespace ECommerceAPI.Data.Entities;
+﻿namespace ECommerceAPI.Domain.Entities;
 
 public class Address
 {

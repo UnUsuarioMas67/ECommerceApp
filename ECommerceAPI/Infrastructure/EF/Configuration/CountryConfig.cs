@@ -1,8 +1,8 @@
-﻿using ECommerceAPI.Data.Entities;
+﻿using ECommerceAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ECommerceAPI.Data.Configuration;
+namespace ECommerceAPI.Infrastructure.EF.Configuration;
 
 public class CountryConfig : IEntityTypeConfiguration<Country>
 {
