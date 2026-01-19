@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ECommerce.Api.Infrastructure.EF.Configuration;
 
-public class UserReviewConfig : IEntityTypeConfiguration<UserReview>
+public class ClientReviewConfig : IEntityTypeConfiguration<ClientReview>
 {
-    public void Configure(EntityTypeBuilder<UserReview> builder)
+    public void Configure(EntityTypeBuilder<ClientReview> builder)
     {
         builder.Property(x => x.Comment)
             .IsRequired()

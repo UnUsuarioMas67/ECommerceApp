@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ECommerce.Api.Infrastructure.EF.Configuration;
 
-public class UserConfig : IEntityTypeConfiguration<User>
+public class ClientConfig : IEntityTypeConfiguration<Client>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public void Configure(EntityTypeBuilder<Client> builder)
     {
         builder.Property(x => x.FirstName)
             .IsRequired()

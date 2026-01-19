@@ -1,6 +1,6 @@
 ﻿namespace ECommerce.Api.Domain.Entities;
 
-public class User
+public class Client
 {
     public int Id { get; set; }
     
@@ -16,5 +16,5 @@ public class User
     public ICollection<ShopOrder> Orders { get; set; }
     public ICollection<Cart> Carts { get; set; }
     public ICollection<Address> Addresses { get; set; }
-    public ICollection<UserReview> Reviews { get; set; }
+    public ICollection<ClientReview> Reviews { get; set; }
 }
