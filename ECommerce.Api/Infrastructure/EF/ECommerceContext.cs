@@ -5,8 +5,8 @@ namespace ECommerce.Api.Infrastructure.EF;
 
 public class ECommerceContext : DbContext
 {
-    public DbSet<Client> Users { get; set; }
-    public DbSet<ClientReview> UserReviews { get; set; }
+    public DbSet<Client> Clients { get; set; }
+    public DbSet<ClientReview> ClientReviews { get; set; }
     
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
