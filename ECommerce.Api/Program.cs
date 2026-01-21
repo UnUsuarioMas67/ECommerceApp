@@ -24,6 +24,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/test", (ECommerceContext dbContext) => dbContext.OrderStatuses.ToList());
 
 app.Run();
