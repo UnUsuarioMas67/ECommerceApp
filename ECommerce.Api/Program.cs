@@ -16,6 +16,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "v1"));
     
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ECommerceContext>();
