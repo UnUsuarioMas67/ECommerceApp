@@ -1,5 +1,5 @@
 using System.Text;
-using ECommerce.Api.Application.Services;
+using ECommerce.Api.Application.Auth;
 using ECommerce.Api.Infrastructure.EF;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
