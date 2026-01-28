@@ -6,19 +6,19 @@ namespace ECommerce.Api.Application.Auth;
 
 public interface IAuthenticationService
 {
-    Task<AuthenticationResult> Login<TUser>(LoginRequest request) where TUser : class, IUser;
+    Task<AuthenticationResult> Login<TUser>(string email, string password) where TUser : class, IUser;
 }
 
 public class AuthenticationService(IJwtService jwtService, ECommerceContext dbContext) : IAuthenticationService
 {
-    public async Task<AuthenticationResult> Login<TUser>(LoginRequest request) where TUser : class, IUser
+    public async Task<AuthenticationResult> Login<TUser>(string email, string password) where TUser : class, IUser
     {
         var dbSet = dbContext.Set<TUser>();   
-        var user = await dbSet.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var user = await dbSet.FirstOrDefaultAsync(u => u.Email == email);
         if (user == null)
             return AuthenticationResult.Failure("Invalid credentials");
 
-        var passwordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+        var passwordValid = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
         if (!passwordValid)
             return AuthenticationResult.Failure("Invalid credentials");
 
