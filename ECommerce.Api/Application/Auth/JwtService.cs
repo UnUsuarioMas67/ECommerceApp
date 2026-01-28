@@ -20,12 +20,14 @@ public class JwtService(IOptions<JwtSettings> settings) : IJwtService
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        
+        var role = user is Admin? UserRoles.Admin : UserRoles.Client;
 
         var claimsIdentity = new ClaimsIdentity([
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.FirstName + " " + user.LastName ),
             new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.Role, UserRoles.Client),
+            new(ClaimTypes.Role, role),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Iat, 
                 new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(), 
