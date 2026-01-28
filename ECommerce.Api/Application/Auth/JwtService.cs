@@ -9,22 +9,22 @@ namespace ECommerce.Api.Application.Auth;
 
 public interface IJwtService
 {
-    string GenerateAccessToken(Client client);
+    string GenerateAccessToken(IUser user);
 }
 
 public class JwtService(IOptions<JwtSettings> settings) : IJwtService
 {
     private readonly JwtSettings _settings = settings.Value;
     
-    public string GenerateAccessToken(Client client)
+    public string GenerateAccessToken(IUser user)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claimsIdentity = new ClaimsIdentity([
-            new(ClaimTypes.NameIdentifier, client.Id.ToString()),
-            new(ClaimTypes.Name, client.FirstName + " " + client.LastName ),
-            new(ClaimTypes.Email, client.Email),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.FirstName + " " + user.LastName ),
+            new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Role, UserRoles.Client),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Iat, 
