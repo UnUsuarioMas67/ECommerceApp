@@ -36,6 +36,15 @@ builder.Services.AddAuthentication(o =>
         };
     });
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+builder.Services.AddAuthorization(o =>
+{
+    o.AddPolicy(UserRoles.Client, policy => policy.RequireRole(UserRoles.Client));
+    o.AddPolicy(UserRoles.Admin, policy => policy.RequireRole(UserRoles.Admin));
+});
+
+// builder.Services.AddSwaggerGenWithAuth();
 
 var app = builder.Build();
 
@@ -52,6 +61,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGet("/test", (ECommerceContext dbContext) => dbContext.OrderStatuses.ToList());
 
