@@ -1,0 +1,28 @@
+﻿using ECommerce.Api.Application.Auth;
+using ECommerce.Api.Application.DTOs;
+using ECommerce.Api.Domain.Entities;
+
+namespace ECommerce.Api.Application;
+
+public static class DtoConversion
+{
+    public static UserDto ToDto(this IUser user)
+        => new UserDto
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
+            BirthDate = user.BirthDate,
+            CreatedAt = user.CreatedAt,
+        };
+
+    public static AuthenticationDto ToDto(this AuthenticationResult result)
+        => new AuthenticationDto
+        {
+            Message = result.Message,
+            Token = result.Token,
+            User = result.User?.ToDto()
+        };
+}
