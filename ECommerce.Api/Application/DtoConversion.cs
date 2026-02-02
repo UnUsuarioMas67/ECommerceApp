@@ -6,8 +6,8 @@ namespace ECommerce.Api.Application;
 
 public static class DtoConversion
 {
-    public static UserDto ToDto(this IUser user)
-        => new UserDto
+    public static UserResponseDto ToDto(this IUser user)
+        => new UserResponseDto
         {
             Id = user.Id,
             FirstName = user.FirstName,

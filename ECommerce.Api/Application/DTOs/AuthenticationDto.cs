@@ -8,7 +8,7 @@ public class AuthenticationDto
     public string? Message { get; set; }
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public UserDto? User { get; set; }
+    public UserResponseDto? User { get; set; }
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? Token { get; set; }

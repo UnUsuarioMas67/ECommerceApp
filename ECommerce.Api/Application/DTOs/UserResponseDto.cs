@@ -1,6 +1,6 @@
 ﻿namespace ECommerce.Api.Application.DTOs;
 
-public class UserDto
+public class UserResponseDto
 {
     public int Id { get; set; }
     
