@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Application.DTOs;
+﻿namespace ECommerce.Api.Application.DTOs.User;
 
 public class UserResponseDto
 {

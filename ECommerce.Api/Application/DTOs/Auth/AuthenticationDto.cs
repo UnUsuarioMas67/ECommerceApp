@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
+using ECommerce.Api.Application.DTOs.User;
 
-namespace ECommerce.Api.Application.DTOs;
+namespace ECommerce.Api.Application.DTOs.Auth;
 
 public class AuthenticationDto
 {
