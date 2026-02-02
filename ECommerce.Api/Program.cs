@@ -42,7 +42,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 builder.Services.AddAuthorization(o =>
 {
-    o.AddPolicy(UserRoles.Client, policy => policy.RequireRole(UserRoles.Client));
+    o.AddPolicy(UserRoles.Client, policy => policy.RequireRole(UserRoles.Client, UserRoles.Admin));
     o.AddPolicy(UserRoles.Admin, policy => policy.RequireRole(UserRoles.Admin));
 });
 
