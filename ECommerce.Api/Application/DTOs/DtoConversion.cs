@@ -1,10 +1,9 @@
 ﻿using ECommerce.Api.Application.Auth;
-using ECommerce.Api.Application.DTOs;
 using ECommerce.Api.Application.DTOs.Auth;
 using ECommerce.Api.Application.DTOs.User;
 using ECommerce.Api.Domain.Entities;
 
-namespace ECommerce.Api.Application;
+namespace ECommerce.Api.Application.DTOs;
 
 public static class DtoConversion
 {
