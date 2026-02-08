@@ -11,7 +11,7 @@ public class ClientReviewConfig : IEntityTypeConfiguration<ClientReview>
     {
         builder.Property(x => x.Comment)
             .IsRequired()
-            .HasMaxLength(TextLengths.LongText);
+            .HasMaxLength(TextLengthRules.LongText);
 
         builder.Property(x => x.Rating)
             .IsRequired();

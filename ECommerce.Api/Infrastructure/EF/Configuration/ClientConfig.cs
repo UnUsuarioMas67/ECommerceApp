@@ -11,23 +11,23 @@ public class ClientConfig : IEntityTypeConfiguration<Client>
     {
         builder.Property(x => x.FirstName)
             .IsRequired()
-            .HasMaxLength(TextLengths.Name);
+            .HasMaxLength(TextLengthRules.Name);
         
         builder.Property(x => x.LastName)
             .IsRequired()
-            .HasMaxLength(TextLengths.Name);
+            .HasMaxLength(TextLengthRules.Name);
         
         builder.Property(x => x.Email)
             .IsRequired()
-            .HasMaxLength(TextLengths.Email);
+            .HasMaxLength(TextLengthRules.Email);
         
         builder.Property(x => x.PasswordHash)
             .IsRequired()
-            .HasMaxLength(TextLengths.PasswordHash);
+            .HasMaxLength(TextLengthRules.PasswordHash);
         
         builder.Property(x => x.PhoneNumber)
             .IsRequired()
-            .HasMaxLength(TextLengths.PhoneNumber);
+            .HasMaxLength(TextLengthRules.PhoneNumber);
 
         builder.Property(x => x.BirthDate)
             .IsRequired();

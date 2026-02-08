@@ -11,11 +11,11 @@ public class ProductConfig : IEntityTypeConfiguration<Product>
     {
         builder.Property(x => x.Sku)
             .IsRequired()
-            .HasMaxLength(TextLengths.Sku);
+            .HasMaxLength(TextLengthRules.Sku);
         
         builder.Property(x => x.Description)
             .IsRequired()
-            .HasMaxLength(TextLengths.LongText);
+            .HasMaxLength(TextLengthRules.LongText);
 
         builder.Property(x => x.Price)
             .IsRequired()

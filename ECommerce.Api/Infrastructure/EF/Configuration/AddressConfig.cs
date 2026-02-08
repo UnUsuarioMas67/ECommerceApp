@@ -11,20 +11,20 @@ public class AddressConfig : IEntityTypeConfiguration<Address>
     {
         builder.Property(x => x.AddressLine1)
             .IsRequired()
-            .HasMaxLength(TextLengths.ShortText);
+            .HasMaxLength(TextLengthRules.ShortText);
         
         builder.Property(x => x.AddressLine2)
-            .HasMaxLength(TextLengths.ShortText);
+            .HasMaxLength(TextLengthRules.ShortText);
         
         builder.Property(x => x.City)
             .IsRequired()
-            .HasMaxLength(TextLengths.ShortText);
+            .HasMaxLength(TextLengthRules.ShortText);
         
         builder.Property(x => x.PostalCode)
             .IsRequired()
-            .HasMaxLength(TextLengths.PostalCode);
+            .HasMaxLength(TextLengthRules.PostalCode);
         
         builder.Property(x => x.Region)
-            .HasMaxLength(TextLengths.ShortText);
+            .HasMaxLength(TextLengthRules.ShortText);
     }
 }

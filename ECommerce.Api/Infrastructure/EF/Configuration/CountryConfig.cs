@@ -11,7 +11,7 @@ public class CountryConfig : IEntityTypeConfiguration<Country>
     {
         builder.Property(x => x.Name)
             .IsRequired()
-            .HasMaxLength(TextLengths.Name);
+            .HasMaxLength(TextLengthRules.Name);
         
         // Add countries
         builder.HasData(new Country

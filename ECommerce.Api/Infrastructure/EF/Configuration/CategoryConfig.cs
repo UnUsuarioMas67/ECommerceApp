@@ -11,10 +11,10 @@ public class CategoryConfig : IEntityTypeConfiguration<Category>
     {
         builder.Property(x => x.Name)
             .IsRequired()
-            .HasMaxLength(TextLengths.Name);
+            .HasMaxLength(TextLengthRules.Name);
         
         builder.Property(x => x.Description)
             .IsRequired()
-            .HasMaxLength(TextLengths.ShortText);
+            .HasMaxLength(TextLengthRules.ShortText);
     }
 }

@@ -11,7 +11,7 @@ public class OrderStatusConfig : IEntityTypeConfiguration<OrderStatus>
     {
         builder.Property(x => x.Status)
             .IsRequired()
-            .HasMaxLength(TextLengths.ShortName);
+            .HasMaxLength(TextLengthRules.ShortName);
 
         builder.HasData(
             new OrderStatus

@@ -1,6 +1,6 @@
 ﻿namespace ECommerce.Api.Domain.Validation;
 
-public static class TextLengths
+public static class TextLengthRules
 {
     public const int LongText = 1000;
     public const int ShortText = 100;
