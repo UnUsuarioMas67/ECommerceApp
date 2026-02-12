@@ -11,7 +11,8 @@ public static class RuleBuilderOptionsExtensions
         DbSet<T> dbSet) where T : class, IUser
     {
         return ruleBuilder
-            .MustAsync(async (email, token) => !await dbSet.AnyAsync(u => u.Email == email))
+            .MustAsync(async (user, email, token) => !await dbSet.AnyAsync(
+                u => u.Email == email && u.Id != user.Id))
             .WithMessage("Email address already in use");
     }
 
@@ -20,8 +21,9 @@ public static class RuleBuilderOptionsExtensions
         DbSet<T> dbSet) where T : class, IUser
     {
         return ruleBuilder
-            .MustAsync(async (phoneNumber, token)
-                => !await dbSet.AnyAsync(u => u.PhoneNumber == phoneNumber))
+            .MustAsync(async (user, phoneNumber, token)
+                => !await dbSet.AnyAsync(
+                    u => u.PhoneNumber == phoneNumber && u.Id != user.Id))
             .WithMessage("Phone number already in use");
     }
 
