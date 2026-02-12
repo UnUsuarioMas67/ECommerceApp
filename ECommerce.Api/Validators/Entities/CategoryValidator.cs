@@ -4,7 +4,7 @@ using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Api.Application.Validators;
+namespace ECommerce.Api.Validators.Entities;
 
 public class CategoryValidator : AbstractValidator<Category>
 {

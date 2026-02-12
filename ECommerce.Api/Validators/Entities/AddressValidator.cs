@@ -3,7 +3,7 @@ using ECommerce.Api.Domain.Validation;
 using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
 
-namespace ECommerce.Api.Application.Validators;
+namespace ECommerce.Api.Validators.Entities;
 
 public class AddressValidator : AbstractValidator<Address>
 {
