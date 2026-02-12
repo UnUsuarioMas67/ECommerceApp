@@ -1,5 +1,4 @@
-﻿using ECommerce.Api.Application.DTOs.User;
-using ECommerce.Api.Domain.Entities;
+﻿using ECommerce.Api.Domain.Entities;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
