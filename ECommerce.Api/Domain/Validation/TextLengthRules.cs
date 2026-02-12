@@ -11,6 +11,7 @@ public static class TextLengthRules
     public const int PhoneNumber = 25;
     public const int PostalCode = 10;
     public const int PasswordHash = 255;
+    public const int PasswordMinLenght = 8;
 }
 
 public static class MoneyPrecision
