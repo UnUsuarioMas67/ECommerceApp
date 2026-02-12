@@ -13,6 +13,10 @@ public class ProductConfig : IEntityTypeConfiguration<Product>
             .IsRequired()
             .HasMaxLength(TextLengthRules.Sku);
         
+        builder.Property(x => x.Name)
+            .IsRequired()
+            .HasMaxLength(TextLengthRules.ShortName);
+        
         builder.Property(x => x.Description)
             .IsRequired()
             .HasMaxLength(TextLengthRules.LongText);
