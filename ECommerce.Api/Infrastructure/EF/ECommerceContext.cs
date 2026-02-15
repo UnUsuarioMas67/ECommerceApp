@@ -1,5 +1,5 @@
 ﻿using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Utils;
+using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Infrastructure.EF;

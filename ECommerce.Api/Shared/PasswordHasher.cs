@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Utils;
+﻿namespace ECommerce.Api.Shared;
 
 public static class PasswordHasher
 {
