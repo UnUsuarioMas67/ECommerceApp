@@ -24,11 +24,14 @@ public class ProductValidator : AbstractValidator<Product>
 
         RuleFor(p => p.Price)
             .NotNull()
-            .GreaterThanOrEqualTo(0);
+            .GreaterThanOrEqualTo(0)
+            .WithMessage("Price cannot be negative");
+        
         
         RuleFor(p => p.Stock)
             .NotNull()
-            .GreaterThanOrEqualTo(0);
+            .GreaterThanOrEqualTo(0)
+            .WithMessage("Stock cannot be negative");
         
         var categories = context.Categories;
         RuleFor(p => p.CategoryId)
