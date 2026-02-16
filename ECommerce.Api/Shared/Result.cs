@@ -5,27 +5,31 @@ public class Result<T>
     public bool IsSuccess { get; }
     public T? Value { get; }
     public Dictionary<string, string[]> Errors { get; }
+    public string? ErrorMessage => Errors.FirstOrDefault().Value.FirstOrDefault();
 
-    protected Result(bool success, T? value, Dictionary<string, string[]>? errors)
+    public Result(bool success, T? value, Dictionary<string, string[]>? errors)
     {
         IsSuccess = success;
         Value = value;
         Errors = errors ?? new Dictionary<string, string[]>();
     }
+}
 
-    public static Result<T> Success(T value)
+public static class Result
+{
+    public static Result<T> Success<T>(T value)
         => new Result<T>(true, value, null);
 
-    public static Result<T?> Fail(string error)
+    public static Result<T> Failure<T>(string error)
     {
         var errors = new Dictionary<string, string[]>
         {
             { "", [error] }
         };
 
-        return new Result<T?>(false, default, errors);
+        return new Result<T>(false, default, errors);
     }
 
-    public static Result<T?> Fail(Dictionary<string, string[]> error)
-        => new Result<T?>(false, default, error);
+    public static Result<T> Failure<T>(Dictionary<string, string[]> error)
+        => new Result<T>(false, default, error);
 }
