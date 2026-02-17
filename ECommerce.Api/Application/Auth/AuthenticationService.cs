@@ -1,28 +1,35 @@
 ﻿using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Infrastructure.EF;
+using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Application.Auth;
 
 public interface IAuthenticationService
 {
-    Task<AuthenticationResult> Login<TUser>(string email, string password) where TUser : class, IUser;
+    Task<Result<JwtToken>> Login<TUser>(string email, string password) where TUser : class, IUser;
 }
 
 public class AuthenticationService(IJwtService jwtService, ECommerceContext dbContext) : IAuthenticationService
 {
-    public async Task<AuthenticationResult> Login<TUser>(string email, string password) where TUser : class, IUser
+    public async Task<Result<JwtToken>> Login<TUser>(string email, string password) where TUser : class, IUser
     {
         var dbSet = dbContext.Set<TUser>();   
         var user = await dbSet.FirstOrDefaultAsync(u => u.Email == email);
         if (user == null)
-            return AuthenticationResult.Failure("Invalid credentials");
+            return Result.Failure<JwtToken>("Invalid credentials");
 
         var passwordValid = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
         if (!passwordValid)
-            return AuthenticationResult.Failure("Invalid credentials");
+            return Result.Failure<JwtToken>("Invalid credentials");
 
         var token = jwtService.GenerateAccessToken(user);
-        return AuthenticationResult.Success(user, token);
+        return Result.Success(new JwtToken { Token = token, User = user });
     }
+}
+
+public class JwtToken
+{
+    public IUser User { get; set; }
+    public string Token { get; set; }
 }

@@ -19,11 +19,11 @@ public static class DtoConversion
             CreatedAt = user.CreatedAt,
         };
 
-    public static AuthenticationDto ToDto(this AuthenticationResult result)
+    public static AuthenticationDto ToDto(this Result<JwtToken> result)
         => new AuthenticationDto
         {
-            Message = result.Message,
-            Token = result.Token,
-            User = result.User?.ToDto()
+            Message = result.ErrorMessage,
+            Token = result.Value?.Token,
+            User = result.Value?.User.ToDto()
         };
 }
