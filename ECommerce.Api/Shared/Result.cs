@@ -27,6 +27,9 @@ public record Result<T> : Result
     {
     }
 
+    public static Result<T> Success(T value) => new(value);
+    public new static Result<T> Failure(Error error) => new(error ?? throw new ArgumentNullException(nameof(error)));
+
     public static implicit operator Result<T>(T value) => new(value);
 
     public static implicit operator Result<T>(Error error) => new(error);
