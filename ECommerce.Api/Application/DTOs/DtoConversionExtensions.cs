@@ -6,7 +6,7 @@ using ECommerce.Api.Shared;
 
 namespace ECommerce.Api.Application.DTOs;
 
-public static class DtoConversion
+public static class DtoConversionExtensions
 {
     public static UserResponseDto ToDto(this IUser user)
         => new UserResponseDto
