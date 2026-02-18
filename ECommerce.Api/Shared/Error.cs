@@ -9,10 +9,14 @@ public static class Errors
 
     public static Error ValidationError(IDictionary<string, string[]> details)
         => new Error(ErrorType.Validation, details); 
+    
+    public static Error AuthenticationError(string name, string description)
+        => new Error(ErrorType.Authentication, new Dictionary<string, string[]> { { name, [description] } });
 }
 
 public enum ErrorType
 {
     Validation,
-    NotFound
+    NotFound,
+    Authentication
 }
