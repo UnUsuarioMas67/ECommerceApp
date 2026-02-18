@@ -1,35 +1,33 @@
 ﻿namespace ECommerce.Api.Shared;
 
-public class Result<T>
+public record Result
 {
     public bool IsSuccess { get; }
-    public T? Value { get; }
-    public IDictionary<string, string[]> Errors { get; }
-    public string? ErrorMessage => Errors.FirstOrDefault().Value.FirstOrDefault();
+    public Error? Error { get; }
 
-    public Result(bool success, T? value, IDictionary<string, string[]>? errors)
+    protected Result(bool isSuccess, Error? error)
     {
-        IsSuccess = success;
-        Value = value;
-        Errors = errors ?? new Dictionary<string, string[]>();
+        IsSuccess = isSuccess;
+        Error = error;
     }
+
+    public static Result Success() => new(true, null);
+    public static Result Failure(Error error) => new(false, error ?? throw new ArgumentNullException(nameof(error)));
+
+    public static implicit operator Result(Error error) => Failure(error);
 }
 
-public static class Result
+public record Result<T> : Result
 {
-    public static Result<T> Success<T>(T value)
-        => new Result<T>(true, value, null);
-    
-    public static Result<T> Failure<T>(IDictionary<string, string[]> error)
-        => new Result<T>(false, default, error);
+    public T? Value { get; }
 
-    public static Result<T> Failure<T>(string error)
+    private Result(T value) : base(true, null) => Value = value;
+
+    private Result(Error error) : base(false, error)
     {
-        var errors = new Dictionary<string, string[]>
-        {
-            { "", [error] }
-        };
-
-        return new Result<T>(false, default, errors);
     }
+
+    public static implicit operator Result<T>(T value) => new(value);
+
+    public static implicit operator Result<T>(Error error) => new(error);
 }

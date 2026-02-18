@@ -2,6 +2,7 @@
 using ECommerce.Api.Application.DTOs.Auth;
 using ECommerce.Api.Application.DTOs.User;
 using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Shared;
 
 namespace ECommerce.Api.Application.DTOs;
 
@@ -22,7 +23,7 @@ public static class DtoConversion
     public static AuthenticationDto ToDto(this Result<JwtToken> result)
         => new AuthenticationDto
         {
-            Message = result.ErrorMessage,
+            Message = result.Error?.Details.First().Value[0],
             Token = result.Value?.Token,
             User = result.Value?.User.ToDto()
         };

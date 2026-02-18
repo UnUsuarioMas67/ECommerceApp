@@ -17,14 +17,14 @@ public class AuthenticationService(IJwtService jwtService, ECommerceContext dbCo
         var dbSet = dbContext.Set<TUser>();   
         var user = await dbSet.FirstOrDefaultAsync(u => u.Email == email);
         if (user == null)
-            return Result.Failure<JwtToken>("Invalid credentials");
+            return Errors.AuthenticationError("Login", "Invalid credentials");
 
         var passwordValid = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
         if (!passwordValid)
-            return Result.Failure<JwtToken>("Invalid credentials");
+            return Errors.AuthenticationError("Login", "Invalid credentials");
 
         var token = jwtService.GenerateAccessToken(user);
-        return Result.Success(new JwtToken { Token = token, User = user });
+        return new JwtToken { Token = token, User = user };
     }
 }
 
