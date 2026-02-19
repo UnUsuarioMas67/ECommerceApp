@@ -40,4 +40,10 @@ public static class ServiceCollectionExtensions
             o.AddPolicy(UserRoles.Admin, policy => policy.RequireRole(UserRoles.Admin));
         });
     }
+
+    public static void AddValidators(this IServiceCollection services)
+    {
+        ValidatorOptions.Global.LanguageManager.Enabled = false;
+        services.AddValidatorsFromAssemblyContaining<ProductValidator>();
+    }
 }
