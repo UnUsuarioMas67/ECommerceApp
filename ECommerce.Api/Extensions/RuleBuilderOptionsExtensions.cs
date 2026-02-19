@@ -43,7 +43,7 @@ public static class RuleBuilderOptionsExtensions
             .WithMessage("Must not be in the future");
     }
 
-    public static IRuleBuilder<T, string> CanParseIntoDate<T>(this IRuleBuilder<T, string> ruleBuilder)
+    public static IRuleBuilderOptions<T, string?> CanParseIntoDate<T>(this IRuleBuilder<T, string?> ruleBuilder)
     {
         return ruleBuilder
             .Must(date => DateOnly.TryParse(date, out _))
