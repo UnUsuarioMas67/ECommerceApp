@@ -1,4 +1,4 @@
-﻿using ECommerce.Api.Application.Endpoints;
+﻿using ECommerce.Api.Endpoints;
 
 namespace ECommerce.Api.Extensions;
 

@@ -4,7 +4,7 @@ using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Extensions;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace ECommerce.Api.Application.Endpoints;
+namespace ECommerce.Api.Endpoints;
 
 public static class AuthEndpoints
 {
