@@ -6,11 +6,11 @@ using FluentValidation;
 
 namespace ECommerce.Api.Validators.Entities;
 
-public class UserValidator<T> : AbstractValidator<IUser> where T : class, IUser
+public class AdminValidator : AbstractValidator<Admin>
 {
-    public UserValidator(ECommerceContext db)
+    public AdminValidator(ECommerceContext context)
     {
-        var users = db.Set<T>();
+        var admins = context.Admins;
         
         RuleFor(u => u.FirstName)
             .NotEmpty()
@@ -42,11 +42,11 @@ public class UserValidator<T> : AbstractValidator<IUser> where T : class, IUser
         RuleFor(u => u.Email)
             .NotEmpty()
             .MaximumLength(TextLengthRules.Email)
-            .EmailNotAlreadyExists(users);
+            .EmailNotAlreadyExists(admins);
 
         RuleFor(u => u.PhoneNumber)
             .NotEmpty()
             .MaximumLength(TextLengthRules.PhoneNumber)
-            .PhoneNumberNotAlreadyExists(users);
+            .PhoneNumberNotAlreadyExists(admins);
     }
 }

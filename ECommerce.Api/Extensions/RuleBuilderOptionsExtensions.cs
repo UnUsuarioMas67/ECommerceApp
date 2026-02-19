@@ -6,9 +6,9 @@ namespace ECommerce.Api.Extensions;
 
 public static class RuleBuilderOptionsExtensions
 {
-    public static IRuleBuilderOptions<IUser, string> EmailNotAlreadyExists<T>(
-        this IRuleBuilder<IUser, string> ruleBuilder,
-        DbSet<T> dbSet) where T : class, IUser
+    public static IRuleBuilderOptions<TUser, string> EmailNotAlreadyExists<TUser>(
+        this IRuleBuilder<TUser, string> ruleBuilder,
+        DbSet<TUser> dbSet) where TUser : class, IUser
     {
         return ruleBuilder
             .MustAsync(async (user, email, token) => !await dbSet.AnyAsync(
@@ -16,9 +16,9 @@ public static class RuleBuilderOptionsExtensions
             .WithMessage("Email address already in use");
     }
 
-    public static IRuleBuilderOptions<IUser, string> PhoneNumberNotAlreadyExists<T>(
-        this IRuleBuilder<IUser, string> ruleBuilder,
-        DbSet<T> dbSet) where T : class, IUser
+    public static IRuleBuilderOptions<TUser, string> PhoneNumberNotAlreadyExists<TUser>(
+        this IRuleBuilder<TUser, string> ruleBuilder,
+        DbSet<TUser> dbSet) where TUser : class, IUser
     {
         return ruleBuilder
             .MustAsync(async (user, phoneNumber, token)
@@ -31,7 +31,7 @@ public static class RuleBuilderOptionsExtensions
         where T : class
     {
         return ruleBuilder
-            .Must((date) => date <= DateTime.Today)
+            .Must((date) => date <= DateTime.UtcNow)
             .WithMessage("Must not be in the future");
     }
 
@@ -39,7 +39,7 @@ public static class RuleBuilderOptionsExtensions
         where T : class
     {
         return ruleBuilder
-            .Must(date => date <= DateOnly.FromDateTime(DateTime.Today))
+            .Must(date => date <= DateOnly.FromDateTime(DateTime.UtcNow))
             .WithMessage("Must not be in the future");
     }
 
