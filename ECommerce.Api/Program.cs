@@ -13,6 +13,7 @@ builder.Services.AddDbContext<ECommerceContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb")));
 
 builder.Services.ConfigureAuth(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.AddValidators();
 
 var app = builder.Build();
 
