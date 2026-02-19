@@ -1,7 +1,7 @@
 ﻿using ECommerce.Api.Application.Auth;
-using ECommerce.Api.Application.DTOs;
 using ECommerce.Api.Application.DTOs.Auth;
 using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Extensions;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ECommerce.Api.Application.Endpoints;
