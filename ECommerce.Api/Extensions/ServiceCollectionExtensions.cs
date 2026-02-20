@@ -1,5 +1,8 @@
 ﻿using System.Text;
 using ECommerce.Api.Application.Auth;
+using ECommerce.Api.Application.Services;
+using ECommerce.Api.Validators.Entities;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -45,5 +48,10 @@ public static class ServiceCollectionExtensions
     {
         ValidatorOptions.Global.LanguageManager.Enabled = false;
         services.AddValidatorsFromAssemblyContaining<ProductValidator>();
+    }
+
+    public static void AddApiServices(this IServiceCollection services)
+    {
+        services.AddScoped<IClientsService, ClientsService>();
     }
 }
