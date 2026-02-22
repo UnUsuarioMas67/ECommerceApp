@@ -40,20 +40,23 @@ public static class DtoConversionExtensions
             CreatedAt = DateTime.UtcNow,
         };
 
-    public static void UpdateFromDto(this Client client, UpdateUserDto dto)
-    {
-        client.FirstName = !string.IsNullOrEmpty(dto.FirstName) ? dto.FirstName : client.FirstName;
-
-        client.LastName = !string.IsNullOrEmpty(dto.LastName) ? dto.LastName : client.LastName;
-
-        client.PhoneNumber = !string.IsNullOrEmpty(dto.PhoneNumber) ? dto.PhoneNumber : client.PhoneNumber;
-
-        client.BirthDate = !string.IsNullOrWhiteSpace(dto.BirthDate)
-            ? DateOnly.Parse(dto.BirthDate)
-            : client.BirthDate;
-
-        client.PasswordHash = !string.IsNullOrWhiteSpace(dto.Password)
-            ? PasswordHasher.HashPassword(dto.Password)
-            : client.PasswordHash;
-    }
+    public static Client GetUpdated(this Client client, UpdateUserDto dto)
+        => new()
+        {
+            Id = client.Id,
+            FirstName = !string.IsNullOrEmpty(dto.FirstName) ? dto.FirstName : client.FirstName,
+            LastName = !string.IsNullOrEmpty(dto.LastName) ? dto.LastName : client.LastName,
+            PhoneNumber = !string.IsNullOrEmpty(dto.PhoneNumber) ? dto.PhoneNumber : client.PhoneNumber,
+            
+            BirthDate = !string.IsNullOrWhiteSpace(dto.BirthDate)
+                ? DateOnly.Parse(dto.BirthDate)
+                : client.BirthDate,
+            
+            PasswordHash = !string.IsNullOrWhiteSpace(dto.Password)
+                ? PasswordHasher.HashPassword(dto.Password)
+                : client.PasswordHash,
+            
+            CreatedAt = client.CreatedAt,
+            Email = client.Email
+        };
 }

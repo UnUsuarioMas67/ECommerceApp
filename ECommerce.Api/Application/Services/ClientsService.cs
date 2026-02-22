@@ -63,15 +63,29 @@ public class ClientsService(ECommerceContext db, IValidator<Client> validator) :
         if (client == null)
             return Errors.NotFound();
 
-        client.UpdateFromDto(dto);
+        var updated = client.GetUpdated(dto);
         
-        var validation = await validator.ValidateAsync(client);
+        var validation = await validator.ValidateAsync(updated);
         if (!validation.IsValid)
             return Errors.ValidationError(validation.ToDictionary());
+        
+        ApplyClientUpdate(client, updated);
 
         await db.SaveChangesAsync();
         
         return client.ToDto();
+    }
+
+    private void ApplyClientUpdate(Client client, Client updated)
+    {
+        client.Id = updated.Id;
+        client.FirstName = updated.FirstName;
+        client.LastName = updated.LastName;
+        client.Email = updated.Email;
+        client.PhoneNumber = updated.PhoneNumber;
+        client.PasswordHash = updated.PasswordHash;
+        client.BirthDate = updated.BirthDate;
+        client.CreatedAt = updated.CreatedAt;
     }
 
     public async Task<UserResponseDto?> DeleteAsync(int clientId)
