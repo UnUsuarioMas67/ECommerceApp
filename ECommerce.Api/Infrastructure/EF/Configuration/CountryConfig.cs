@@ -12,5 +12,9 @@ public class CountryConfig : IEntityTypeConfiguration<Country>
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(TextLengthRules.Name);
+        
+        builder.Property(x => x.Cca2)
+            .IsRequired()
+            .HasMaxLength(2);
     }
 }

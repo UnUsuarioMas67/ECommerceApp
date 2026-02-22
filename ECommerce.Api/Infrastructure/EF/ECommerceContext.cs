@@ -77,8 +77,8 @@ public class ECommerceContext : DbContext
             }
 
             var countries = context.Set<Country>();
-            var countriesToAdd = RestCountriesService.GetAllCountriesNames()
-                .Select(name => new Country { Name = name });
+            var countriesToAdd = RestCountriesService.GetAllCountries()
+                .Select(country => new Country { Name = country.Name.Common, Cca2 = country.Cca2 });
 
             if (!countries.Any())
                 countries.AddRange(countriesToAdd);
