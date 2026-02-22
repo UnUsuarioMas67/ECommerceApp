@@ -12,12 +12,5 @@ public class CountryConfig : IEntityTypeConfiguration<Country>
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(TextLengthRules.Name);
-        
-        // Add countries
-        builder.HasData(new Country
-        {
-            Id = 1,
-            Name = "Dominican Republic"
-        });
     }
 }

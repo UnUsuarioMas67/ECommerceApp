@@ -1,6 +1,7 @@
 ﻿using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
+using RESTCountries.NET.Services;
 
 namespace ECommerce.Api.Infrastructure.EF;
 
@@ -74,7 +75,14 @@ public class ECommerceContext : DbContext
                 };
                 context.Set<Admin>().Add(newAdmin);
             }
-            
+
+            var countries = context.Set<Country>();
+            var countriesToAdd = RestCountriesService.GetAllCountriesNames()
+                .Select(name => new Country { Name = name });
+
+            if (!countries.Any())
+                countries.AddRange(countriesToAdd);
+
             context.SaveChanges();
         });
     }
