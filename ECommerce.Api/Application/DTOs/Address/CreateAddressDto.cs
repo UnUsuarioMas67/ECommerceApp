@@ -8,7 +8,7 @@ public class CreateAddressDto
     public string? AddressLine2 { get; set; }
     
     public string CountryCode { get; set; }
-    public string? Region { get; set; }
+    public string Region { get; set; }
     public string City { get; set; }
     public string PostalCode { get; set; }
 }

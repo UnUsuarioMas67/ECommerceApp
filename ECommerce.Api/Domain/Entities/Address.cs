@@ -10,7 +10,7 @@ public class Address
     public string? AddressLine2 { get; set; }
     public string City { get; set; }
     public string PostalCode { get; set; }
-    public string? Region { get; set; }
+    public string Region { get; set; }
 
     public Country Country { get; set; }
     public Client? Client { get; set; }

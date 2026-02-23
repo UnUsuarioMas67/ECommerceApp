@@ -25,6 +25,7 @@ public class AddressConfig : IEntityTypeConfiguration<Address>
             .HasMaxLength(TextLengthRules.PostalCode);
         
         builder.Property(x => x.Region)
+            .IsRequired()
             .HasMaxLength(TextLengthRules.ShortText);
     }
 }

@@ -27,8 +27,7 @@ public class AddressValidator : AbstractValidator<Address>
             .MaximumLength(TextLengthRules.PostalCode);
 
         RuleFor(a => a.Region)
-            .NotEmpty().WithMessage("Region cannot be blank text")
-            .Unless(a => a.Region == null)
+            .NotEmpty()
             .MaximumLength(TextLengthRules.ShortText);
         
         var countries = context.Countries;

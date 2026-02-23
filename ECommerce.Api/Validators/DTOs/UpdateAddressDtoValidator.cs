@@ -9,28 +9,30 @@ public class UpdateAddressDtoValidator : AbstractValidator<UpdateAddressDto>
     public UpdateAddressDtoValidator()
     {
         RuleFor(a => a.AddressLine1)
-            .NotEmpty().WithMessage("AddressLine1 is required")
+            .NotEmpty()
             .Unless(a => a.AddressLine1 == null)
             .MaximumLength(TextLengthRules.ShortText);
-        
+
         RuleFor(a => a.AddressLine2)
             .MaximumLength(TextLengthRules.ShortText);
 
         RuleFor(a => a.CountryCode)
-            .NotEmpty().WithMessage("CountryCode is required")
+            .NotEmpty()
             .Unless(a => a.CountryCode == null)
             .MaximumLength(2);
 
         RuleFor(a => a.Region)
+            .NotEmpty()
+            .Unless(a => a.Region == null)
             .MaximumLength(TextLengthRules.ShortText);
 
         RuleFor(a => a.City)
-            .NotEmpty().WithMessage("City is required")
+            .NotEmpty()
             .Unless(a => a.City == null)
             .MaximumLength(TextLengthRules.ShortText);
 
         RuleFor(a => a.PostalCode)
-            .NotEmpty().WithMessage("Postal Code is required")
+            .NotEmpty()
             .Unless(a => a.PostalCode == null)
             .MaximumLength(TextLengthRules.PostalCode);
     }
