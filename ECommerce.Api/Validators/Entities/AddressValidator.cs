@@ -34,6 +34,7 @@ public class AddressValidator : AbstractValidator<Address>
         RuleFor(a => a.CountryId)
             .NotEmpty()
             .Must(id => countries.Any(c => c.Id == id))
-            .WithMessage("The specified country does not exist.");
+            .WithName("CountryCode")
+            .WithMessage("Must specify a valid country code.");
     }
 }
