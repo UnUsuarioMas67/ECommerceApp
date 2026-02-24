@@ -2,6 +2,7 @@
 using ECommerce.Api.Application.DTOs.Auth;
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Extensions;
+using ECommerce.Api.Extensions.Mappings;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -27,6 +28,6 @@ public static class AuthEndpoints
             return TypedResults.ValidationProblem(validation.ToDictionary());
         
         var result = await authenticationService.Login<T>(requestDto.Email, requestDto.Password);
-        return TypedResults.Ok(result.ToDto());
+        return TypedResults.Ok(result.GetDto());
     }
 }

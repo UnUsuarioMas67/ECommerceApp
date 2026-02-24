@@ -1,6 +1,7 @@
 ﻿using ECommerce.Api.Application.DTOs.User;
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Extensions;
+using ECommerce.Api.Extensions.Mappings;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
 using FluentValidation;
@@ -22,7 +23,7 @@ public class ClientsService(ECommerceContext db, IValidator<Client> validator) :
     public async Task<UserResponseDto?> GetByIdAsync(int clientId)
     {
         var client = await db.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
-        return client?.ToDto();
+        return client?.GetDto();
     }
 
     public async Task<IEnumerable<UserResponseDto>> GetClientsAsync(string? search = null)
@@ -30,7 +31,7 @@ public class ClientsService(ECommerceContext db, IValidator<Client> validator) :
         var clients = await db.Clients.ToListAsync();
         return clients
             .Where(c => ClientMatches(c, search))
-            .Select(c => c.ToDto());
+            .Select(c => c.GetDto());
     }
 
     private bool ClientMatches(Client client, string? search)
@@ -44,7 +45,7 @@ public class ClientsService(ECommerceContext db, IValidator<Client> validator) :
 
     public async Task<Result<UserResponseDto>> CreateAsync(CreateUserDto dto)
     {
-        var client = dto.ToClientEntity();
+        var client = dto.GetEntity();
 
         var validation = await validator.ValidateAsync(client);
 
@@ -54,7 +55,7 @@ public class ClientsService(ECommerceContext db, IValidator<Client> validator) :
         await db.Clients.AddAsync(client);
         await db.SaveChangesAsync();
         
-        return client.ToDto();
+        return client.GetDto();
     }
 
     public async Task<Result<UserResponseDto>> UpdateAsync(int clientId, UpdateUserDto dto)
@@ -73,7 +74,7 @@ public class ClientsService(ECommerceContext db, IValidator<Client> validator) :
 
         await db.SaveChangesAsync();
         
-        return client.ToDto();
+        return client.GetDto();
     }
 
     private void ApplyClientUpdate(Client client, Client updated)
@@ -97,6 +98,6 @@ public class ClientsService(ECommerceContext db, IValidator<Client> validator) :
         db.Clients.Remove(client);
         await db.SaveChangesAsync();
 
-        return client.ToDto();
+        return client.GetDto();
     }
 }
