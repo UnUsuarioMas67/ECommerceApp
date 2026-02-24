@@ -1,12 +1,13 @@
 ﻿using ECommerce.Api.Application.DTOs.Address;
 using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Infrastructure.EF;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Extensions.Mappings;
 
 public static class AddressMappingExtensions
 {
-    public static AddressResponseDto? GetDto(this Address address)
+    public static AddressResponseDto GetDto(this Address address)
         => new()
         {
             Id = address.Id,
@@ -19,9 +20,9 @@ public static class AddressMappingExtensions
             Country = address.Country.Name
         };
 
-    public static async Task<Address> GetEntityAsync(this CreateAddressDto dto, DbSet<Country> countries)
+    public static async Task<Address> GetEntityAsync(this CreateAddressDto dto, ECommerceContext context)
     {
-        var country = await countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
+        var country = await context.Countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
         
         return new Address
         {
@@ -35,7 +36,7 @@ public static class AddressMappingExtensions
         };
     }
 
-    public static async Task<Address> GetUpdatedAsync(this Address address, UpdateAddressDto dto, DbSet<Country> countries)
+    public static async Task<Address> GetUpdatedAsync(this Address address, UpdateAddressDto dto, ECommerceContext context)
     {
         var updated =  new Address
         {
@@ -55,7 +56,7 @@ public static class AddressMappingExtensions
         updated.PostalCode = dto.PostalCode ?? address.PostalCode;
         updated.Region = dto.Region ?? address.Region;
         
-        var country = await countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
+        var country = await context.Countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
         updated.CountryId = country?.Id ?? 0;
 
         return updated;

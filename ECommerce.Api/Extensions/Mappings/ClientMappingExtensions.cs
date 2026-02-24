@@ -35,9 +35,9 @@ public static class ClientMappingExtensions
         => new()
         {
             Id = client.Id,
-            FirstName = !string.IsNullOrEmpty(dto.FirstName) ? dto.FirstName : client.FirstName,
-            LastName = !string.IsNullOrEmpty(dto.LastName) ? dto.LastName : client.LastName,
-            PhoneNumber = !string.IsNullOrEmpty(dto.PhoneNumber) ? dto.PhoneNumber : client.PhoneNumber,
+            FirstName = dto.FirstName ?? client.FirstName,
+            LastName = dto.LastName ?? client.LastName,
+            PhoneNumber = dto.PhoneNumber ?? client.PhoneNumber,
 
             BirthDate = !string.IsNullOrWhiteSpace(dto.BirthDate)
                 ? DateOnly.Parse(dto.BirthDate)
