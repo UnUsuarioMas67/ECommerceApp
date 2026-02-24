@@ -27,7 +27,7 @@ public static class AddressMappingExtensions
         {
             ClientId = dto.ClientId,
             AddressLine1 = dto.AddressLine1,
-            AddressLine2 = dto.AddressLine2,
+            AddressLine2 = dto.AddressLine2 ?? "",
             CountryId = country?.Id ?? 0,
             Region = dto.Region,
             City = dto.City,
@@ -49,15 +49,11 @@ public static class AddressMappingExtensions
             Region = address.Region
         };
         
-        updated.AddressLine1 = string.IsNullOrWhiteSpace(dto.AddressLine1) ? address.AddressLine1 : dto.AddressLine1;
-        updated.City = string.IsNullOrWhiteSpace(dto.City) ? address.City : dto.City;
-        updated.PostalCode = string.IsNullOrWhiteSpace(dto.PostalCode) ? address.PostalCode : dto.PostalCode;
-        updated.Region = string.IsNullOrWhiteSpace(dto.Region) ? address.Region : dto.Region;
-
-        if (dto.AddressLine2 != null && dto.AddressLine2.Trim() == "")
-            updated.AddressLine2 = null;
-        else if (dto.AddressLine2 != null)
-            updated.AddressLine2 = dto.AddressLine2;
+        updated.AddressLine1 = dto.AddressLine1 ?? address.AddressLine1;
+        updated.AddressLine2 = dto.AddressLine2 ?? address.AddressLine2;
+        updated.City = dto.City ?? address.City;
+        updated.PostalCode = dto.PostalCode ?? address.PostalCode;
+        updated.Region = dto.Region ?? address.Region;
         
         var country = await countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
         updated.CountryId = country?.Id ?? 0;

@@ -14,6 +14,7 @@ public class AddressConfig : IEntityTypeConfiguration<Address>
             .HasMaxLength(TextLengthRules.ShortText);
         
         builder.Property(x => x.AddressLine2)
+            .IsRequired()
             .HasMaxLength(TextLengthRules.ShortText);
         
         builder.Property(x => x.City)

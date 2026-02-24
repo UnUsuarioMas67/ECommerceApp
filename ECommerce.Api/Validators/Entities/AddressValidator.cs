@@ -14,8 +14,7 @@ public class AddressValidator : AbstractValidator<Address>
             .MaximumLength(TextLengthRules.ShortText);
 
         RuleFor(a => a.AddressLine2)
-            .NotEmpty().WithMessage("AddressLine2 cannot be blank text")
-            .Unless(a => a.AddressLine2 == null)
+            .NotNull()
             .MaximumLength(TextLengthRules.ShortText);
 
         RuleFor(a => a.City)
