@@ -21,7 +21,7 @@ public static class AddressMappingExtensions
             PostalCode = address.PostalCode,
             Region = address.Region,
             ClientId = address.ClientId,
-            Country = address.Country.Name
+            Country = address.Country!.Name
         };
     }
 
