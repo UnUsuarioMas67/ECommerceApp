@@ -8,5 +8,6 @@ public static class EndpointRouteBuilderExtensions
     {
         endpoints.MapAuthEndpoints();
         endpoints.MapClientsEndpoints();
+        endpoints.MapAddressEndpoints();
     }
 }

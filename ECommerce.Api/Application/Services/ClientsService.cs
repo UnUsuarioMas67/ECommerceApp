@@ -11,6 +11,7 @@ namespace ECommerce.Api.Application.Services;
 
 public interface IClientsService
 {
+    Task<bool> ClientExistsAsync(int clientId);
     Task<UserResponseDto?> GetByIdAsync(int clientId);
     Task<IEnumerable<UserResponseDto>> GetClientsAsync(string? search = null);
     Task<Result<UserResponseDto>> CreateAsync(CreateUserDto dto);
@@ -20,6 +21,9 @@ public interface IClientsService
 
 public class ClientsService(ECommerceContext context, IValidator<Client> validator) : IClientsService
 {
+    public async Task<bool> ClientExistsAsync(int clientId)
+        => await context.Clients.AnyAsync(c => c.Id == clientId);
+
     public async Task<UserResponseDto?> GetByIdAsync(int clientId)
     {
         var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
