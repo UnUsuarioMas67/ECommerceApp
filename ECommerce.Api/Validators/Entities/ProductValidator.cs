@@ -8,7 +8,7 @@ namespace ECommerce.Api.Validators.Entities;
 
 public class ProductValidator : AbstractValidator<Product>
 {
-    public ProductValidator(ECommerceContext context)
+    public ProductValidator()
     {
         RuleFor(p => p.Sku)
             .NotEmpty()
@@ -27,16 +27,9 @@ public class ProductValidator : AbstractValidator<Product>
             .GreaterThanOrEqualTo(0)
             .WithMessage("Price cannot be negative");
         
-        
         RuleFor(p => p.Stock)
             .NotNull()
             .GreaterThanOrEqualTo(0)
             .WithMessage("Stock cannot be negative");
-        
-        var categories = context.Categories;
-        RuleFor(p => p.CategoryId)
-            .NotNull()
-            .MustAsync(async (id, token) => await categories.AnyAsync(c => c.Id == id))
-            .WithMessage("Category doesn't exist");
     }
 }

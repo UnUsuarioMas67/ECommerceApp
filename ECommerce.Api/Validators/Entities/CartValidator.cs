@@ -7,22 +7,22 @@ namespace ECommerce.Api.Validators.Entities;
 
 public class CartValidator : AbstractValidator<Cart>
 {
-    private readonly ECommerceContext _context;
-
-    public CartValidator(ECommerceContext context)
+    public CartValidator()
     {
-        _context = context;
+        When(c => c.Client == null, () =>
+        {
+            RuleFor(c => c.ClientId)
+                .GreaterThan(0)
+                .WithMessage("Client is required");
+        });
 
-        RuleFor(c => c.ClientId)
-            .NotNull()
-            .MustAsync(ClientExists)
-            .WithMessage("Client does not exist");
+        When(c => c.ClientId <= 0, () =>
+        {
+            RuleFor(c => c.Client)
+                .NotNull()
+                .WithMessage("Client is required");
+        });
         
         RuleForEach(c => c.Items).SetValidator(new CartItemValidator());
-    }
-
-    private async Task<bool> ClientExists(int clientId, CancellationToken token)
-    {
-        return await _context.Clients.AnyAsync(c => c.Id == clientId, token);
     }
 }

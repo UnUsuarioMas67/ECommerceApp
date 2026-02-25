@@ -9,7 +9,7 @@ namespace ECommerce.Api.Validators.Entities;
 
 public class AddressValidator : AbstractValidator<Address>
 {
-    public AddressValidator(ECommerceContext context)
+    public AddressValidator()
     {
         RuleFor(a => a.AddressLine1)
             .NotEmpty()
@@ -31,7 +31,19 @@ public class AddressValidator : AbstractValidator<Address>
             .NotEmpty()
             .MaximumLength(TextLengthRules.ShortText);
         
-        RuleFor(a => a.Country)
-            .ExistsInDatabase(context);
+        When(a => a.Country == null, () =>
+        {
+            RuleFor(a => a.CountryCca2)
+                .NotEmpty()
+                .MaximumLength(2)
+                .WithMessage("Country is required");
+        });
+
+        When(a => string.IsNullOrWhiteSpace(a.CountryCca2), () =>
+        {
+            RuleFor(a => a.Country)
+                .NotNull()
+                .WithMessage("Country is required");
+        });
     }
 }
