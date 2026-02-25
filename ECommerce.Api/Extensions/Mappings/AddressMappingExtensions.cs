@@ -35,6 +35,7 @@ public static class AddressMappingExtensions
             AddressLine1 = dto.AddressLine1,
             AddressLine2 = dto.AddressLine2 ?? "",
             Country = country,
+            CountryCca2 =  dto.CountryCode,
             Region = dto.Region,
             City = dto.City,
             PostalCode = dto.PostalCode,
@@ -52,6 +53,7 @@ public static class AddressMappingExtensions
             ClientId = address.ClientId,
             AddressLine1 = address.AddressLine1,
             AddressLine2 = address.AddressLine2,
+            CountryCca2 = address.CountryCca2,
             Country = address.Country,
             City = address.City,
             PostalCode = address.PostalCode,
@@ -65,7 +67,7 @@ public static class AddressMappingExtensions
         updated.Region = dto.Region ?? address.Region;
         
         var country = await context.Countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
-        updated.Country = country;
+        updated.Country = country ?? address.Country;
 
         return updated;
     }

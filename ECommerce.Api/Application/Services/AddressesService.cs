@@ -24,7 +24,6 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
     {
         var address = await context.Addresses
             .Include(a => a.Country)
-            .Include(a => a.Client)
             .FirstOrDefaultAsync(a => a.Id == addressId);
         return address?.GetDto();
     }
@@ -59,7 +58,10 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
 
     public async Task<Result<AddressResponseDto>> UpdateAsync(int addressId, UpdateAddressDto dto)
     {
-        var address = await context.Addresses.FindAsync(addressId);
+        var address = await context.Addresses
+            .Include(a => a.Country)
+            .FirstOrDefaultAsync(a => a.Id == addressId);
+        
         if (address == null)
             return Errors.NotFound();
 
@@ -82,6 +84,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         address.AddressLine1 = updated.AddressLine1;
         address.AddressLine2 = updated.AddressLine2;
         address.CountryCca2 = updated.CountryCca2;
+        address.Country = updated.Country;
         address.Region = updated.Region;
         address.City = updated.City;
         address.PostalCode = updated.PostalCode;
@@ -129,5 +132,6 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
     }
 
     private async Task<bool> CountryIsValid(Address address)
-        => await context.Countries.AnyAsync(c => c.Cca2 == address.CountryCca2 || c == address.Country);
+        => await context.Countries.AnyAsync(
+            c => c.Cca2 == address.CountryCca2 || c == address.Country);
 }
