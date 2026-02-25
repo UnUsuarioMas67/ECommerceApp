@@ -1,7 +1,9 @@
 ﻿using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Domain.Validation;
+using ECommerce.Api.Extensions;
 using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Validators.Entities;
 
@@ -29,11 +31,7 @@ public class AddressValidator : AbstractValidator<Address>
             .NotEmpty()
             .MaximumLength(TextLengthRules.ShortText);
         
-        var countries = context.Countries;
-        RuleFor(a => a.CountryId)
-            .NotEmpty()
-            .Must(id => countries.Any(c => c.Id == id))
-            .WithName("CountryCode")
-            .WithMessage("Must specify a valid country code.");
+        RuleFor(a => a.Country)
+            .ExistsInDatabase(context);
     }
 }

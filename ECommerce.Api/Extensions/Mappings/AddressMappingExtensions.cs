@@ -8,7 +8,11 @@ namespace ECommerce.Api.Extensions.Mappings;
 public static class AddressMappingExtensions
 {
     public static AddressResponseDto GetDto(this Address address)
-        => new()
+    {
+        if (address.Country == null)
+            throw new InvalidOperationException($"{nameof(address.Country)} must be included.");
+        
+        return new AddressResponseDto
         {
             Id = address.Id,
             AddressLine1 = address.AddressLine1,
@@ -19,6 +23,7 @@ public static class AddressMappingExtensions
             ClientId = address.ClientId,
             Country = address.Country.Name
         };
+    }
 
     public static async Task<Address> GetEntityAsync(this CreateAddressDto dto, ECommerceContext context)
     {
@@ -29,7 +34,7 @@ public static class AddressMappingExtensions
             ClientId = dto.ClientId,
             AddressLine1 = dto.AddressLine1,
             AddressLine2 = dto.AddressLine2 ?? "",
-            CountryId = country?.Id ?? 0,
+            Country = country,
             Region = dto.Region,
             City = dto.City,
             PostalCode = dto.PostalCode,
@@ -38,13 +43,16 @@ public static class AddressMappingExtensions
 
     public static async Task<Address> GetUpdatedAsync(this Address address, UpdateAddressDto dto, ECommerceContext context)
     {
+        if (address.Country == null)
+            throw new InvalidOperationException($"{nameof(address.Country)} must be included.");
+        
         var updated =  new Address
         {
             Id = address.Id,
             ClientId = address.ClientId,
             AddressLine1 = address.AddressLine1,
             AddressLine2 = address.AddressLine2,
-            CountryId = address.CountryId,
+            Country = address.Country,
             City = address.City,
             PostalCode = address.PostalCode,
             Region = address.Region
@@ -57,7 +65,7 @@ public static class AddressMappingExtensions
         updated.Region = dto.Region ?? address.Region;
         
         var country = await context.Countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
-        updated.CountryId = country?.Id ?? 0;
+        updated.Country = country;
 
         return updated;
     }
