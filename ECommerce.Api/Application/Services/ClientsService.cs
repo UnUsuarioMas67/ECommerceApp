@@ -18,17 +18,17 @@ public interface IClientsService
     Task<UserResponseDto?> DeleteAsync(int clientId);
 }
 
-public class ClientsService(ECommerceContext db, IValidator<Client> validator) : IClientsService
+public class ClientsService(ECommerceContext context, IValidator<Client> validator) : IClientsService
 {
     public async Task<UserResponseDto?> GetByIdAsync(int clientId)
     {
-        var client = await db.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
+        var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
         return client?.GetDto();
     }
 
     public async Task<IEnumerable<UserResponseDto>> GetClientsAsync(string? search = null)
     {
-        var clients = await db.Clients.ToListAsync();
+        var clients = await context.Clients.ToListAsync();
         return clients
             .Where(c => ClientMatches(c, search))
             .Select(c => c.GetDto());
@@ -47,33 +47,32 @@ public class ClientsService(ECommerceContext db, IValidator<Client> validator) :
     {
         var client = dto.GetEntity();
 
-        var validation = await validator.ValidateAsync(client);
+        var validationResult = await Validate(client);
+        if (!validationResult.IsSuccess)
+            return Errors.ValidationError(validationResult.Error!.Details);
 
-        if (!validation.IsValid)
-            return Errors.ValidationError(validation.ToDictionary());
-        
-        await db.Clients.AddAsync(client);
-        await db.SaveChangesAsync();
-        
+        await context.Clients.AddAsync(client);
+        await context.SaveChangesAsync();
+
         return client.GetDto();
     }
 
     public async Task<Result<UserResponseDto>> UpdateAsync(int clientId, UpdateUserDto dto)
     {
-        var client = await db.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
+        var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
         if (client == null)
             return Errors.NotFound();
 
         var updated = client.GetUpdated(dto);
-        
-        var validation = await validator.ValidateAsync(updated);
-        if (!validation.IsValid)
-            return Errors.ValidationError(validation.ToDictionary());
-        
+
+        var validationResult = await Validate(updated);
+        if (!validationResult.IsSuccess)
+            return Errors.ValidationError(validationResult.Error!.Details);
+
         ApplyClientUpdate(client, updated);
 
-        await db.SaveChangesAsync();
-        
+        await context.SaveChangesAsync();
+
         return client.GetDto();
     }
 
@@ -91,13 +90,43 @@ public class ClientsService(ECommerceContext db, IValidator<Client> validator) :
 
     public async Task<UserResponseDto?> DeleteAsync(int clientId)
     {
-        var client = await db.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
+        var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
         if (client == null)
             return null;
 
-        db.Clients.Remove(client);
-        await db.SaveChangesAsync();
+        context.Clients.Remove(client);
+        await context.SaveChangesAsync();
 
         return client.GetDto();
     }
+
+    private async Task<Result> Validate(Client client)
+    {
+        var validation = await validator.ValidateAsync(client);
+        if (!validation.IsValid)
+        {
+            return Errors.ValidationError(validation.ToDictionary());
+        }
+
+        var emailIsDuplicate = await EmailIsDuplicate(client);
+        var phoneNumberIsDuplicate = await PhoneNumberIsDuplicate(client);
+
+        if (!emailIsDuplicate && !phoneNumberIsDuplicate) 
+            return Result.Success();
+        
+        var errorDetails = new Dictionary<string, string[]>();
+        
+        if (emailIsDuplicate)
+            errorDetails.Add(nameof(client.Email), ["Email address already in use"]);
+        if (phoneNumberIsDuplicate)
+            errorDetails.Add(nameof(client.PhoneNumber), ["Phone number already in use"]);
+
+        return Errors.ValidationError(errorDetails);
+    }
+
+    private async Task<bool> EmailIsDuplicate(Client client)
+        => await context.Clients.AnyAsync(c => c.Email == client.Email && c.Id != client.Id);
+
+    private async Task<bool> PhoneNumberIsDuplicate(Client client)
+        => await context.Clients.AnyAsync(c => c.PhoneNumber == client.PhoneNumber && c.Id != client.Id);
 }

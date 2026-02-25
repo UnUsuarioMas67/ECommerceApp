@@ -8,10 +8,8 @@ namespace ECommerce.Api.Validators.Entities;
 
 public class ClientValidator : AbstractValidator<Client>
 {
-    public ClientValidator(ECommerceContext context)
+    public ClientValidator()
     {
-        var clients = context.Clients;
-        
         RuleFor(u => u.FirstName)
             .NotEmpty()
             .MaximumLength(TextLengthRules.Name);
@@ -41,12 +39,10 @@ public class ClientValidator : AbstractValidator<Client>
 
         RuleFor(u => u.Email)
             .NotEmpty()
-            .MaximumLength(TextLengthRules.Email)
-            .EmailNotAlreadyExists(clients);
+            .MaximumLength(TextLengthRules.Email);
 
         RuleFor(u => u.PhoneNumber)
             .NotEmpty()
-            .MaximumLength(TextLengthRules.PhoneNumber)
-            .PhoneNumberNotAlreadyExists(clients);
+            .MaximumLength(TextLengthRules.PhoneNumber);
     }
 }
