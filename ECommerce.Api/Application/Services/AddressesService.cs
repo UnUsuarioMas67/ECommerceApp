@@ -1,50 +1,133 @@
 ﻿using ECommerce.Api.Application.DTOs.Address;
 using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Extensions.Mappings;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Application.Services;
 
 public interface IAddressesService
 {
     Task<AddressResponseDto?> GetByIdAsync(int addressId);
-    Task<IEnumerable<AddressResponseDto>> GetAddressesAsync(string? search = null);
-    Task<IEnumerable<AddressResponseDto>> GetByClientId(int clientId);
+    Task<IEnumerable<AddressResponseDto>> GetByClient(int clientId);
+    Task<IEnumerable<AddressResponseDto>> GetByCountry(string cca2);
     Task<Result<AddressResponseDto>> CreateAsync(CreateAddressDto dto);
     Task<Result<AddressResponseDto>> UpdateAsync(int addressId, UpdateAddressDto dto);
     Task<AddressResponseDto?> DeleteAsync(int addressId);
 }
 
-public class AddressesService(ECommerceContext db, IValidator<Address> validator) : IAddressesService
+public class AddressesService(ECommerceContext context, IValidator<Address> validator) : IAddressesService
 {
-    public Task<AddressResponseDto?> GetByIdAsync(int addressId)
+    public async Task<AddressResponseDto?> GetByIdAsync(int addressId)
     {
-        throw new NotImplementedException();
+        var address = await context.Addresses
+            .Include(a => a.Country)
+            .Include(a => a.Client)
+            .FirstOrDefaultAsync(a => a.Id == addressId);
+        return address?.GetDto();
     }
 
-    public Task<IEnumerable<AddressResponseDto>> GetAddressesAsync(string? search = null)
+    public async Task<IEnumerable<AddressResponseDto>> GetByClient(int clientId)
+        => await context.Addresses
+            .Include(a => a.Country)
+            .Where(a => a.ClientId == clientId)
+            .Select(a => a.GetDto())
+            .ToListAsync();
+
+    public async Task<IEnumerable<AddressResponseDto>> GetByCountry(string cca2)
+        => await context.Addresses
+            .Include(a => a.Country)
+            .Where(a => a.Country!.Cca2 == cca2)
+            .Select(a => a.GetDto())
+            .ToListAsync();
+
+    public async Task<Result<AddressResponseDto>> CreateAsync(CreateAddressDto dto)
     {
-        throw new NotImplementedException();
+        var address = await dto.GetEntityAsync(context);
+
+        var validationResult = await Validate(address);
+        if (!validationResult.IsSuccess)
+            return Errors.ValidationError(validationResult.Error!.Details);
+
+        await context.Addresses.AddAsync(address);
+        await context.SaveChangesAsync();
+
+        return address.GetDto();
     }
 
-    public Task<IEnumerable<AddressResponseDto>> GetByClientId(int clientId)
+    public async Task<Result<AddressResponseDto>> UpdateAsync(int addressId, UpdateAddressDto dto)
     {
-        throw new NotImplementedException();
+        var address = await context.Addresses.FindAsync(addressId);
+        if (address == null)
+            return Errors.NotFound();
+
+        var updated = await address.GetUpdatedAsync(dto, context);
+
+        var validationResult = await Validate(updated);
+        if (!validationResult.IsSuccess)
+            return Errors.ValidationError(validationResult.Error!.Details);
+
+        ApplyAddressUpdate(address, updated);
+        await context.SaveChangesAsync();
+
+        return address.GetDto();
     }
 
-    public Task<Result<AddressResponseDto>> CreateAsync(CreateAddressDto dto)
+    private void ApplyAddressUpdate(Address address, Address updated)
     {
-        throw new NotImplementedException();
+        address.Id = updated.Id;
+        address.ClientId = updated.ClientId;
+        address.AddressLine1 = updated.AddressLine1;
+        address.AddressLine2 = updated.AddressLine2;
+        address.CountryCca2 = updated.CountryCca2;
+        address.Region = updated.Region;
+        address.City = updated.City;
+        address.PostalCode = updated.PostalCode;
     }
 
-    public Task<Result<AddressResponseDto>> UpdateAsync(int addressId, UpdateAddressDto dto)
+    public async Task<AddressResponseDto?> DeleteAsync(int addressId)
     {
-        throw new NotImplementedException();
+        var address = await context.Addresses.FindAsync(addressId);
+        if (address == null)
+            return null;
+
+        context.Addresses.Remove(address);
+        await context.SaveChangesAsync();
+        return address.GetDto();
     }
 
-    public Task<AddressResponseDto?> DeleteAsync(int addressId)
+    private async Task<Result> Validate(Address address)
     {
-        throw new NotImplementedException();
+        var validation = await validator.ValidateAsync(address);
+        if (!validation.IsValid)
+            return Errors.ValidationError(validation.ToDictionary());
+
+        var clientValid = await ClientIsValid(address);
+        var countryValid = await CountryIsValid(address);
+
+        if (clientValid && countryValid)
+            return Result.Success();
+        
+        var errorDetails = new Dictionary<string, string[]>();
+        
+        if (!clientValid)
+            errorDetails.Add(nameof(address.Client), ["Invalid client"]);
+        if (!countryValid)
+            errorDetails.Add(nameof(address.Country), ["Invalid country"]);
+        
+        return Errors.ValidationError(errorDetails);
     }
+
+    private async Task<bool> ClientIsValid(Address address)
+    {
+        if (address.Client == null && address.ClientId == 0)
+            return true;
+
+        return await context.Clients.AnyAsync(c => c.Id == address.ClientId || c == address.Client);
+    }
+
+    private async Task<bool> CountryIsValid(Address address)
+        => await context.Countries.AnyAsync(c => c.Cca2 == address.CountryCca2 || c == address.Country);
 }
