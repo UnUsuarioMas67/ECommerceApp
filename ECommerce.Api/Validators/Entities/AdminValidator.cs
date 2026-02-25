@@ -8,10 +8,8 @@ namespace ECommerce.Api.Validators.Entities;
 
 public class AdminValidator : AbstractValidator<Admin>
 {
-    public AdminValidator(ECommerceContext context)
+    public AdminValidator()
     {
-        var admins = context.Admins;
-        
         RuleFor(u => u.FirstName)
             .NotEmpty()
             .MaximumLength(TextLengthRules.Name);
@@ -41,12 +39,10 @@ public class AdminValidator : AbstractValidator<Admin>
 
         RuleFor(u => u.Email)
             .NotEmpty()
-            .MaximumLength(TextLengthRules.Email)
-            .EmailNotAlreadyExists(admins);
+            .MaximumLength(TextLengthRules.Email);
 
         RuleFor(u => u.PhoneNumber)
             .NotEmpty()
-            .MaximumLength(TextLengthRules.PhoneNumber)
-            .PhoneNumberNotAlreadyExists(admins);
+            .MaximumLength(TextLengthRules.PhoneNumber);
     }
 }
