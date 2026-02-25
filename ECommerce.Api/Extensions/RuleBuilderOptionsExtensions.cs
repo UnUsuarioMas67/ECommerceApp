@@ -49,4 +49,15 @@ public static class RuleBuilderOptionsExtensions
             .Must(date => DateOnly.TryParse(date, out _))
             .WithMessage("Not a valid date");
     }
+
+    public static IRuleBuilderOptions<T, TProperty?> ExistsInDatabase<T, TProperty>(
+        this IRuleBuilder<T, TProperty?> ruleBuilder,
+        DbContext dbContext) where TProperty : class
+    {
+        var dbSet = dbContext.Set<TProperty>();
+        return ruleBuilder
+            .NotNull()
+            .MustAsync(async (entity, token) => await dbSet.AnyAsync(e => e == entity))
+            .WithMessage($"The specified {nameof(TProperty)} does not exist.");
+    }
 }
