@@ -1,6 +1,7 @@
 ﻿using ECommerce.Api.Application.DTOs.Address;
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Infrastructure.EF;
+using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Extensions.Mappings;
@@ -47,18 +48,7 @@ public static class AddressMappingExtensions
         if (address.Country == null)
             throw new InvalidOperationException($"{nameof(address.Country)} must be included.");
         
-        var updated =  new Address
-        {
-            Id = address.Id,
-            ClientId = address.ClientId,
-            AddressLine1 = address.AddressLine1,
-            AddressLine2 = address.AddressLine2,
-            CountryCca2 = address.CountryCca2,
-            Country = address.Country,
-            City = address.City,
-            PostalCode = address.PostalCode,
-            Region = address.Region
-        };
+        var updated = PropertyCopier.GetCopy(address);
         
         updated.AddressLine1 = dto.AddressLine1 ?? address.AddressLine1;
         updated.AddressLine2 = dto.AddressLine2 ?? address.AddressLine2;

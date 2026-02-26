@@ -73,23 +73,11 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         if (!validationResult.IsSuccess)
             return Errors.ValidationError(validationResult.Error!.Details);
 
-        ApplyClientUpdate(client, updated);
+        PropertyCopier.Mirror(updated, client);
 
         await context.SaveChangesAsync();
 
         return client.GetDto();
-    }
-
-    private void ApplyClientUpdate(Client client, Client updated)
-    {
-        client.Id = updated.Id;
-        client.FirstName = updated.FirstName;
-        client.LastName = updated.LastName;
-        client.Email = updated.Email;
-        client.PhoneNumber = updated.PhoneNumber;
-        client.PasswordHash = updated.PasswordHash;
-        client.BirthDate = updated.BirthDate;
-        client.CreatedAt = updated.CreatedAt;
     }
 
     public async Task<UserResponseDto?> DeleteAsync(int clientId)

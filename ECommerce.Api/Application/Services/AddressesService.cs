@@ -71,23 +71,10 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         if (!validationResult.IsSuccess)
             return Errors.ValidationError(validationResult.Error!.Details);
 
-        ApplyAddressUpdate(address, updated);
+        PropertyCopier.Mirror(updated, address);
         await context.SaveChangesAsync();
 
         return address.GetDto();
-    }
-
-    private void ApplyAddressUpdate(Address address, Address updated)
-    {
-        address.Id = updated.Id;
-        address.ClientId = updated.ClientId;
-        address.AddressLine1 = updated.AddressLine1;
-        address.AddressLine2 = updated.AddressLine2;
-        address.CountryCca2 = updated.CountryCca2;
-        address.Country = updated.Country;
-        address.Region = updated.Region;
-        address.City = updated.City;
-        address.PostalCode = updated.PostalCode;
     }
 
     public async Task<AddressResponseDto?> DeleteAsync(int addressId)

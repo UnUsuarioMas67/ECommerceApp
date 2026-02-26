@@ -32,22 +32,19 @@ public static class ClientMappingExtensions
         };
 
     public static Client GetUpdated(this Client client, UpdateUserDto dto)
-        => new()
-        {
-            Id = client.Id,
-            FirstName = dto.FirstName ?? client.FirstName,
-            LastName = dto.LastName ?? client.LastName,
-            PhoneNumber = dto.PhoneNumber ?? client.PhoneNumber,
+    {
+        var updated = PropertyCopier.GetCopy(client);
 
-            BirthDate = !string.IsNullOrWhiteSpace(dto.BirthDate)
-                ? DateOnly.Parse(dto.BirthDate)
-                : client.BirthDate,
-
-            PasswordHash = !string.IsNullOrWhiteSpace(dto.Password)
-                ? PasswordHasher.HashPassword(dto.Password)
-                : client.PasswordHash,
-
-            CreatedAt = client.CreatedAt,
-            Email = client.Email
-        };
+        updated.FirstName = dto.FirstName ?? client.FirstName;
+        updated.LastName = dto.LastName ?? client.LastName;
+        updated.PhoneNumber = dto.PhoneNumber ?? client.PhoneNumber;
+        updated.BirthDate = !string.IsNullOrWhiteSpace(dto.BirthDate)
+            ? DateOnly.Parse(dto.BirthDate)
+            : client.BirthDate;
+        updated.PasswordHash = !string.IsNullOrWhiteSpace(dto.Password)
+            ? PasswordHasher.HashPassword(dto.Password)
+            : client.PasswordHash;
+        
+        return updated;
+    }
 }
