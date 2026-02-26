@@ -18,14 +18,6 @@ public class ClientValidator : AbstractValidator<Client>
             .NotEmpty()
             .MaximumLength(TextLengthRules.Name);
 
-        RuleFor(u => u.Email)
-            .NotEmpty()
-            .MaximumLength(TextLengthRules.Email);
-
-        RuleFor(u => u.PhoneNumber)
-            .NotEmpty()
-            .MaximumLength(TextLengthRules.PhoneNumber);
-
         RuleFor(u => u.BirthDate)
             .NotNull()
             .NotInTheFuture();
