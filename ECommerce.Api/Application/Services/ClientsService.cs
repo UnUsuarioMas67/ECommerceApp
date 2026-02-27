@@ -1,6 +1,6 @@
-﻿using ECommerce.Api.Application.DTOs.User;
+﻿using ECommerce.Api.Application.DTOs.Shared;
+using ECommerce.Api.Application.DTOs.User;
 using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Extensions;
 using ECommerce.Api.Extensions.Mappings;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
@@ -13,7 +13,7 @@ public interface IClientsService
 {
     Task<bool> ClientExistsAsync(int clientId);
     Task<UserResponseDto?> GetByIdAsync(int clientId);
-    Task<IEnumerable<UserResponseDto>> GetClientsAsync(string? search = null);
+    Task<IEnumerable<UserResponseDto>> GetClientsAsync(PaginationQuery pagination, string? search = null);
     Task<Result<UserResponseDto>> CreateAsync(CreateUserDto dto);
     Task<Result<UserResponseDto>> UpdateAsync(int clientId, UpdateUserDto dto);
     Task<UserResponseDto?> DeleteAsync(int clientId);
@@ -30,11 +30,13 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         return client?.GetDto();
     }
 
-    public async Task<IEnumerable<UserResponseDto>> GetClientsAsync(string? search = null)
+    public async Task<IEnumerable<UserResponseDto>> GetClientsAsync(PaginationQuery pagination, string? search = null)
     {
         var clients = await context.Clients.ToListAsync();
         return clients
             .Where(c => ClientMatches(c, search))
+            .Skip(pagination.Skip ?? 0)
+            .Take(pagination.Limit ?? 100)
             .Select(c => c.GetDto());
     }
 

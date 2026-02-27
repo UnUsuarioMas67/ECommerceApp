@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using ECommerce.Api.Application.Auth;
 using ECommerce.Api.Application.DTOs.Address;
+using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.DTOs.User;
 using ECommerce.Api.Application.Services;
 using ECommerce.Api.Shared;
@@ -61,8 +62,9 @@ public static class ClientsEndpoints
 
     private static async Task<Ok<IEnumerable<UserResponseDto>>> GetClients(
         IClientsService clientsService,
+        [AsParameters] PaginationQuery pagination,
         [FromQuery] string? search = null)
-        => TypedResults.Ok(await clientsService.GetClientsAsync(search));
+        => TypedResults.Ok(await clientsService.GetClientsAsync(pagination, search));
 
 
     private static async Task<Results<Created<UserResponseDto>, ValidationProblem>> CreateClient(
