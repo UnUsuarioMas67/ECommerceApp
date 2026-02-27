@@ -11,9 +11,9 @@ namespace ECommerce.Api.Application.Services;
 
 public interface IClientsService
 {
-    Task<bool> ClientExistsAsync(int clientId);
+    Task<bool> EntryExistsAsync(int clientId);
     Task<UserResponseDto?> GetByIdAsync(int clientId);
-    Task<IEnumerable<UserResponseDto>> GetClientsAsync(PaginationQuery pagination, string? search = null);
+    Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
     Task<Result<UserResponseDto>> CreateAsync(CreateUserDto dto);
     Task<Result<UserResponseDto>> UpdateAsync(int clientId, UpdateUserDto dto);
     Task<UserResponseDto?> DeleteAsync(int clientId);
@@ -21,7 +21,7 @@ public interface IClientsService
 
 public class ClientsService(ECommerceContext context, IValidator<Client> validator) : IClientsService
 {
-    public async Task<bool> ClientExistsAsync(int clientId)
+    public async Task<bool> EntryExistsAsync(int clientId)
         => await context.Clients.AnyAsync(c => c.Id == clientId);
 
     public async Task<UserResponseDto?> GetByIdAsync(int clientId)
@@ -30,7 +30,7 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         return client?.GetDto();
     }
 
-    public async Task<IEnumerable<UserResponseDto>> GetClientsAsync(PaginationQuery pagination, string? search = null)
+    public async Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
     {
         var clients = await context.Clients.ToListAsync();
         return clients

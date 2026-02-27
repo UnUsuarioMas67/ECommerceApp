@@ -64,7 +64,7 @@ public static class ClientsEndpoints
         IClientsService clientsService,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string? search = null)
-        => TypedResults.Ok(await clientsService.GetClientsAsync(pagination, search));
+        => TypedResults.Ok(await clientsService.GetManyAsync(pagination, search));
 
 
     private static async Task<Results<Created<UserResponseDto>, ValidationProblem>> CreateClient(
@@ -115,7 +115,7 @@ public static class ClientsEndpoints
         IClientsService clientsService,
         IAddressesService addressesService)
     {
-        var clientExists = await clientsService.ClientExistsAsync(id);
+        var clientExists = await clientsService.EntryExistsAsync(id);
         if (!clientExists)
             return TypedResults.NotFound();
 
