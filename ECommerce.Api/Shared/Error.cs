@@ -8,15 +8,19 @@ public static class Errors
         => new Error(ErrorType.NotFound, new Dictionary<string, string[]>());
 
     public static Error ValidationError(IDictionary<string, string[]> details)
-        => new Error(ErrorType.Validation, details); 
-    
+        => new Error(ErrorType.Validation, details);
+
     public static Error AuthenticationError(string name, string description)
         => new Error(ErrorType.Authentication, new Dictionary<string, string[]> { { name, [description] } });
+
+    public static Error ParametersError(string name, string description)
+        => new Error(ErrorType.Parameters, new Dictionary<string, string[]> { { name, [description] } });
 }
 
 public enum ErrorType
 {
     Validation,
     NotFound,
-    Authentication
+    Authentication,
+    Parameters
 }
