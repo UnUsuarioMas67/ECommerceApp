@@ -67,7 +67,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         if (!validationResult.IsValid)
             return Errors.ValidationError(validationResult.ToDictionary());
         
-        PropertyCopier.Mirror(category, updated);
+        PropertyCopier.Mirror(updated, category);
         await context.SaveChangesAsync();
         
         return category.GetDto();
