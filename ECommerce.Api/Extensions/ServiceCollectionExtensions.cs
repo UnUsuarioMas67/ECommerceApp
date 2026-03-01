@@ -54,5 +54,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IClientsService, ClientsService>();
         services.AddScoped<IAddressesService, AddressesService>();
+        services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IProductService, ProductService>();
     }
 }
