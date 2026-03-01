@@ -9,11 +9,12 @@ public static class CategoryMappingExtensions
     public static CategoryDto GetDto(this Category category)
         => new()
         {
+            Id = category.Id,
             Name = category.Name,
             Description = category.Description,
         };
 
-    public static Category GetEntity(this CategoryDto dto)
+    public static Category GetEntity(this CategoryCreateDto dto)
         => new()
         {
             Name = dto.Name,

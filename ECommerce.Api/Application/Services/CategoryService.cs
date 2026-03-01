@@ -14,7 +14,7 @@ public interface ICategoryService
     Task<bool> EntryExistsAsync(int categoryId);
     Task<CategoryDto?> GetByIdAsync(int categoryId);
     Task<IEnumerable<CategoryDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
-    Task<Result<CategoryDto>> CreateAsync(CategoryDto dto);
+    Task<Result<CategoryDto>> CreateAsync(CategoryCreateDto dto);
     Task<Result<CategoryDto>> UpdateAsync(int categoryId, CategoryUpdateDto dto);
     Task<CategoryDto?> DeleteAsync(int categoryId);
 }
@@ -41,7 +41,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
             .Select(c => c.GetDto());
     }
 
-    public async Task<Result<CategoryDto>> CreateAsync(CategoryDto dto)
+    public async Task<Result<CategoryDto>> CreateAsync(CategoryCreateDto dto)
     {
         var created = dto.GetEntity();
         
