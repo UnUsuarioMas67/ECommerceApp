@@ -17,12 +17,13 @@ public static class AddressEndpoints
             .RequireAuthorization(UserRoles.Client);
         endpoints.MapPost("/api/addresses", AddAddress)
             .RequireAuthorization(UserRoles.Client);
-        endpoints.MapPut("/api/addresses/{id:int}", UpdateAddress) /*
-            .RequireAuthorization(UserRoles.Client)*/;
+        endpoints.MapPut("/api/addresses/{id:int}", UpdateAddress) 
+            .RequireAuthorization(UserRoles.Client);
         endpoints.MapDelete("/api/addresses/{id:int}", DeleteAddress)
             .RequireAuthorization(UserRoles.Client);
 
-        endpoints.MapGet("/api/addresses/country/{countryCode}", GetByCountry);
+        endpoints.MapGet("/api/addresses/country/{countryCode}", GetByCountry)
+            .RequireAuthorization(UserRoles.Client);
 
         return endpoints;
     }
