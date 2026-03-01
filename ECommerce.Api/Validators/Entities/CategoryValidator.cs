@@ -15,7 +15,7 @@ public class CategoryValidator : AbstractValidator<Category>
             .MaximumLength(TextLengthRules.Name);
 
         RuleFor(c => c.Description)
-            .NotEmpty()
+            .NotNull()
             .MaximumLength(TextLengthRules.ShortText);
     }
 }

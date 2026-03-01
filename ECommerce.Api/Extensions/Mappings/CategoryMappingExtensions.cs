@@ -18,7 +18,7 @@ public static class CategoryMappingExtensions
         => new()
         {
             Name = dto.Name,
-            Description = dto.Description,
+            Description = dto.Description ?? "",
         };
 
     public static Category GetUpdated(this Category category, CategoryUpdateDto dto)
