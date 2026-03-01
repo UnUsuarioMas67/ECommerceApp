@@ -13,16 +13,16 @@ public static class AddressEndpoints
 {
     public static IEndpointRouteBuilder MapAddressEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("/api/addresses/{id:int}", GetById)
+        endpoints.MapGet("{id:int}", GetById)
             .RequireAuthorization(UserRoles.Client);
-        endpoints.MapPost("/api/addresses", AddAddress)
+        endpoints.MapPost("", AddAddress)
             .RequireAuthorization(UserRoles.Client);
-        endpoints.MapPut("/api/addresses/{id:int}", UpdateAddress) 
+        endpoints.MapPut("{id:int}", UpdateAddress) 
             .RequireAuthorization(UserRoles.Client);
-        endpoints.MapDelete("/api/addresses/{id:int}", DeleteAddress)
+        endpoints.MapDelete("{id:int}", DeleteAddress)
             .RequireAuthorization(UserRoles.Client);
 
-        endpoints.MapGet("/api/addresses/country/{countryCode}", GetByCountry)
+        endpoints.MapGet("country/{countryCode}", GetByCountry)
             .RequireAuthorization(UserRoles.Client);
 
         return endpoints;

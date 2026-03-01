@@ -12,15 +12,16 @@ public static class CategoryEndpoints
 {
     public static IEndpointRouteBuilder MapCategoryEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("api/categories", GetCategories)
+        endpoints.MapGet("", GetCategories)
+            .WithName("Get categories")
             .RequireAuthorization(UserRoles.Client);
-        endpoints.MapGet("api/categories/{id:int}", GetCategoryById)
+        endpoints.MapGet("{id:int}", GetCategoryById)
             .RequireAuthorization(UserRoles.Client);
-        endpoints.MapPost("api/categories", CreateCategory)
+        endpoints.MapPost("", CreateCategory)
             .RequireAuthorization(UserRoles.Admin);
-        endpoints.MapPut("api/categories/{id:int}", UpdateCategory)
+        endpoints.MapPut("{id:int}", UpdateCategory)
             .RequireAuthorization(UserRoles.Admin);
-        endpoints.MapDelete("api/categories/{id:int}", DeleteCategory)
+        endpoints.MapDelete("{id:int}", DeleteCategory)
             .RequireAuthorization(UserRoles.Admin);
 
         return endpoints;

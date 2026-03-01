@@ -12,8 +12,8 @@ public static class AuthEndpoints
 {
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapPost("api/login/client", Login<Client>);
-        endpoints.MapPost("api/login/admin", Login<Admin>);
+        endpoints.MapPost("client", Login<Client>);
+        endpoints.MapPost("admin", Login<Admin>);
 
         return endpoints;
     }

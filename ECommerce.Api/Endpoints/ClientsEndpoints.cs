@@ -15,22 +15,22 @@ public static class ClientsEndpoints
 {
     public static IEndpointRouteBuilder MapClientsEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("/api/clients/me", GetAuthClient)
+        endpoints.MapGet("me", GetAuthClient)
             .RequireAuthorization(UserRoles.Client);
-        endpoints.MapGet("/api/clients/{id:int}", GetClientById)
+        endpoints.MapGet("{id:int}", GetClientById)
             .RequireAuthorization(UserRoles.Client);
-        endpoints.MapGet("/api/clients", GetClients)
-            .RequireAuthorization(UserRoles.Client);
-
-        endpoints.MapPost("/api/clients", CreateClient);
-
-        endpoints.MapPut("/api/clients/{id:int}", UpdateClient)
+        endpoints.MapGet("", GetClients)
             .RequireAuthorization(UserRoles.Client);
 
-        endpoints.MapDelete("/api/clients/{id:int}", DeleteClient)
+        endpoints.MapPost("", CreateClient);
+
+        endpoints.MapPut("{id:int}", UpdateClient)
             .RequireAuthorization(UserRoles.Client);
 
-        endpoints.MapGet("/api/clients/{id:int}/addresses", GetClientAddresses)
+        endpoints.MapDelete("{id:int}", DeleteClient)
+            .RequireAuthorization(UserRoles.Client);
+
+        endpoints.MapGet("{id:int}/addresses", GetClientAddresses)
             .RequireAuthorization(UserRoles.Client);
 
         return endpoints;
