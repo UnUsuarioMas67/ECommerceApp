@@ -88,16 +88,13 @@ public static class AddressEndpoints
         return TypedResults.Ok(address);
     }
 
-    private static async Task<Results<Ok<IEnumerable<AddressResponseDto>>, BadRequest<string>>> GetByCountry(
+    private static async Task<Ok<IEnumerable<AddressResponseDto>>> GetByCountry(
         IAddressesService addressesService,
         [FromRoute] string countryCode,
         [AsParameters] PaginationQuery pagination
     )
     {
-        var result = await addressesService.GetByCountry(countryCode, pagination);
-        if (!result.IsSuccess)
-            return TypedResults.BadRequest(result.Error!.Details.First().Value[0]);
-
-        return TypedResults.Ok(result.Value);
+        var addresses = await addressesService.GetByCountry(countryCode, pagination);
+        return TypedResults.Ok(addresses);
     }
 }

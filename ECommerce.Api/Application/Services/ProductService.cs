@@ -18,7 +18,7 @@ public interface IProductService
     Task<ProductResponseDto?> DeleteAsync(int productId);
 
     Task<IEnumerable<ProductResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
-    Task<Result<IEnumerable<ProductResponseDto>>> GetByCategory(int categoryId, PaginationQuery pagination,
+    Task<IEnumerable<ProductResponseDto>> GetByCategory(int categoryId, PaginationQuery pagination,
         string? search = null);
 }
 
@@ -97,16 +97,12 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         return products;
     }
 
-    public async Task<Result<IEnumerable<ProductResponseDto>>> GetByCategory(int categoryId, PaginationQuery pagination,
+    public async Task<IEnumerable<ProductResponseDto>> GetByCategory(int categoryId, PaginationQuery pagination,
         string? search = null)
     {
-        var category = await context.Categories.FindAsync(categoryId);
-        if (category == null)
-            return Errors.ParametersError(nameof(categoryId), $"Category with id {categoryId} not found");
-
         var products = await context.Products
             .Include(p => p.Category)
-            .Where(p => p.Category!.Name.Contains(search ?? "") && p.Category! == category)
+            .Where(p => p.Category!.Name.Contains(search ?? "") && p.Category.Id == categoryId)
             .Skip(pagination.Skip ?? 0).Take(pagination.Limit ?? 100)
             .Select(product => product.GetDto())
             .ToListAsync();

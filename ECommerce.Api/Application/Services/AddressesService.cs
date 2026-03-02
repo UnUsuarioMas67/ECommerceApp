@@ -13,7 +13,7 @@ public interface IAddressesService
 {
     Task<AddressResponseDto?> GetByIdAsync(int addressId);
     Task<IEnumerable<AddressResponseDto>> GetByClient(int clientId);
-    Task<Result<IEnumerable<AddressResponseDto>>> GetByCountry(string cca2, PaginationQuery pagination);
+    Task<IEnumerable<AddressResponseDto>> GetByCountry(string cca2, PaginationQuery pagination);
     Task<Result<AddressResponseDto>> CreateAsync(CreateAddressDto dto);
     Task<Result<AddressResponseDto>> UpdateAsync(int addressId, UpdateAddressDto dto);
     Task<AddressResponseDto?> DeleteAsync(int addressId);
@@ -36,17 +36,12 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
             .Select(a => a.GetDto())
             .ToListAsync();
 
-    public async Task<Result<IEnumerable<AddressResponseDto>>> GetByCountry(string cca2, PaginationQuery pagination)
+    public async Task<IEnumerable<AddressResponseDto>> GetByCountry(string cca2, PaginationQuery pagination)
     {
-        var country = await context.Countries.FindAsync(cca2);
-        if (country == null)
-            return Errors.ParametersError("cca2", "Invalid country code");
-        
         return await context.Addresses
             .Include(a => a.Country)
-            .Where(a => a.Country! == country)
-            .Skip(pagination.Skip ?? 0)
-            .Take(pagination.Limit ?? 100)
+            .Where(a => a.Country!.Cca2 == cca2)
+            .Skip(pagination.Skip ?? 0).Take(pagination.Limit ?? 100)
             .Select(a => a.GetDto())
             .ToListAsync();
     }
