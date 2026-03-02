@@ -36,8 +36,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
 
         return categories
             .Where(c => c.Name.Contains(search ?? "", StringComparison.InvariantCultureIgnoreCase))
-            .Skip(pagination.Skip ?? 0)
-            .Take(pagination.Limit ?? 100)
+            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
             .Select(c => c.GetDto());
     }
 

@@ -35,8 +35,7 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         var clients = await context.Clients.ToListAsync();
         return clients
             .Where(c => ClientMatches(c, search))
-            .Skip(pagination.Skip ?? 0)
-            .Take(pagination.Limit ?? 100)
+            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
             .Select(c => c.GetDto());
     }
 

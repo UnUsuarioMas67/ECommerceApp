@@ -90,7 +90,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         var products = await context.Products
             .Include(p => p.Category)
             .Where(p => p.Category!.Name.Contains(search ?? ""))
-            .Skip(pagination.Skip ?? 0).Take(pagination.Limit ?? 100)
+            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
             .Select(product => product.GetDto())
             .ToListAsync();
 
@@ -103,7 +103,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         var products = await context.Products
             .Include(p => p.Category)
             .Where(p => p.Category!.Name.Contains(search ?? "") && p.Category.Id == categoryId)
-            .Skip(pagination.Skip ?? 0).Take(pagination.Limit ?? 100)
+            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
             .Select(product => product.GetDto())
             .ToListAsync();
 
