@@ -5,9 +5,9 @@ using FluentValidation;
 
 namespace ECommerce.Api.Validators.DTOs;
 
-public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
+public class UserCreateDtoValidator : AbstractValidator<UserCreateDto>
 {
-    public CreateUserDtoValidator()
+    public UserCreateDtoValidator()
     {
         RuleFor(u => u.Password)
             .NotEmpty()

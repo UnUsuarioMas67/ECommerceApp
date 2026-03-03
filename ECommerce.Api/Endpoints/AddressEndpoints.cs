@@ -31,9 +31,9 @@ public static class AddressEndpoints
 
     private static async Task<Results<Created<AddressResponseDto>, ValidationProblem>> AddAddress(
         HttpContext httpContext,
-        CreateAddressDto dto,
+        AddressCreateDto dto,
         IAddressesService addressesService,
-        IValidator<CreateAddressDto> validator)
+        IValidator<AddressCreateDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
@@ -49,9 +49,9 @@ public static class AddressEndpoints
 
     private static async Task<Results<Ok<AddressResponseDto>, ValidationProblem, NotFound>> UpdateAddress(
         int id,
-        UpdateAddressDto dto,
+        AddressUpdateDto dto,
         IAddressesService addressesService,
-        IValidator<UpdateAddressDto> validator)
+        IValidator<AddressUpdateDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)

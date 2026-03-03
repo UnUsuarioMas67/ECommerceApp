@@ -19,7 +19,7 @@ public static class ClientMappingExtensions
         };
 
 
-    public static Client GetEntity(this CreateUserDto dto)
+    public static Client GetEntity(this UserCreateDto dto)
         => new Client
         {
             FirstName = dto.FirstName,
@@ -31,7 +31,7 @@ public static class ClientMappingExtensions
             CreatedAt = DateTime.UtcNow,
         };
 
-    public static Client GetUpdated(this Client client, UpdateUserDto dto)
+    public static Client GetUpdated(this Client client, UserUpdateDto dto)
     {
         var updated = PropertyCopier.GetCopy(client);
 

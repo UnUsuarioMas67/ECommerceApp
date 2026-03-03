@@ -70,8 +70,8 @@ public static class ClientsEndpoints
     private static async Task<Results<Created<UserResponseDto>, ValidationProblem>> CreateClient(
         HttpContext httpContext,
         IClientsService clientsService,
-        CreateUserDto dto,
-        IValidator<CreateUserDto> validator)
+        UserCreateDto dto,
+        IValidator<UserCreateDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
@@ -88,8 +88,8 @@ public static class ClientsEndpoints
     private static async Task<Results<Ok<UserResponseDto>, ValidationProblem, NotFound>> UpdateClient(
         IClientsService clientsService,
         int id,
-        UpdateUserDto dto,
-        IValidator<UpdateUserDto> validator)
+        UserUpdateDto dto,
+        IValidator<UserUpdateDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)

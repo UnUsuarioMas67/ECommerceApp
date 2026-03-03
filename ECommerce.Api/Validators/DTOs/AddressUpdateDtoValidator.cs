@@ -4,15 +4,13 @@ using FluentValidation;
 
 namespace ECommerce.Api.Validators.DTOs;
 
-public class CreateAddressDtoValidator : AbstractValidator<CreateAddressDto>
+public class AddressUpdateDtoValidator : AbstractValidator<AddressUpdateDto>
 {
-    public CreateAddressDtoValidator()
+    public AddressUpdateDtoValidator()
     {
-        RuleFor(a => a.ClientId)
-            .NotEmpty();
-
         RuleFor(a => a.CountryCode)
             .NotEmpty()
+            .Unless(a => a.CountryCode == null)
             .MaximumLength(2);
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace ECommerce.Api.Application.DTOs.Address;
 
-public class UpdateAddressDto
+// ReSharper disable once ClassNeverInstantiated.Global
+public class AddressUpdateDto
 {
     public string? AddressLine1 { get; set; }
     public string? AddressLine2 { get; set; }

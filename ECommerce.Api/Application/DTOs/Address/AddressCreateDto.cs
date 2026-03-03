@@ -1,6 +1,7 @@
 ﻿namespace ECommerce.Api.Application.DTOs.Address;
 
-public class CreateAddressDto
+// ReSharper disable once ClassNeverInstantiated.Global
+public class AddressCreateDto
 {
     public int ClientId { get; set; }
     

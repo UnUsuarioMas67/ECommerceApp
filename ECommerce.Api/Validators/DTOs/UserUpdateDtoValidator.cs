@@ -5,9 +5,9 @@ using FluentValidation;
 
 namespace ECommerce.Api.Validators.DTOs;
 
-public class UpdateUserDtoValidator : AbstractValidator<UpdateUserDto>
+public class UserUpdateDtoValidator : AbstractValidator<UserUpdateDto>
 {
-    public UpdateUserDtoValidator()
+    public UserUpdateDtoValidator()
     {
         RuleFor(u => u.Password)
             .MinimumLength(TextLengthRules.PasswordMinLenght)

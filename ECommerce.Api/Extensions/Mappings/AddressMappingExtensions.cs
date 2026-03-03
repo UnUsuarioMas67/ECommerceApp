@@ -26,7 +26,7 @@ public static class AddressMappingExtensions
         };
     }
 
-    public static async Task<Address> GetEntityAsync(this CreateAddressDto dto, ECommerceContext context)
+    public static async Task<Address> GetEntityAsync(this AddressCreateDto dto, ECommerceContext context)
     {
         var country = await context.Countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
 
@@ -43,7 +43,7 @@ public static class AddressMappingExtensions
         };
     }
 
-    public static async Task<Address> GetUpdatedAsync(this Address address, UpdateAddressDto dto,
+    public static async Task<Address> GetUpdatedAsync(this Address address, AddressUpdateDto dto,
         ECommerceContext context)
     {
         if (address.Country == null)

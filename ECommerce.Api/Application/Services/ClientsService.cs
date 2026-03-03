@@ -14,8 +14,8 @@ public interface IClientsService
     Task<bool> EntryExistsAsync(int clientId);
     Task<UserResponseDto?> GetByIdAsync(int clientId);
     Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
-    Task<Result<UserResponseDto>> CreateAsync(CreateUserDto dto);
-    Task<Result<UserResponseDto>> UpdateAsync(int clientId, UpdateUserDto dto);
+    Task<Result<UserResponseDto>> CreateAsync(UserCreateDto dto);
+    Task<Result<UserResponseDto>> UpdateAsync(int clientId, UserUpdateDto dto);
     Task<UserResponseDto?> DeleteAsync(int clientId);
 }
 
@@ -39,7 +39,7 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
             .ToListAsync();
     }
 
-    public async Task<Result<UserResponseDto>> CreateAsync(CreateUserDto dto)
+    public async Task<Result<UserResponseDto>> CreateAsync(UserCreateDto dto)
     {
         var client = dto.GetEntity();
 
@@ -53,7 +53,7 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         return client.GetDto();
     }
 
-    public async Task<Result<UserResponseDto>> UpdateAsync(int clientId, UpdateUserDto dto)
+    public async Task<Result<UserResponseDto>> UpdateAsync(int clientId, UserUpdateDto dto)
     {
         var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
         if (client == null)

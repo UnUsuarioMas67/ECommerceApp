@@ -1,6 +1,7 @@
 ﻿namespace ECommerce.Api.Application.DTOs.User;
 
-public class CreateUserDto
+// ReSharper disable once ClassNeverInstantiated.Global
+public class UserCreateDto
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }
