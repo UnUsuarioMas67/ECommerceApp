@@ -6,7 +6,7 @@ namespace ECommerce.Api.Extensions.Mappings;
 
 public static class CategoryMappingExtensions
 {
-    public static CategoryDto GetDto(this Category category)
+    public static CategoryResponseDto GetDto(this Category category)
         => new()
         {
             Id = category.Id,

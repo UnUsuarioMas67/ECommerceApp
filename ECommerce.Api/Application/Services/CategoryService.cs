@@ -12,11 +12,11 @@ namespace ECommerce.Api.Application.Services;
 public interface ICategoryService
 {
     Task<bool> EntryExistsAsync(int categoryId);
-    Task<CategoryDto?> GetByIdAsync(int categoryId);
-    Task<IEnumerable<CategoryDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
-    Task<Result<CategoryDto>> CreateAsync(CategoryCreateDto dto);
-    Task<Result<CategoryDto>> UpdateAsync(int categoryId, CategoryUpdateDto dto);
-    Task<CategoryDto?> DeleteAsync(int categoryId);
+    Task<CategoryResponseDto?> GetByIdAsync(int categoryId);
+    Task<IEnumerable<CategoryResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
+    Task<Result<CategoryResponseDto>> CreateAsync(CategoryCreateDto dto);
+    Task<Result<CategoryResponseDto>> UpdateAsync(int categoryId, CategoryUpdateDto dto);
+    Task<CategoryResponseDto?> DeleteAsync(int categoryId);
 }
 
 public class CategoryService(ECommerceContext context, IValidator<Category> validator) : ICategoryService
@@ -24,13 +24,13 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
     public async Task<bool> EntryExistsAsync(int categoryId)
         => await context.Categories.AnyAsync(c => c.Id == categoryId);
 
-    public async Task<CategoryDto?> GetByIdAsync(int categoryId)
+    public async Task<CategoryResponseDto?> GetByIdAsync(int categoryId)
     {
         var category = await context.Categories.FindAsync(categoryId);
         return category?.GetDto();
     }
 
-    public async Task<IEnumerable<CategoryDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
+    public async Task<IEnumerable<CategoryResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
     {
         var categories = await context.Categories.ToListAsync();
 
@@ -40,7 +40,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
             .Select(c => c.GetDto());
     }
 
-    public async Task<Result<CategoryDto>> CreateAsync(CategoryCreateDto dto)
+    public async Task<Result<CategoryResponseDto>> CreateAsync(CategoryCreateDto dto)
     {
         var created = dto.GetEntity();
         
@@ -54,7 +54,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         return created.GetDto();
     }
 
-    public async Task<Result<CategoryDto>> UpdateAsync(int categoryId, CategoryUpdateDto dto)
+    public async Task<Result<CategoryResponseDto>> UpdateAsync(int categoryId, CategoryUpdateDto dto)
     {
         var category = await context.Categories.FindAsync(categoryId);
         if (category == null)
@@ -72,7 +72,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         return category.GetDto();
     }
 
-    public async Task<CategoryDto?> DeleteAsync(int categoryId)
+    public async Task<CategoryResponseDto?> DeleteAsync(int categoryId)
     {
         var category = await context.Categories.FindAsync(categoryId);
         if (category == null)

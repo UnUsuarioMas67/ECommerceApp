@@ -27,14 +27,14 @@ public static class CategoryEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Ok<CategoryDto>, ValidationProblem>> CreateCategory(
+    private static async Task<Results<Ok<CategoryResponseDto>, ValidationProblem>> CreateCategory(
         ICategoryService categoryService, CategoryCreateDto dto)
     {
         var result = await categoryService.CreateAsync(dto);
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.ValidationProblem(result.Error!.Details);
     }
 
-    private static async Task<Results<Ok<CategoryDto>, ValidationProblem, NotFound>> UpdateCategory(
+    private static async Task<Results<Ok<CategoryResponseDto>, ValidationProblem, NotFound>> UpdateCategory(
         ICategoryService categoryService, int id, CategoryUpdateDto dto)
     {
         var result = await categoryService.UpdateAsync(id, dto);
@@ -44,7 +44,7 @@ public static class CategoryEndpoints
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.ValidationProblem(result.Error!.Details);
     }
 
-    private static async Task<Results<Ok<CategoryDto>, NotFound>> DeleteCategory(
+    private static async Task<Results<Ok<CategoryResponseDto>, NotFound>> DeleteCategory(
         ICategoryService categoryService, int id)
     {
         var category = await categoryService.DeleteAsync(id);
@@ -54,7 +54,7 @@ public static class CategoryEndpoints
         return TypedResults.Ok(category);
     }
 
-    private static async Task<Results<Ok<CategoryDto>, NotFound>> GetCategoryById(
+    private static async Task<Results<Ok<CategoryResponseDto>, NotFound>> GetCategoryById(
         ICategoryService categoryService, int id)
     {
         var category = await categoryService.GetByIdAsync(id);
@@ -64,7 +64,7 @@ public static class CategoryEndpoints
         return TypedResults.Ok(category);
     }
 
-    private static async Task<Ok<IEnumerable<CategoryDto>>> GetCategories(
+    private static async Task<Ok<IEnumerable<CategoryResponseDto>>> GetCategories(
         ICategoryService categoryService,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string search = "")
