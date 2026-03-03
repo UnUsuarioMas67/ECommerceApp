@@ -9,6 +9,9 @@ public static class Errors
 
     public static Error ValidationError(IDictionary<string, string[]> details)
         => new Error(ErrorType.Validation, details);
+    
+    public static Error ValidationError(string name, string description)
+        => new Error(ErrorType.Validation, new Dictionary<string, string[]> { { name, [description] } });
 
     public static Error AuthenticationError(string name, string description)
         => new Error(ErrorType.Authentication, new Dictionary<string, string[]> { { name, [description] } });
