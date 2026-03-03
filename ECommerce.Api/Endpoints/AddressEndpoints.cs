@@ -30,6 +30,7 @@ public static class AddressEndpoints
 
 
     private static async Task<Results<Created<AddressResponseDto>, ValidationProblem>> AddAddress(
+        HttpContext httpContext,
         CreateAddressDto dto,
         IAddressesService addressesService,
         IValidator<CreateAddressDto> validator)
@@ -39,8 +40,9 @@ public static class AddressEndpoints
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
         var result = await addressesService.CreateAsync(dto);
+        var path = httpContext.Request.Path;
         return result.IsSuccess
-            ? TypedResults.Created($"/api/addresses/{result.Value!.Id}", result.Value)
+            ? TypedResults.Created($"{path}/{result.Value!.Id}", result.Value)
             : TypedResults.ValidationProblem(result.Error!.Details);
     }
 

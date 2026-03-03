@@ -68,6 +68,7 @@ public static class ClientsEndpoints
 
 
     private static async Task<Results<Created<UserResponseDto>, ValidationProblem>> CreateClient(
+        HttpContext httpContext,
         IClientsService clientsService,
         CreateUserDto dto,
         IValidator<CreateUserDto> validator)
@@ -77,8 +78,9 @@ public static class ClientsEndpoints
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
         var result = await clientsService.CreateAsync(dto);
+        var path = httpContext.Request.Path;
         return result.IsSuccess
-            ? TypedResults.Created($"/api/clients/{result.Value!.Id}", result.Value)
+            ? TypedResults.Created($"{path}/{result.Value!.Id}", result.Value)
             : TypedResults.ValidationProblem(result.Error!.Details);
     }
 

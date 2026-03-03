@@ -28,11 +28,12 @@ public static class CategoryEndpoints
     }
 
     private static async Task<Results<Created<CategoryResponseDto>, ValidationProblem>> CreateCategory(
-        ICategoryService categoryService, CategoryCreateDto dto)
+        HttpContext httpContext, ICategoryService categoryService, CategoryCreateDto dto)
     {
         var result = await categoryService.CreateAsync(dto);
+        var path = httpContext.Request.Path;
         return result.IsSuccess 
-            ? TypedResults.Created($"api/categories/{result.Value!.Slug}", result.Value) 
+            ? TypedResults.Created($"{path}/{result.Value!.Slug}", result.Value) 
             : TypedResults.ValidationProblem(result.Error!.Details);
     }
 
