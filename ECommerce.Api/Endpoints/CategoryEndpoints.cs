@@ -27,11 +27,13 @@ public static class CategoryEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Ok<CategoryResponseDto>, ValidationProblem>> CreateCategory(
+    private static async Task<Results<Created<CategoryResponseDto>, ValidationProblem>> CreateCategory(
         ICategoryService categoryService, CategoryCreateDto dto)
     {
         var result = await categoryService.CreateAsync(dto);
-        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.ValidationProblem(result.Error!.Details);
+        return result.IsSuccess 
+            ? TypedResults.Created($"api/categories/{result.Value!.Slug}", result.Value) 
+            : TypedResults.ValidationProblem(result.Error!.Details);
     }
 
     private static async Task<Results<Ok<CategoryResponseDto>, ValidationProblem, NotFound>> UpdateCategory(
