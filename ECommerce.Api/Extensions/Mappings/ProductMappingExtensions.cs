@@ -39,7 +39,7 @@ public static class ProductMappingExtensions
             Category = category,
             CategoryId = category?.Id,
             ImageUrl = dto.ImageUrl,
-            Stock = 0
+            Stock = dto.InitialStock
         };
     }
 

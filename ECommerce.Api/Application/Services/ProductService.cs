@@ -22,6 +22,8 @@ public interface IProductService
         string? search = null);
     Task<IEnumerable<ProductResponseDto>> GetByCategorySlug(string categorySlug, PaginationQuery pagination,
         string? search = null);
+    
+    Task<Result<ProductResponseDto>> Restock(int productId, int newStock);
 }
 
 public class ProductService(ECommerceContext context, IValidator<Product> validator) : IProductService
@@ -119,5 +121,23 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
             .Select(product => product.GetDto())
             .ToListAsync(); 
+    }
+
+    public async Task<Result<ProductResponseDto>> Restock(int productId, int newStock)
+    {
+        var product = await context.Products
+            .Include(p => p.Category)
+            .FirstOrDefaultAsync(p => p.Id == productId);
+        
+        if (product == null)
+            return Errors.NotFound();
+
+        product.Stock = newStock;
+        
+        var validation = await validator.ValidateAsync(product);
+        if (!validation.IsValid)
+            return Errors.ValidationError(validation.ToDictionary());
+        
+        return product.GetDto();
     }
 }
