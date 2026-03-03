@@ -15,13 +15,13 @@ public static class CategoryEndpoints
         endpoints.MapGet("", GetCategories)
             .WithName("Get categories")
             .RequireAuthorization(UserRoles.Client);
-        endpoints.MapGet("{id:int}", GetCategoryById)
+        endpoints.MapGet("{category}", GetCategory)
             .RequireAuthorization(UserRoles.Client);
         endpoints.MapPost("", CreateCategory)
             .RequireAuthorization(UserRoles.Admin);
-        endpoints.MapPut("{id:int}", UpdateCategory)
+        endpoints.MapPut("{category}", UpdateCategory)
             .RequireAuthorization(UserRoles.Admin);
-        endpoints.MapDelete("{id:int}", DeleteCategory)
+        endpoints.MapDelete("{category}", DeleteCategory)
             .RequireAuthorization(UserRoles.Admin);
 
         return endpoints;
@@ -35,33 +35,51 @@ public static class CategoryEndpoints
     }
 
     private static async Task<Results<Ok<CategoryResponseDto>, ValidationProblem, NotFound>> UpdateCategory(
-        ICategoryService categoryService, int id, CategoryUpdateDto dto)
+        ICategoryService categoryService, string category, CategoryUpdateDto dto)
     {
-        var result = await categoryService.UpdateAsync(id, dto);
+        Result<CategoryResponseDto> result;
+        
+        if (int.TryParse(category, out var categoryId))
+            result = await categoryService.UpdateAsync(categoryId, dto);
+        else
+            result = await categoryService.UpdateAsync(category, dto);
+
         if (result is { IsSuccess: false, Error.ErrorType: ErrorType.NotFound })
             return TypedResults.NotFound();
-        
+
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.ValidationProblem(result.Error!.Details);
     }
 
     private static async Task<Results<Ok<CategoryResponseDto>, NotFound>> DeleteCategory(
-        ICategoryService categoryService, int id)
+        ICategoryService categoryService, string category)
     {
-        var category = await categoryService.DeleteAsync(id);
-        if (category == null)
-            return TypedResults.NotFound();
+        CategoryResponseDto? deleted;
         
-        return TypedResults.Ok(category);
+        if (int.TryParse(category, out var categoryId))
+            deleted = await categoryService.DeleteAsync(categoryId);
+        else
+            deleted = await categoryService.DeleteAsync(category);
+        
+        if (deleted == null)
+            return TypedResults.NotFound();
+
+        return TypedResults.Ok(deleted);
     }
 
-    private static async Task<Results<Ok<CategoryResponseDto>, NotFound>> GetCategoryById(
-        ICategoryService categoryService, int id)
+    private static async Task<Results<Ok<CategoryResponseDto>, NotFound>> GetCategory(
+        ICategoryService categoryService, string category)
     {
-        var category = await categoryService.GetByIdAsync(id);
-        if (category == null)
-            return TypedResults.NotFound();
+        CategoryResponseDto? dto;
         
-        return TypedResults.Ok(category);
+        if (int.TryParse(category, out var categoryId))
+            dto = await categoryService.GetByIdAsync(categoryId);
+        else
+            dto = await categoryService.GetBySlugAsync(category);
+        
+        if (dto == null)
+            return TypedResults.NotFound();
+
+        return TypedResults.Ok(dto);
     }
 
     private static async Task<Ok<IEnumerable<CategoryResponseDto>>> GetCategories(
@@ -71,5 +89,5 @@ public static class CategoryEndpoints
     {
         var categories = await categoryService.GetManyAsync(pagination, search);
         return TypedResults.Ok(categories);
-    } 
+    }
 }
