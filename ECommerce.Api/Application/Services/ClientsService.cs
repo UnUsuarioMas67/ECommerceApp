@@ -32,20 +32,11 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
 
     public async Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
     {
-        var clients = await context.Clients.ToListAsync();
-        return clients
-            .Where(c => ClientMatches(c, search))
+        return await context.Clients
+            .Where(c => (c.FirstName + " " + c.LastName).Contains(search ?? ""))
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
-            .Select(c => c.GetDto());
-    }
-
-    private bool ClientMatches(Client client, string? search)
-    {
-        if (string.IsNullOrWhiteSpace(search))
-            return true;
-
-        var fullName = client.FirstName + " " + client.LastName;
-        return fullName.Contains(search, StringComparison.OrdinalIgnoreCase);
+            .Select(c => c.GetDto())
+            .ToListAsync();
     }
 
     public async Task<Result<UserResponseDto>> CreateAsync(CreateUserDto dto)
