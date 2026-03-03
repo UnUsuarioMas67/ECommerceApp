@@ -9,12 +9,12 @@ public class CategoryConfig : IEntityTypeConfiguration<Category>
 {
     public void Configure(EntityTypeBuilder<Category> builder)
     {
-        builder.Property(x => x.Name)
+        builder.Property(x => x.Slug)
             .IsRequired()
             .HasMaxLength(TextLengthRules.Name);
         
-        builder.Property(x => x.Description)
+        builder.Property(x => x.Name)
             .IsRequired()
-            .HasMaxLength(TextLengthRules.ShortText);
+            .HasMaxLength(TextLengthRules.Name);
     }
 }

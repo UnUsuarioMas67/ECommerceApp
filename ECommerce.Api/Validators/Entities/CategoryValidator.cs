@@ -10,12 +10,14 @@ public class CategoryValidator : AbstractValidator<Category>
 {
     public CategoryValidator()
     {
+        RuleFor(c => c.Slug)
+            .NotEmpty()
+            .Must(slug => !double.TryParse(slug, out _))
+            .WithMessage("Slug must not be a number.")
+            .MaximumLength(TextLengthRules.Name);
+        
         RuleFor(c => c.Name)
             .NotEmpty()
             .MaximumLength(TextLengthRules.Name);
-
-        RuleFor(c => c.Description)
-            .NotNull()
-            .MaximumLength(TextLengthRules.ShortText);
     }
 }

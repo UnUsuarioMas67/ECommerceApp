@@ -10,22 +10,22 @@ public static class CategoryMappingExtensions
         => new()
         {
             Id = category.Id,
+            Slug = category.Slug,
             Name = category.Name,
-            Description = category.Description,
         };
 
     public static Category GetEntity(this CategoryCreateDto dto)
         => new()
         {
+            Slug = dto.Slug,
             Name = dto.Name,
-            Description = dto.Description ?? "",
         };
 
     public static Category GetUpdated(this Category category, CategoryUpdateDto dto)
     {
         var updated = PropertyCopier.GetCopy(category);
+        updated.Slug = dto.Slug ?? updated.Slug;
         updated.Name = dto.Name ?? updated.Name;
-        updated.Description = dto.Description ?? updated.Description;
         return updated;
     }
 }
