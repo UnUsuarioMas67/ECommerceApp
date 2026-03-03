@@ -18,7 +18,9 @@ public interface IProductService
     Task<ProductResponseDto?> DeleteAsync(int productId);
 
     Task<IEnumerable<ProductResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
-    Task<IEnumerable<ProductResponseDto>> GetByCategory(int categoryId, PaginationQuery pagination,
+    Task<IEnumerable<ProductResponseDto>> GetByCategoryId(int categoryId, PaginationQuery pagination,
+        string? search = null);
+    Task<IEnumerable<ProductResponseDto>> GetByCategorySlug(string categorySlug, PaginationQuery pagination,
         string? search = null);
 }
 
@@ -97,16 +99,25 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         return products;
     }
 
-    public async Task<IEnumerable<ProductResponseDto>> GetByCategory(int categoryId, PaginationQuery pagination,
+    public async Task<IEnumerable<ProductResponseDto>> GetByCategoryId(int categoryId, PaginationQuery pagination,
         string? search = null)
     {
-        var products = await context.Products
+        return await context.Products
             .Include(p => p.Category)
-            .Where(p => p.Category!.Name.Contains(search ?? "") && p.Category.Id == categoryId)
+            .Where(p => p.Name.Contains(search ?? "") && p.Category!.Id == categoryId)
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
             .Select(product => product.GetDto())
             .ToListAsync();
+    }
 
-        return products;
+    public async Task<IEnumerable<ProductResponseDto>> GetByCategorySlug(string categorySlug, 
+        PaginationQuery pagination, string? search = null)
+    {
+        return await context.Products
+            .Include(p => p.Category)
+            .Where(p => p.Name.Contains(search ?? "") && p.Category!.Slug == categorySlug)
+            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
+            .Select(product => product.GetDto())
+            .ToListAsync(); 
     }
 }

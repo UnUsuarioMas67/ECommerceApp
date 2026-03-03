@@ -2,6 +2,7 @@
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Extensions.Mappings;
 
@@ -19,7 +20,7 @@ public static class ProductMappingExtensions
             Description = product.Description,
             Price = product.Price,
             Sku = product.Sku,
-            Category = product.Category.Name,
+            Category = product.Category.Slug,
             ImageUrl = product.ImageUrl,
             Stock = product.Stock,
         };
@@ -27,7 +28,7 @@ public static class ProductMappingExtensions
 
     public static async Task<Product> GetEntityAsync(this ProductCreateDto dto, ECommerceContext context)
     {
-        var category = await context.Categories.FindAsync(dto.CategoryId);
+        var category = await FindCategory(dto.Category, context);
 
         return new Product
         {
@@ -36,7 +37,7 @@ public static class ProductMappingExtensions
             Price = dto.Price,
             Sku = dto.Sku,
             Category = category,
-            CategoryId = dto.CategoryId,
+            CategoryId = category?.Id,
             ImageUrl = dto.ImageUrl,
             Stock = 0
         };
@@ -56,12 +57,19 @@ public static class ProductMappingExtensions
         updated.Price = dto.Price ?? updated.Price;
         updated.ImageUrl = dto.ImageUrl ?? updated.ImageUrl;
         
-        if (dto.CategoryId != null)
+        if (dto.Category != null)
         {
-            updated.CategoryId =  dto.CategoryId;
-            updated.Category = await context.Categories.FindAsync(dto.CategoryId);
+            updated.Category = await FindCategory(dto.Category, context);
+            updated.CategoryId =  updated.Category?.Id;
         }
         
         return updated;
+    }
+
+    private static async Task<Category?> FindCategory(string category, ECommerceContext context)
+    {
+        if (int.TryParse(category, out var categoryId))
+            return await context.Categories.FindAsync(categoryId);
+        return await context.Categories.FirstOrDefaultAsync(c => c.Slug == category);
     }
 }

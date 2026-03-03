@@ -2,7 +2,7 @@
 
 public class ProductUpdateDto
 {
-    public int? CategoryId { get; set; }
+    public string? Category { get; set; }
     
     public string? Name { get; set; }
     public string? Description { get; set; }
