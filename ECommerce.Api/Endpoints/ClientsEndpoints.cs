@@ -60,11 +60,22 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Ok<IEnumerable<UserResponseDto>>> GetClients(
+    private static async Task<Ok<UserListResponseDto>> GetClients(
         IClientsService clientsService,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string? search = null)
-        => TypedResults.Ok(await clientsService.GetManyAsync(pagination, search));
+    {
+        var clients = await clientsService.GetManyAsync(pagination, search);
+
+        var list = new UserListResponseDto
+        {
+            Users = clients,
+            Pagination = pagination,
+            SearchTerm = search
+        };
+
+        return TypedResults.Ok(list);
+    }
 
 
     private static async Task<Results<Created<UserResponseDto>, ValidationProblem>> CreateClient(
@@ -112,16 +123,22 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Results<Ok<IEnumerable<AddressResponseDto>>, NotFound>> GetClientAddresses(
+    private static async Task<Results<Ok<AddressListResponseDto>, NotFound>> GetClientAddresses(
         int id,
         IClientsService clientsService,
         IAddressesService addressesService)
     {
-        var clientExists = await clientsService.EntryExistsAsync(id);
-        if (!clientExists)
+        var client = await clientsService.GetByIdAsync(id);
+        if (client == null)
             return TypedResults.NotFound();
 
         var addresses = await addressesService.GetByClient(id);
-        return TypedResults.Ok(addresses);
+        var list = new AddressListResponseDto
+        {
+            Addresses = addresses,
+            Client = client
+        };
+        
+        return TypedResults.Ok(list);
     }
 }

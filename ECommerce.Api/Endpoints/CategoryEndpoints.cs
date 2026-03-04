@@ -32,8 +32,8 @@ public static class CategoryEndpoints
     {
         var result = await categoryService.CreateAsync(dto);
         var path = httpContext.Request.Path;
-        return result.IsSuccess 
-            ? TypedResults.Created($"{path}/{result.Value!.Slug}", result.Value) 
+        return result.IsSuccess
+            ? TypedResults.Created($"{path}/{result.Value!.Slug}", result.Value)
             : TypedResults.ValidationProblem(result.Error!.Details);
     }
 
@@ -41,7 +41,7 @@ public static class CategoryEndpoints
         ICategoryService categoryService, string category, CategoryUpdateDto dto)
     {
         Result<CategoryResponseDto> result;
-        
+
         if (int.TryParse(category, out var categoryId))
             result = await categoryService.UpdateAsync(categoryId, dto);
         else
@@ -57,12 +57,12 @@ public static class CategoryEndpoints
         ICategoryService categoryService, string category)
     {
         CategoryResponseDto? deleted;
-        
+
         if (int.TryParse(category, out var categoryId))
             deleted = await categoryService.DeleteAsync(categoryId);
         else
             deleted = await categoryService.DeleteAsync(category);
-        
+
         if (deleted == null)
             return TypedResults.NotFound();
 
@@ -73,24 +73,30 @@ public static class CategoryEndpoints
         ICategoryService categoryService, string category)
     {
         CategoryResponseDto? dto;
-        
+
         if (int.TryParse(category, out var categoryId))
             dto = await categoryService.GetByIdAsync(categoryId);
         else
             dto = await categoryService.GetBySlugAsync(category);
-        
+
         if (dto == null)
             return TypedResults.NotFound();
 
         return TypedResults.Ok(dto);
     }
 
-    private static async Task<Ok<IEnumerable<CategoryResponseDto>>> GetCategories(
+    private static async Task<Ok<CategoryListResponseDto>> GetCategories(
         ICategoryService categoryService,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string search = "")
     {
         var categories = await categoryService.GetManyAsync(pagination, search);
-        return TypedResults.Ok(categories);
+        var list = new CategoryListResponseDto
+        {
+            Categories = categories,
+            Pagination = pagination,
+            SearchTerm = search
+        };
+        return TypedResults.Ok(list);
     }
 }

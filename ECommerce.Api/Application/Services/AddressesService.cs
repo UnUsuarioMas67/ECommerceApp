@@ -17,6 +17,7 @@ public interface IAddressesService
     Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto);
     Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto);
     Task<AddressResponseDto?> DeleteAsync(int addressId);
+    Task<string?> GetCountryNameAsync(string cca2);
 }
 
 public class AddressesService(ECommerceContext context, IValidator<Address> validator) : IAddressesService
@@ -91,6 +92,13 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         await context.SaveChangesAsync();
         return address.GetDto();
     }
+
+    public async Task<string?> GetCountryNameAsync(string cca2)
+        => await context.Countries
+            .Where(c => c.Cca2 == cca2)
+            .Select(c => c.Name)
+            .FirstOrDefaultAsync();
+    
 
     private async Task<Result> Validate(Address address)
     {
