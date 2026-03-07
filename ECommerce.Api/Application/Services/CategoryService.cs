@@ -1,7 +1,7 @@
 ﻿using ECommerce.Api.Application.DTOs.Category;
 using ECommerce.Api.Application.DTOs.Shared;
+using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Extensions.Mappings;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
 using FluentValidation;
@@ -27,7 +27,8 @@ public interface ICategoryService
     Task<CategoryResponseDto?> DeleteAsync(string categorySlug);
 }
 
-public class CategoryService(ECommerceContext context, IValidator<Category> validator) : ICategoryService
+public class CategoryService(ECommerceContext context, IValidator<Category> validator, ICategoryMapper mapper) 
+    : ICategoryService
 {
     public async Task<bool> EntryExistsAsync(int categoryId)
         => await context.Categories.AnyAsync(c => c.Id == categoryId);
@@ -38,13 +39,13 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
     public async Task<CategoryResponseDto?> GetByIdAsync(int categoryId)
     {
         var category = await context.Categories.FindAsync(categoryId);
-        return category?.GetDto();
+        return category != null ? mapper.ToDto(category) : null;
     }
 
     public async Task<CategoryResponseDto?> GetBySlugAsync(string categorySlug)
     {
         var category = await context.Categories.FirstOrDefaultAsync(c => c.Slug == categorySlug);
-        return category?.GetDto();
+        return category != null ? mapper.ToDto(category) : null;
     }
 
     public async Task<IEnumerable<CategoryResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
@@ -54,12 +55,12 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         return categories
             .Where(c => c.Name.Contains(search ?? "", StringComparison.InvariantCultureIgnoreCase))
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
-            .Select(c => c.GetDto());
+            .Select(mapper.ToDto);
     }
 
     public async Task<Result<CategoryResponseDto>> CreateAsync(CategoryCreateDto dto)
     {
-        var created = dto.GetEntity();
+        var created = mapper.ToEntity(dto);
 
         var validationResult = await Validate(created);
         if (!validationResult.IsSuccess)
@@ -68,7 +69,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         await context.Categories.AddAsync(created);
         await context.SaveChangesAsync();
 
-        return created.GetDto();
+        return mapper.ToDto(created);
     }
     
 
@@ -77,7 +78,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         if (category == null)
             return Errors.NotFound();
 
-        var updated = category.GetUpdated(dto);
+        var updated = mapper.UpdateEntity(category, dto);
 
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)
@@ -86,7 +87,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         PropertyCopier.Mirror(updated, category);
         await context.SaveChangesAsync();
 
-        return category.GetDto();
+        return mapper.ToDto(category);
     }
 
     public async Task<Result<CategoryResponseDto>> UpdateAsync(int categoryId, CategoryUpdateDto dto)
@@ -110,7 +111,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         context.Categories.Remove(category);
         await context.SaveChangesAsync();
 
-        return category.GetDto();
+        return mapper.ToDto(category);
     }
 
     public async Task<CategoryResponseDto?> DeleteAsync(int categoryId)

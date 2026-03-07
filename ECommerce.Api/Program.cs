@@ -16,6 +16,7 @@ builder.Services.AddDbContext<ECommerceContext>(o =>
 
 builder.Services.ConfigureAuth(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddValidators();
+builder.Services.AddObjectMappers();
 builder.Services.AddApiServices();
 
 var app = builder.Build();

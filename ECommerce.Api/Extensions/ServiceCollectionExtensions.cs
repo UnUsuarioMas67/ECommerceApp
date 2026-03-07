@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using ECommerce.Api.Application.Auth;
 using ECommerce.Api.Application.Services;
+using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Validators.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -56,5 +57,13 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAddressesService, AddressesService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
+    }
+
+    public static void AddObjectMappers(this IServiceCollection services)
+    {
+        services.AddScoped<IClientMapper,  ClientMapper>();
+        services.AddScoped<IAddressMapper, AddressMapper>();
+        services.AddScoped<ICategoryMapper, CategoryMapper>();
+        services.AddScoped<IProductMapper, ProductMapper>();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.DTOs.User;
+using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Extensions.Mappings;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
 using FluentValidation;
@@ -19,7 +19,8 @@ public interface IClientsService
     Task<UserResponseDto?> DeleteAsync(int clientId);
 }
 
-public class ClientsService(ECommerceContext context, IValidator<Client> validator) : IClientsService
+public class ClientsService(ECommerceContext context, IValidator<Client> validator, IClientMapper mapper) 
+    : IClientsService
 {
     public async Task<bool> EntryExistsAsync(int clientId)
         => await context.Clients.AnyAsync(c => c.Id == clientId);
@@ -27,7 +28,7 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
     public async Task<UserResponseDto?> GetByIdAsync(int clientId)
     {
         var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
-        return client?.GetDto();
+        return client != null ? mapper.ToDto(client) : null;
     }
 
     public async Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
@@ -35,13 +36,13 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         return await context.Clients
             .Where(c => (c.FirstName + " " + c.LastName).Contains(search ?? ""))
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
-            .Select(c => c.GetDto())
+            .Select(c => mapper.ToDto(c)!)
             .ToListAsync();
     }
 
     public async Task<Result<UserResponseDto>> CreateAsync(UserCreateDto dto)
     {
-        var client = dto.GetEntity();
+        var client = mapper.ToEntity(dto);
 
         var validationResult = await Validate(client);
         if (!validationResult.IsSuccess)
@@ -50,7 +51,7 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         await context.Clients.AddAsync(client);
         await context.SaveChangesAsync();
 
-        return client.GetDto();
+        return mapper.ToDto(client);
     }
 
     public async Task<Result<UserResponseDto>> UpdateAsync(int clientId, UserUpdateDto dto)
@@ -59,7 +60,7 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         if (client == null)
             return Errors.NotFound();
 
-        var updated = client.GetUpdated(dto);
+        var updated = mapper.UpdateEntity(client, dto);
 
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)
@@ -69,7 +70,7 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
 
         await context.SaveChangesAsync();
 
-        return client.GetDto();
+        return mapper.ToDto(client);
     }
 
     public async Task<UserResponseDto?> DeleteAsync(int clientId)
@@ -81,7 +82,7 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         context.Clients.Remove(client);
         await context.SaveChangesAsync();
 
-        return client.GetDto();
+        return mapper.ToDto(client);
     }
 
     private async Task<Result> Validate(Client client)

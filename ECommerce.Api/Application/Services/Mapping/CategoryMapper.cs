@@ -2,26 +2,31 @@
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Shared;
 
-namespace ECommerce.Api.Extensions.Mappings;
+namespace ECommerce.Api.Application.Services.Mapping;
 
-public static class CategoryMappingExtensions
+public interface ICategoryMapper
+    : IEntityDtoMapper<Category, CategoryResponseDto, CategoryCreateDto, CategoryUpdateDto>;
+
+public class CategoryMapper : ICategoryMapper
 {
-    public static CategoryResponseDto GetDto(this Category category)
-        => new()
+    public CategoryResponseDto ToDto(Category category)
+    {
+        return new CategoryResponseDto
         {
             Id = category.Id,
             Slug = category.Slug,
             Name = category.Name,
         };
+    }
 
-    public static Category GetEntity(this CategoryCreateDto dto)
+    public Category ToEntity(CategoryCreateDto dto)
         => new()
         {
             Slug = dto.Slug,
             Name = dto.Name,
         };
 
-    public static Category GetUpdated(this Category category, CategoryUpdateDto dto)
+    public Category UpdateEntity(Category category, CategoryUpdateDto dto)
     {
         var updated = PropertyCopier.GetCopy(category);
         updated.Slug = dto.Slug ?? updated.Slug;

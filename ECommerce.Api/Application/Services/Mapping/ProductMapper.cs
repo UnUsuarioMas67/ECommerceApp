@@ -4,11 +4,14 @@ using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Api.Extensions.Mappings;
+namespace ECommerce.Api.Application.Services.Mapping;
 
-public static class ProductMappingExtensions
+public interface IProductMapper
+    : IEntityDtoAsyncMapper<Product, ProductResponseDto, ProductCreateDto, ProductUpdateDto>;
+
+public class ProductMapper : IProductMapper
 {
-    public static ProductResponseDto GetDto(this Product product)
+    public ProductResponseDto ToDto(Product product)
     {
         if (product.Category == null)
             throw new InvalidOperationException($"{nameof(product.Category)} must not be null.");
@@ -26,7 +29,7 @@ public static class ProductMappingExtensions
         };
     }
 
-    public static async Task<Product> GetEntityAsync(this ProductCreateDto dto, ECommerceContext context)
+    public async Task<Product> ToEntityAsync(ProductCreateDto dto, ECommerceContext context)
     {
         var category = await FindCategory(dto.Category, context);
 
@@ -43,10 +46,7 @@ public static class ProductMappingExtensions
         };
     }
 
-    public static async Task<Product> GetUpdatedAsync(
-        this Product product, 
-        ProductUpdateDto dto,
-        ECommerceContext context)
+    public async Task<Product> UpdateEntityAsync(Product product, ProductUpdateDto dto, ECommerceContext context)
     {
         if (product.Category == null)
             throw new InvalidOperationException($"{nameof(product.Category)} must not be null.");

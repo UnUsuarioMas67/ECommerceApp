@@ -4,11 +4,13 @@ using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Api.Extensions.Mappings;
+namespace ECommerce.Api.Application.Services.Mapping;
 
-public static class AddressMappingExtensions
+public interface IAddressMapper : IEntityDtoAsyncMapper<Address, AddressResponseDto, AddressCreateDto, AddressUpdateDto>;
+
+public class AddressMapper : IAddressMapper
 {
-    public static AddressResponseDto GetDto(this Address address)
+    public AddressResponseDto ToDto(Address address)
     {
         if (address.Country == null)
             throw new InvalidOperationException($"{nameof(address.Country)} must be included.");
@@ -26,7 +28,7 @@ public static class AddressMappingExtensions
         };
     }
 
-    public static async Task<Address> GetEntityAsync(this AddressCreateDto dto, ECommerceContext context)
+    public async Task<Address> ToEntityAsync(AddressCreateDto dto, ECommerceContext context)
     {
         var country = await context.Countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
 
@@ -43,8 +45,7 @@ public static class AddressMappingExtensions
         };
     }
 
-    public static async Task<Address> GetUpdatedAsync(this Address address, AddressUpdateDto dto,
-        ECommerceContext context)
+    public async Task<Address> UpdateEntityAsync(Address address, AddressUpdateDto dto, ECommerceContext context)
     {
         if (address.Country == null)
             throw new InvalidOperationException($"{nameof(address.Country)} must be included.");

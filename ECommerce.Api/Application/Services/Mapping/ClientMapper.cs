@@ -2,24 +2,27 @@
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Shared;
 
-namespace ECommerce.Api.Extensions.Mappings;
+namespace ECommerce.Api.Application.Services.Mapping;
 
-public static class ClientMappingExtensions
+public interface IClientMapper : IEntityDtoMapper<Client, UserResponseDto, UserCreateDto, UserUpdateDto>;
+
+public class ClientMapper : IClientMapper
 {
-    public static UserResponseDto GetDto(this IUser user)
-        => new UserResponseDto
+    public UserResponseDto ToDto(Client client)
+    {
+        return new UserResponseDto
         {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            BirthDate = user.BirthDate,
-            CreatedAt = user.CreatedAt,
+            Id = client.Id,
+            FirstName = client.FirstName,
+            LastName = client.LastName,
+            Email = client.Email,
+            PhoneNumber = client.PhoneNumber,
+            BirthDate = client.BirthDate,
+            CreatedAt = client.CreatedAt,
         };
+    }
 
-
-    public static Client GetEntity(this UserCreateDto dto)
+    public Client ToEntity(UserCreateDto dto)
         => new Client
         {
             FirstName = dto.FirstName,
@@ -31,7 +34,7 @@ public static class ClientMappingExtensions
             CreatedAt = DateTime.UtcNow,
         };
 
-    public static Client GetUpdated(this Client client, UserUpdateDto dto)
+    public Client UpdateEntity(Client client, UserUpdateDto dto)
     {
         var updated = PropertyCopier.GetCopy(client);
 
@@ -44,7 +47,7 @@ public static class ClientMappingExtensions
         updated.PasswordHash = !string.IsNullOrWhiteSpace(dto.Password)
             ? PasswordHasher.HashPassword(dto.Password)
             : client.PasswordHash;
-        
+
         return updated;
     }
 }
