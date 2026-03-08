@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using ECommerce.Api.Application.DTOs.User;
+﻿using ECommerce.Api.Application.DTOs.User;
 
 namespace ECommerce.Api.Application.DTOs.Auth;
 

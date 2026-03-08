@@ -1,7 +1,5 @@
 ﻿using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Validators.Entities;
 

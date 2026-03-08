@@ -1,5 +1,4 @@
 ﻿using ECommerce.Api.Application.DTOs.Address;
-using ECommerce.Api.Domain.Validation;
 using FluentValidation;
 
 namespace ECommerce.Api.Validators.DTOs;

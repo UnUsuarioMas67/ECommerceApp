@@ -1,5 +1,4 @@
 ﻿using ECommerce.Api.Infrastructure.EF;
-using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Application.Services.Mapping;
 

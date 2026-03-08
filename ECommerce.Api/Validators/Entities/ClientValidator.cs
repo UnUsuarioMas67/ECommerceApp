@@ -1,7 +1,6 @@
 ﻿using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Domain.Validation;
 using ECommerce.Api.Extensions;
-using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
 
 namespace ECommerce.Api.Validators.Entities;
