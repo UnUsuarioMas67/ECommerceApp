@@ -78,7 +78,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         if (category == null)
             return Errors.NotFound();
 
-        var updated = mapper.UpdateEntity(category, dto);
+        var updated = mapper.GetUpdatedEntity(category, dto);
 
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)

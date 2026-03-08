@@ -46,7 +46,7 @@ public class ProductMapper : IProductMapper
         };
     }
 
-    public async Task<Product> UpdateEntityAsync(Product product, ProductUpdateDto dto, ECommerceContext context)
+    public async Task<Product> GetUpdatedEntityAsync(Product product, ProductUpdateDto dto, ECommerceContext context)
     {
         if (product.Category == null)
             throw new InvalidOperationException($"{nameof(product.Category)} must not be null.");

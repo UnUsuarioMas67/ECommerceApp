@@ -71,7 +71,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         if (address == null)
             return Errors.NotFound();
 
-        var updated = await mapper.UpdateEntityAsync(address, dto, context);
+        var updated = await mapper.GetUpdatedEntityAsync(address, dto, context);
 
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)

@@ -63,7 +63,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         if (product == null)
             return Errors.NotFound();
 
-        var updated = await mapper.UpdateEntityAsync(product, dto, context);
+        var updated = await mapper.GetUpdatedEntityAsync(product, dto, context);
 
         var validationResult = await validator.ValidateAsync(updated);
         if (!validationResult.IsValid)

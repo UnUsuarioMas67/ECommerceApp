@@ -26,7 +26,7 @@ public class CategoryMapper : ICategoryMapper
             Name = dto.Name,
         };
 
-    public Category UpdateEntity(Category category, CategoryUpdateDto dto)
+    public Category GetUpdatedEntity(Category category, CategoryUpdateDto dto)
     {
         var updated = PropertyCopier.GetCopy(category);
         updated.Slug = dto.Slug ?? updated.Slug;

@@ -60,7 +60,7 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         if (client == null)
             return Errors.NotFound();
 
-        var updated = mapper.UpdateEntity(client, dto);
+        var updated = mapper.GetUpdatedEntity(client, dto);
 
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)

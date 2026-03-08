@@ -45,7 +45,7 @@ public class AddressMapper : IAddressMapper
         };
     }
 
-    public async Task<Address> UpdateEntityAsync(Address address, AddressUpdateDto dto, ECommerceContext context)
+    public async Task<Address> GetUpdatedEntityAsync(Address address, AddressUpdateDto dto, ECommerceContext context)
     {
         if (address.Country == null)
             throw new InvalidOperationException($"{nameof(address.Country)} must be included.");

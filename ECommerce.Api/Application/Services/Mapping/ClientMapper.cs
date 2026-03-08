@@ -34,7 +34,7 @@ public class ClientMapper : IClientMapper
             CreatedAt = DateTime.UtcNow,
         };
 
-    public Client UpdateEntity(Client client, UserUpdateDto dto)
+    public Client GetUpdatedEntity(Client client, UserUpdateDto dto)
     {
         var updated = PropertyCopier.GetCopy(client);
 
