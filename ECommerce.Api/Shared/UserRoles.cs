@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Application.Auth;
+﻿namespace ECommerce.Api.Shared;
 
 public static class UserRoles
 {

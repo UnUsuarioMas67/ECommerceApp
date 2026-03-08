@@ -7,7 +7,7 @@ using ECommerce.Api.Shared;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Api.Application.Services;
+namespace ECommerce.Api.Application.Services.DataAccess;
 
 public interface IClientsService
 {

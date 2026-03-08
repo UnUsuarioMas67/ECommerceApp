@@ -1,7 +1,8 @@
 ﻿using System.Text;
-using ECommerce.Api.Application.Auth;
-using ECommerce.Api.Application.Services;
+using ECommerce.Api.Application.Services.Auth;
+using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Application.Services.Mapping;
+using ECommerce.Api.Shared;
 using ECommerce.Api.Validators.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

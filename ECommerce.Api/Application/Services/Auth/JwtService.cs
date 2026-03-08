@@ -1,11 +1,12 @@
 ﻿using System.Security.Claims;
 using System.Text;
 using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Shared;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace ECommerce.Api.Application.Auth;
+namespace ECommerce.Api.Application.Services.Auth;
 
 public interface IJwtService
 {

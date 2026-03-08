@@ -1,8 +1,7 @@
-﻿using ECommerce.Api.Application.Auth;
-using ECommerce.Api.Application.DTOs.Category;
+﻿using ECommerce.Api.Application.DTOs.Category;
 using ECommerce.Api.Application.DTOs.Product;
 using ECommerce.Api.Application.DTOs.Shared;
-using ECommerce.Api.Application.Services;
+using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Shared;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

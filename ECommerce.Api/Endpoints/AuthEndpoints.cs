@@ -1,5 +1,5 @@
-﻿using ECommerce.Api.Application.Auth;
-using ECommerce.Api.Application.DTOs.Auth;
+﻿using ECommerce.Api.Application.DTOs.Auth;
+using ECommerce.Api.Application.Services.Auth;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
