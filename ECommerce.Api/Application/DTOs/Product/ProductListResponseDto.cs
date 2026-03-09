@@ -7,11 +7,14 @@ public class ProductListResponseDto
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? Category { get; set; }
-    
+
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? SearchTerm { get; set; }
 
     public int Total => Products.Count();
-    public required PaginationInfo Pagination { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public PaginationInfo? Pagination { get; set; }
+
     public required IEnumerable<ProductResponseDto> Products { get; set; }
 }

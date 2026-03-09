@@ -9,6 +9,8 @@ public class UserListResponseDto
     public string? SearchTerm { get; set; }
 
     public int Total => Users.Count();
-    public required PaginationInfo Pagination { get; set; }
+    
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public PaginationInfo? Pagination { get; set; }
     public required IEnumerable<UserResponseDto> Users { get; set; }
 }

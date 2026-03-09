@@ -1,4 +1,6 @@
-﻿namespace ECommerce.Api.Application.DTOs.Shared;
+﻿using System.Text.Json.Serialization;
+
+namespace ECommerce.Api.Application.DTOs.Shared;
 
 public class PaginationQuery
 {
@@ -12,8 +14,10 @@ public static class PaginationDefaults
     public const int Limit = 100;
 }
 
-public record PaginationInfo(int Skip, int? Limit)
+public record PaginationInfo(
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] int? Skip, 
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] int? Limit)
 {
     public static implicit operator PaginationInfo(PaginationQuery query)
-        => new(query.Skip ?? PaginationDefaults.Skip, query.Limit);
+        => new(query.Skip, query.Limit);
 }

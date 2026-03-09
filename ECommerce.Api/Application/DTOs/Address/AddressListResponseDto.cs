@@ -11,8 +11,10 @@ public class AddressListResponseDto
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public UserResponseDto? Client { get; set; }
-
-    public int Total => Addresses.Count();
+    
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public PaginationInfo? Pagination { get; set; }
+    
+    public int Total => Addresses.Count();
     public required IEnumerable<AddressResponseDto> Addresses { get; set; }
 }

@@ -9,6 +9,9 @@ public class CategoryListResponseDto
     public string? SearchTerm { get; set; }
 
     public int Total => Categories.Count();
-    public required PaginationInfo Pagination { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public PaginationInfo? Pagination { get; set; }
+
     public required IEnumerable<CategoryResponseDto> Categories { get; set; }
 }
