@@ -12,17 +12,14 @@ public static class AddressEndpoints
 {
     public static IEndpointRouteBuilder MapAddressEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("{id:int}", GetById)
-            .RequireAuthorization(UserRoles.Client);
-        endpoints.MapPost("", AddAddress)
-            .RequireAuthorization(UserRoles.Client);
-        endpoints.MapPut("{id:int}", UpdateAddress) 
-            .RequireAuthorization(UserRoles.Client);
-        endpoints.MapDelete("{id:int}", DeleteAddress)
+        var group = endpoints.MapGroup("api/addresses")
             .RequireAuthorization(UserRoles.Client);
 
-        endpoints.MapGet("country/{countryCode}", GetByCountry)
-            .RequireAuthorization(UserRoles.Client);
+        group.MapGet("{id:int}", GetById);
+        group.MapPost("", AddAddress);
+        group.MapPut("{id:int}", UpdateAddress);
+        group.MapDelete("{id:int}", DeleteAddress);
+        group.MapGet("country/{countryCode}", GetByCountry);
 
         return endpoints;
     }
@@ -104,7 +101,7 @@ public static class AddressEndpoints
             Pagination = pagination,
             Country = countryName
         };
-        
+
         return TypedResults.Ok(list);
     }
 }

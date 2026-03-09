@@ -12,23 +12,22 @@ public static class ProductEndpoints
 {
     public static IEndpointRouteBuilder MapProductEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet("", GetProducts)
+        var group = endpoints.MapGroup("api/products")
             .RequireAuthorization(UserRoles.Client);
-        endpoints.MapGet("categories/{category}", GetProductsByCategory)
-            .RequireAuthorization(UserRoles.Client);
-        endpoints.MapGet("categories", GetCategoriesList)
-            .RequireAuthorization(UserRoles.Client);
-        endpoints.MapGet("{id:int}", GetProductById)
-            .RequireAuthorization(UserRoles.Client);
+        
+        group.MapGet("", GetProducts);
+        group.MapGet("categories/{category}", GetProductsByCategory);
+        group.MapGet("categories", GetCategoriesList);
+        group.MapGet("{id:int}", GetProductById);
 
-        endpoints.MapPost("", CreateProduct)
+        group.MapPost("", CreateProduct)
             .RequireAuthorization(UserRoles.Admin);
-        endpoints.MapPut("{id:int}", UpdateProduct)
+        group.MapPut("{id:int}", UpdateProduct)
             .RequireAuthorization(UserRoles.Admin);
-        endpoints.MapDelete("{id:int}", DeleteProduct)
+        group.MapDelete("{id:int}", DeleteProduct)
             .RequireAuthorization(UserRoles.Admin);
         
-        endpoints.MapPut("{id:int}/restock", RestockProduct)
+        group.MapPut("{id:int}/restock", RestockProduct)
             .RequireAuthorization(UserRoles.Admin);
 
         return endpoints;
