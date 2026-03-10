@@ -58,6 +58,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAddressesService, AddressesService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<ICartsService, CartsService>();
     }
 
     public static void AddObjectMappers(this IServiceCollection services)
@@ -66,5 +67,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAddressMapper, AddressMapper>();
         services.AddScoped<ICategoryMapper, CategoryMapper>();
         services.AddScoped<IProductMapper, ProductMapper>();
+        services.AddScoped<ICartMapper, CartMapper>();
     }
 }
