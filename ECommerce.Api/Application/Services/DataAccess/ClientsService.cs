@@ -19,7 +19,7 @@ public interface IClientsService
     Task<UserResponseDto?> DeleteAsync(int clientId);
 }
 
-public class ClientsService(ECommerceContext context, IValidator<Client> validator, IClientMapper mapper) 
+public class ClientsService(ECommerceContext context, IValidator<Client> validator, IClientMapper mapper)
     : IClientsService
 {
     public async Task<bool> EntryExistsAsync(int clientId)
@@ -56,21 +56,23 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
 
     public async Task<Result<UserResponseDto>> UpdateAsync(int clientId, UserUpdateDto dto)
     {
-        var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
-        if (client == null)
+        // TODO Rewrite UpdateAsync methods in all services
+        var updated = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
+        if (updated == null)
             return Errors.NotFound();
 
-        var updated = mapper.GetUpdatedEntity(client, dto);
+        InnerUpdate(updated, dto);
 
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)
+        {
+            await context.DisposeAsync();
             return Errors.ValidationError(validationResult.Error!.Details);
-
-        PropertyCopier.Mirror(updated, client);
+        }
 
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(client);
+        return mapper.ToDto(updated);
     }
 
     public async Task<UserResponseDto?> DeleteAsync(int clientId)
@@ -96,11 +98,11 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         var emailIsDuplicate = await EmailIsDuplicate(client);
         var phoneNumberIsDuplicate = await PhoneNumberIsDuplicate(client);
 
-        if (!emailIsDuplicate && !phoneNumberIsDuplicate) 
+        if (!emailIsDuplicate && !phoneNumberIsDuplicate)
             return Result.Success();
-        
+
         var errorDetails = new Dictionary<string, string[]>();
-        
+
         if (emailIsDuplicate)
             errorDetails.Add(nameof(client.Email), ["Email address already in use"]);
         if (phoneNumberIsDuplicate)
@@ -114,4 +116,26 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
 
     private async Task<bool> PhoneNumberIsDuplicate(Client client)
         => await context.Clients.AnyAsync(c => c.PhoneNumber == client.PhoneNumber && c.Id != client.Id);
+
+    private void InnerUpdate(Client toUpdate, UserUpdateDto dto)
+    {
+        if (dto.FirstName != null && dto.FirstName != toUpdate.FirstName)
+            toUpdate.FirstName = dto.FirstName;
+
+        if (dto.LastName != null && dto.LastName != toUpdate.LastName)
+            toUpdate.LastName = dto.LastName;
+
+        if (dto.PhoneNumber != null && dto.PhoneNumber != toUpdate.PhoneNumber)
+            toUpdate.PhoneNumber = dto.PhoneNumber;
+
+        if (DateOnly.TryParseExact(dto.BirthDate, "yyyy-MM-dd", out var birthDate) && birthDate != toUpdate.BirthDate)
+            toUpdate.BirthDate = birthDate;
+
+        if (!string.IsNullOrWhiteSpace(dto.Password))
+        {
+            var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            if (newPasswordHash != toUpdate.PasswordHash)
+                toUpdate.PasswordHash = newPasswordHash;
+        }
+    }
 }
