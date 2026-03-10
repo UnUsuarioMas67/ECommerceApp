@@ -117,16 +117,14 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Results<Ok<AddressListResponseDto>, NotFound>> GetClientAddresses(
+    private static async Task<Ok<AddressListResponseDto>> GetClientAddresses(
         int id,
         IClientsService clientsService,
         IAddressesService addressesService)
     {
         var client = await clientsService.GetByIdAsync(id);
-        if (client == null)
-            return TypedResults.NotFound();
-
         var addresses = await addressesService.GetByClient(id);
+        
         var list = new AddressListResponseDto
         {
             Addresses = addresses,
