@@ -43,8 +43,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/test", (ECommerceContext dbContext) => dbContext.OrderStatuses.ToList());
-
 app.MapApiEndpoints();
 
 app.Run();
