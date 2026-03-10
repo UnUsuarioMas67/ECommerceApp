@@ -20,7 +20,8 @@ public class CartValidator : AbstractValidator<Cart>
                 .NotNull()
                 .WithMessage("Client is required");
         });
-        
+
+        RuleFor(c => c.Items).NotEmpty();   
         RuleForEach(c => c.Items).SetValidator(new CartItemValidator());
     }
 }
