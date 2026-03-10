@@ -13,5 +13,5 @@ public class ShopOrder
     public Address Address { get; set; }
     public OrderStatus Status { get; set; }
     
-    public ICollection<OrderLine> Items { get; set; }
+    public ICollection<OrderLine> Items { get; set; } = new List<OrderLine>();
 }
