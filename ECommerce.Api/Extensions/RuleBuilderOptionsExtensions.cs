@@ -1,37 +1,25 @@
 ﻿using ECommerce.Api.Domain.Entities;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ECommerce.Api.Extensions;
 
 public static class RuleBuilderOptionsExtensions
 {
-    public static IRuleBuilderOptions<TUser, string> EmailNotAlreadyExists<TUser>(
-        this IRuleBuilder<TUser, string> ruleBuilder,
-        DbSet<TUser> dbSet) where TUser : class, IUser
+    public static IRuleBuilderOptions<T, int> IdIsDefaultOnNewEntry<T>(
+        this IRuleBuilder<T, int> ruleBuilder, Func<T, EntityEntry<T>> predicate) where T : class
     {
         return ruleBuilder
-            .MustAsync(async (user, email, token) => !await dbSet.AnyAsync(
-                u => u.Email == email && u.Id != user.Id))
-            .WithMessage("Email address already in use");
+            .Equal(0)
+            .When(client => predicate(client).State == EntityState.Detached);
     }
-
-    public static IRuleBuilderOptions<TUser, string> PhoneNumberNotAlreadyExists<TUser>(
-        this IRuleBuilder<TUser, string> ruleBuilder,
-        DbSet<TUser> dbSet) where TUser : class, IUser
-    {
-        return ruleBuilder
-            .MustAsync(async (user, phoneNumber, token)
-                => !await dbSet.AnyAsync(
-                    u => u.PhoneNumber == phoneNumber && u.Id != user.Id))
-            .WithMessage("Phone number already in use");
-    }
-
+    
     public static IRuleBuilderOptions<T, DateTime> NotInTheFuture<T>(this IRuleBuilder<T, DateTime> ruleBuilder)
         where T : class
     {
         return ruleBuilder
-            .Must((date) => date <= DateTime.UtcNow)
+            .Must(date => date <= DateTime.UtcNow)
             .WithMessage("Must not be in the future");
     }
 
