@@ -86,22 +86,13 @@ public static class AddressEndpoints
         return TypedResults.Ok(address);
     }
 
-    private static async Task<Ok<AddressListResponseDto>> GetByCountry(
+    private static async Task<Ok<IEnumerable<AddressResponseDto>>> GetByCountry(
         IAddressesService addressesService,
         [FromRoute] string countryCode,
         [AsParameters] PaginationQuery pagination
     )
     {
         var addresses = await addressesService.GetByCountry(countryCode, pagination);
-        var countryName = await addressesService.GetCountryNameAsync(countryCode);
-
-        var list = new AddressListResponseDto
-        {
-            Addresses = addresses,
-            Pagination = pagination,
-            Country = countryName
-        };
-
-        return TypedResults.Ok(list);
+        return TypedResults.Ok(addresses);
     }
 }

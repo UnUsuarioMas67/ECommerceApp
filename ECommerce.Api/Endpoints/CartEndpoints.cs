@@ -31,37 +31,20 @@ public static class CartEndpoints
         return cart != null ? TypedResults.Ok(cart) : TypedResults.NotFound();
     }
 
-    private static async Task<Ok<CartListResponseDto>> GetCarts(
+    private static async Task<Ok<IEnumerable<CartResponseDto>>> GetCarts(
         ICartsService cartsService, [AsParameters] PaginationQuery pagination)
     {
         var carts = await cartsService.GetManyAsync(pagination);
-
-        var list = new CartListResponseDto
-        {
-            Carts = carts,
-            Pagination = pagination,
-        };
-
-        return TypedResults.Ok(list);
+        return TypedResults.Ok(carts);
     }
     
-    private static async Task<Ok<CartListResponseDto>> GetCartsByClient(
+    private static async Task<Ok<IEnumerable<CartResponseDto>>> GetCartsByClient(
         ICartsService cartsService,
-        IClientsService clientsService,
         int id, 
         [AsParameters] PaginationQuery pagination)
     {
-        var client = await clientsService.GetByIdAsync(id);
         var carts = await cartsService.GetByClientAsync(id, pagination);
-
-        var list = new CartListResponseDto
-        {
-            Client = client,
-            Carts = carts,
-            Pagination = pagination,
-        };
-
-        return TypedResults.Ok(list);
+        return TypedResults.Ok(carts);
     }
 
     private static async Task<Results<Ok<CartResponseDto>, ValidationProblem>> CreateCart(

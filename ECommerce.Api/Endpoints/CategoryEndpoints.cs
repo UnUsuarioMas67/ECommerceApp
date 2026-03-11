@@ -84,18 +84,12 @@ public static class CategoryEndpoints
         return TypedResults.Ok(dto);
     }
 
-    private static async Task<Ok<CategoryListResponseDto>> GetCategories(
+    private static async Task<Ok<IEnumerable<CategoryResponseDto>>> GetCategories(
         ICategoryService categoryService,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string search = "")
     {
         var categories = await categoryService.GetManyAsync(pagination, search);
-        var list = new CategoryListResponseDto
-        {
-            Categories = categories,
-            Pagination = pagination,
-            SearchTerm = search
-        };
-        return TypedResults.Ok(list);
+        return TypedResults.Ok(categories);
     }
 }

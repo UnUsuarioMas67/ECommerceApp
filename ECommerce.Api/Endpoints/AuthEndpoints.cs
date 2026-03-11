@@ -15,19 +15,6 @@ public static class AuthEndpoints
 
         return endpoints;
     }
-
-    // private static async Task<Results<Ok<AuthenticationDto>, ValidationProblem>> Login<T>(
-    //     IAuthenticationService authenticationService,
-    //     LoginRequestDto requestDto,
-    //     IValidator<LoginRequestDto> validator) where T : class, IUser
-    // {
-    //     var validation = await validator.ValidateAsync(requestDto);
-    //     if (!validation.IsValid)
-    //         return TypedResults.ValidationProblem(validation.ToDictionary());
-    //     
-    //     var result = await authenticationService.Login<T>(requestDto.Email, requestDto.Password);
-    //     return TypedResults.Ok(result.GetDto());
-    // }
     
     private static async Task<Results<Ok<AuthenticationDto>, Ok<string>, ValidationProblem>> LoginClient(
         IAuthenticationService authenticationService,

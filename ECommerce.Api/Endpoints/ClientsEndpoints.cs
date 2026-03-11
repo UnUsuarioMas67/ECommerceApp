@@ -16,14 +16,14 @@ public static class ClientsEndpoints
     {
         var group = endpoints.MapGroup("api/clients")
             .RequireAuthorization(UserRoles.Client);
-        
+
         group.MapGet("me", GetAuthClient);
         group.MapGet("{id:int}", GetClientById);
         group.MapGet("", GetClients);
         group.MapPut("{id:int}", UpdateClient);
         group.MapDelete("{id:int}", DeleteClient);
         group.MapGet("{id:int}/addresses", GetClientAddresses);
-        
+
         group.MapPost("", CreateClient)
             .AllowAnonymous();
 
@@ -54,21 +54,13 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Ok<UserListResponseDto>> GetClients(
+    private static async Task<Ok<IEnumerable<UserResponseDto>>> GetClients(
         IClientsService clientsService,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string? search = null)
     {
         var clients = await clientsService.GetManyAsync(pagination, search);
-
-        var list = new UserListResponseDto
-        {
-            Users = clients,
-            Pagination = pagination,
-            SearchTerm = search
-        };
-
-        return TypedResults.Ok(list);
+        return TypedResults.Ok(clients);
     }
 
 
@@ -116,7 +108,7 @@ public static class ClientsEndpoints
         return client != null ? TypedResults.Ok(client) : TypedResults.NotFound();
     }
 
-
+    // TODO - Move this to AddressEndpoints
     private static async Task<Ok<AddressListResponseDto>> GetClientAddresses(
         int id,
         IClientsService clientsService,
@@ -124,13 +116,13 @@ public static class ClientsEndpoints
     {
         var client = await clientsService.GetByIdAsync(id);
         var addresses = await addressesService.GetByClient(id);
-        
+
         var list = new AddressListResponseDto
         {
             Addresses = addresses,
             Client = client
         };
-        
+
         return TypedResults.Ok(list);
     }
 }

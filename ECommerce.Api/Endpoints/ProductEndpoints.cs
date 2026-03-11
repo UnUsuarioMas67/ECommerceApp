@@ -14,7 +14,7 @@ public static class ProductEndpoints
     {
         var group = endpoints.MapGroup("api/products")
             .RequireAuthorization(UserRoles.Client);
-        
+
         group.MapGet("", GetProducts);
         group.MapGet("categories/{category}", GetProductsByCategory);
         group.MapGet("categories", GetCategoriesList);
@@ -26,57 +26,37 @@ public static class ProductEndpoints
             .RequireAuthorization(UserRoles.Admin);
         group.MapDelete("{id:int}", DeleteProduct)
             .RequireAuthorization(UserRoles.Admin);
-        
+
         group.MapPut("{id:int}/restock", RestockProduct)
             .RequireAuthorization(UserRoles.Admin);
 
         return endpoints;
     }
 
-    private static async Task<Ok<ProductListResponseDto>> GetProducts(
+    private static async Task<Ok<IEnumerable<ProductResponseDto>>> GetProducts(
         IProductService productService,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string? search)
     {
         var products = await productService.GetManyAsync(pagination, search);
-        var list = new ProductListResponseDto
-        {
-            Products = products,
-            Pagination = pagination,
-            SearchTerm = search
-        };
-        return TypedResults.Ok(list);
+        return TypedResults.Ok(products);
     }
 
-    private static async Task<Ok<ProductListResponseDto>> GetProductsByCategory(
+    private static async Task<Ok<IEnumerable<ProductResponseDto>>> GetProductsByCategory(
         IProductService productService,
-        ICategoryService categoryService,
         [FromRoute] string category,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string? search)
     {
         IEnumerable<ProductResponseDto> products;
-        CategoryResponseDto? categoryDto;
 
         if (int.TryParse(category, out var categoryId))
-        {
             products = await productService.GetByCategoryId(categoryId, pagination, search);
-            categoryDto = await categoryService.GetByIdAsync(categoryId);
-        }
         else
-        {
             products = await productService.GetByCategorySlug(category, pagination, search);
-            categoryDto = await categoryService.GetBySlugAsync(category);
-        }
 
-        var list = new ProductListResponseDto
-        {
-            Products = products,
-            Pagination = pagination,
-            SearchTerm = search,
-            Category = categoryDto?.Slug
-        };
-        return TypedResults.Ok(list);
+
+        return TypedResults.Ok(products);
     }
 
     private static async Task<Ok<IEnumerable<string>>> GetCategoriesList(
@@ -124,7 +104,7 @@ public static class ProductEndpoints
         var deleted = await productService.DeleteAsync(id);
         return deleted != null ? TypedResults.Ok(deleted) : TypedResults.NotFound();
     }
-    
+
     private static async Task<Results<Ok<ProductResponseDto>, NotFound, ValidationProblem>> RestockProduct(
         IProductService productService, int id, [FromQuery] int amount)
     {
