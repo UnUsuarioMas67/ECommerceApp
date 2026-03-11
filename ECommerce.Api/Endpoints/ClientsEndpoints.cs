@@ -22,7 +22,6 @@ public static class ClientsEndpoints
         group.MapGet("", GetClients);
         group.MapPut("{id:int}", UpdateClient);
         group.MapDelete("{id:int}", DeleteClient);
-        group.MapGet("{id:int}/addresses", GetClientAddresses);
 
         group.MapPost("", CreateClient)
             .AllowAnonymous();
@@ -106,23 +105,5 @@ public static class ClientsEndpoints
     {
         var client = await clientsService.DeleteAsync(id);
         return client != null ? TypedResults.Ok(client) : TypedResults.NotFound();
-    }
-
-    // TODO - Move this to AddressEndpoints
-    private static async Task<Ok<AddressListResponseDto>> GetClientAddresses(
-        int id,
-        IClientsService clientsService,
-        IAddressesService addressesService)
-    {
-        var client = await clientsService.GetByIdAsync(id);
-        var addresses = await addressesService.GetByClient(id);
-
-        var list = new AddressListResponseDto
-        {
-            Addresses = addresses,
-            Client = client
-        };
-
-        return TypedResults.Ok(list);
     }
 }

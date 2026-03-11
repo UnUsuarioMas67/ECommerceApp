@@ -19,7 +19,8 @@ public static class AddressEndpoints
         group.MapPost("", AddAddress);
         group.MapPut("{id:int}", UpdateAddress);
         group.MapDelete("{id:int}", DeleteAddress);
-        group.MapGet("country/{countryCode}", GetByCountry);
+        group.MapGet("country/{countryCode}", GetAddressesByCountry);
+        group.MapGet("clients/{id:int}", GetAddressesByClient);
 
         return endpoints;
     }
@@ -86,13 +87,21 @@ public static class AddressEndpoints
         return TypedResults.Ok(address);
     }
 
-    private static async Task<Ok<IEnumerable<AddressResponseDto>>> GetByCountry(
+    private static async Task<Ok<IEnumerable<AddressResponseDto>>> GetAddressesByCountry(
         IAddressesService addressesService,
         [FromRoute] string countryCode,
         [AsParameters] PaginationQuery pagination
     )
     {
         var addresses = await addressesService.GetByCountry(countryCode, pagination);
+        return TypedResults.Ok(addresses);
+    }
+    
+    private static async Task<Ok<IEnumerable<AddressResponseDto>>> GetAddressesByClient(
+        int id,
+        IAddressesService addressesService)
+    {
+        var addresses = await addressesService.GetByClient(id);
         return TypedResults.Ok(addresses);
     }
 }
