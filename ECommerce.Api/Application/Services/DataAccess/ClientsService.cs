@@ -44,9 +44,11 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
     {
         var client = mapper.MapToEntity(dto);
 
-        var validationResult = await Validate(client);
-        if (!validationResult.IsSuccess)
-            return Errors.ValidationError(validationResult.Error!.Details);
+        var validation = await validator.ValidateAsync(client);
+        if (!validation.IsValid)
+        {
+            return Errors.ValidationError(validation.ToDictionary());
+        }
 
         await context.Clients.AddAsync(client);
         await context.SaveChangesAsync();
@@ -63,11 +65,11 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
 
         mapper.ApplyUpdate(updated, dto);
 
-        var validationResult = await Validate(updated);
-        if (!validationResult.IsSuccess)
+        var validation = await validator.ValidateAsync(updated);
+        if (!validation.IsValid)
         {
             await context.DisposeAsync();
-            return Errors.ValidationError(validationResult.Error!.Details);
+            return Errors.ValidationError(validation.ToDictionary());
         }
 
         await context.SaveChangesAsync();
@@ -86,34 +88,4 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
 
         return mapper.MapToDto(client);
     }
-
-    private async Task<Result> Validate(Client client)
-    {
-        var validation = await validator.ValidateAsync(client);
-        if (!validation.IsValid)
-        {
-            return Errors.ValidationError(validation.ToDictionary());
-        }
-
-        var emailIsDuplicate = await EmailIsDuplicate(client);
-        var phoneNumberIsDuplicate = await PhoneNumberIsDuplicate(client);
-
-        if (!emailIsDuplicate && !phoneNumberIsDuplicate)
-            return Result.Success();
-
-        var errorDetails = new Dictionary<string, string[]>();
-
-        if (emailIsDuplicate)
-            errorDetails.Add(nameof(client.Email), ["Email address already in use"]);
-        if (phoneNumberIsDuplicate)
-            errorDetails.Add(nameof(client.PhoneNumber), ["Phone number already in use"]);
-
-        return Errors.ValidationError(errorDetails);
-    }
-
-    private async Task<bool> EmailIsDuplicate(Client client)
-        => await context.Clients.AnyAsync(c => c.Email == client.Email && c.Id != client.Id);
-
-    private async Task<bool> PhoneNumberIsDuplicate(Client client)
-        => await context.Clients.AnyAsync(c => c.PhoneNumber == client.PhoneNumber && c.Id != client.Id);
 }
