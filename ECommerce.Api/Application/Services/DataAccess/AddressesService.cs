@@ -20,7 +20,7 @@ public interface IAddressesService
     Task<string?> GetCountryNameAsync(string cca2);
 }
 
-public class AddressesService(ECommerceContext context, IValidator<Address> validator, IAddressMapper mapper)
+public class AddressesService(ECommerceContext context, IValidator<Address> validator, AddressMapper mapper)
     : IAddressesService
 {
     public async Task<AddressResponseDto?> GetByIdAsync(int addressId)
@@ -28,14 +28,14 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         var address = await context.Addresses
             .Include(a => a.Country)
             .FirstOrDefaultAsync(a => a.Id == addressId);
-        return address != null ? mapper.ToDto(address) : null;
+        return address != null ? mapper.MapToDto(address) : null;
     }
 
     public async Task<IEnumerable<AddressResponseDto>> GetByClient(int clientId)
         => await context.Addresses
             .Include(a => a.Country)
             .Where(a => a.ClientId == clientId)
-            .Select(a => mapper.ToDto(a))
+            .Select(a => mapper.MapToDto(a))
             .ToListAsync();
 
     public async Task<IEnumerable<AddressResponseDto>> GetByCountry(string cca2, PaginationQuery pagination)
@@ -44,13 +44,13 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
             .Include(a => a.Country)
             .Where(a => a.Country!.Cca2 == cca2)
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
-            .Select(a => mapper.ToDto(a))
+            .Select(a => mapper.MapToDto(a))
             .ToListAsync();
     }
 
     public async Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto)
     {
-        var address = await mapper.ToEntityAsync(dto, context);
+        var address = await mapper.MapToEntityAsync(dto);
 
         var validationResult = await Validate(address);
         if (!validationResult.IsSuccess)
@@ -59,7 +59,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         await context.Addresses.AddAsync(address);
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(address);
+        return mapper.MapToDto(address);
     }
 
     public async Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto)
@@ -71,7 +71,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         if (updated == null)
             return Errors.NotFound();
 
-        await mapper.ApplyUpdateToEntityAsync(updated, dto, context);
+        await mapper.ApplyUpdateAsync(updated, dto);
 
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)
@@ -82,7 +82,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
 
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(updated);
+        return mapper.MapToDto(updated);
     }
 
     public async Task<AddressResponseDto?> DeleteAsync(int addressId)
@@ -93,7 +93,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
 
         context.Addresses.Remove(address);
         await context.SaveChangesAsync();
-        return mapper.ToDto(address);
+        return mapper.MapToDto(address);
     }
 
     public async Task<string?> GetCountryNameAsync(string cca2)

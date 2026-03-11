@@ -3,5 +3,5 @@
 public class CartCreateDto
 {
     public int ClientId { get; set; }
-    public ICollection<CartItemEntry> Items { get; set; }
+    public ICollection<CartItemCreate> Items { get; set; }
 }

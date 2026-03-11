@@ -20,7 +20,7 @@ public interface ICartsService
     Task<CartResponseDto?> DeleteAsync(int cartId);
 }
 
-public class CartsService(ECommerceContext context, IValidator<Cart> validator, ICartMapper mapper)
+public class CartsService(ECommerceContext context, IValidator<Cart> validator, CartMapper mapper)
     : ICartsService
 {
     public async Task<bool> EntryExistsAsync(int cartId)
@@ -33,7 +33,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
             .ThenInclude(item => item.Product)
             .ThenInclude(product => product!.Category)
             .FirstOrDefaultAsync(c => c.Id == cartId);
-        return cart != null ? mapper.ToDto(cart) : null;
+        return cart != null ? mapper.MapToDto(cart) : null;
     }
 
     public async Task<IEnumerable<CartResponseDto>> GetManyAsync(PaginationQuery pagination)
@@ -43,7 +43,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
             .ThenInclude(item => item.Product)
             .ThenInclude(product => product!.Category)
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
-            .Select(item => mapper.ToDto(item))
+            .Select(item => mapper.MapToDto(item))
             .ToListAsync();
     }
 
@@ -55,13 +55,13 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
             .ThenInclude(product => product!.Category)
             .Where(c => c.ClientId == clientId)
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
-            .Select(item => mapper.ToDto(item))
+            .Select(item => mapper.MapToDto(item))
             .ToListAsync();
     }
 
     public async Task<Result<CartResponseDto>> CreateAsync(CartCreateDto dto)
     {
-        var created = await mapper.ToEntityAsync(dto, context);
+        var created = await mapper.MapToEntityAsync(dto);
         
         var validationResult = await Validate(created);
         if (!validationResult.IsSuccess)
@@ -70,7 +70,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         await context.Carts.AddAsync(created);
         await context.SaveChangesAsync();
         
-        return mapper.ToDto(created);
+        return mapper.MapToDto(created);
     }
 
     public async Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartUpdateDto dto)
@@ -79,7 +79,12 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         if (updated == null)
             return Errors.NotFound();
         
-        await mapper.ApplyUpdateToEntityAsync(updated, dto, context);
+        await mapper.ApplyUpdateAsync(updated, dto);
+        
+        // Delete previous cart item entries
+        await context.CartItems
+            .Where(ci => ci.CartId == updated.Id)
+            .ExecuteDeleteAsync();
         
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)
@@ -89,8 +94,8 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         }
 
         await context.SaveChangesAsync();
-         
-        return mapper.ToDto(updated);
+        
+        return mapper.MapToDto(updated);
     }
 
     public async Task<CartResponseDto?> DeleteAsync(int cartId)
@@ -102,7 +107,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         context.Carts.Remove(deleted);
         await context.SaveChangesAsync();
         
-        return mapper.ToDto(deleted);
+        return mapper.MapToDto(deleted);
     }
 
     private async Task<Result> Validate(Cart cart)

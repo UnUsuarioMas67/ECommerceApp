@@ -2,13 +2,13 @@
 
 namespace ECommerce.Api.Application.DTOs.Cart;
 
-public class CartItemDto
+public class CartItemResponse
 {
     public ProductResponseDto Product { get; set; }
     public int Quantity { get; set; }
 }
 
-public class CartItemEntry
+public class CartItemCreate
 {
     public int ProductId { get; set; }
     public int Quantity { get; set; }

@@ -1,15 +1,11 @@
 ﻿using ECommerce.Api.Application.DTOs.Category;
 using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Shared;
 
 namespace ECommerce.Api.Application.Services.Mapping;
 
-public interface ICategoryMapper
-    : IEntityDtoMapper<Category, CategoryResponseDto, CategoryCreateDto, CategoryUpdateDto>;
-
-public class CategoryMapper : ICategoryMapper
+public class CategoryMapper
 {
-    public CategoryResponseDto ToDto(Category category)
+    public CategoryResponseDto MapToDto(Category category)
     {
         return new CategoryResponseDto
         {
@@ -19,14 +15,14 @@ public class CategoryMapper : ICategoryMapper
         };
     }
 
-    public Category ToEntity(CategoryCreateDto dto)
+    public Category MapToEntity(CategoryCreateDto dto)
         => new()
         {
             Slug = dto.Slug,
             Name = dto.Name,
         };
 
-    public void ApplyUpdateToEntity(Category category, CategoryUpdateDto dto)
+    public void ApplyUpdate(Category category, CategoryUpdateDto dto)
     {
         if (dto.Slug != null &&  dto.Slug != category.Slug)
             category.Slug = dto.Slug;

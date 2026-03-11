@@ -26,7 +26,7 @@ public interface IProductService
     Task<Result<ProductResponseDto>> Restock(int productId, int newStock);
 }
 
-public class ProductService(ECommerceContext context, IValidator<Product> validator, IProductMapper mapper) 
+public class ProductService(ECommerceContext context, IValidator<Product> validator, ProductMapper mapper) 
     : IProductService
 {
     public async Task<bool> EntryExistsAsync(int productId)
@@ -37,12 +37,12 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         var product = await context.Products
             .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == productId);
-        return product != null ? mapper.ToDto(product) : null;
+        return product != null ? mapper.MapToDto(product) : null;
     }
 
     public async Task<Result<ProductResponseDto>> CreateAsync(ProductCreateDto dto)
     {
-        var created = await mapper.ToEntityAsync(dto, context);
+        var created = await mapper.MapToEntityAsync(dto);
 
         var validationResult = await validator.ValidateAsync(created);
         if (!validationResult.IsValid)
@@ -51,7 +51,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         await context.Products.AddAsync(created);
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(created);
+        return mapper.MapToDto(created);
     }
 
     public async Task<Result<ProductResponseDto>> UpdateAsync(int productId, ProductUpdateDto dto)
@@ -63,7 +63,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         if (updated == null)
             return Errors.NotFound();
 
-        await mapper.ApplyUpdateToEntityAsync(updated, dto, context);
+        await mapper.ApplyUpdateAsync(updated, dto);
 
         var validationResult = await validator.ValidateAsync(updated);
         if (!validationResult.IsValid)
@@ -74,7 +74,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
 
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(updated);
+        return mapper.MapToDto(updated);
     }
 
     public async Task<ProductResponseDto?> DeleteAsync(int productId)
@@ -89,7 +89,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         context.Products.Remove(product);
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(product);
+        return mapper.MapToDto(product);
     }
 
     public async Task<IEnumerable<ProductResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
@@ -98,7 +98,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             .Include(p => p.Category)
             .Where(p => p.Category!.Name.Contains(search ?? ""))
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
-            .Select(product => mapper.ToDto(product))
+            .Select(product => mapper.MapToDto(product))
             .ToListAsync();
 
         return products;
@@ -111,7 +111,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             .Include(p => p.Category)
             .Where(p => p.Name.Contains(search ?? "") && p.Category!.Id == categoryId)
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
-            .Select(product => mapper.ToDto(product))
+            .Select(product => mapper.MapToDto(product))
             .ToListAsync();
     }
 
@@ -122,7 +122,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             .Include(p => p.Category)
             .Where(p => p.Name.Contains(search ?? "") && p.Category!.Slug == categorySlug)
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
-            .Select(product => mapper.ToDto(product))
+            .Select(product => mapper.MapToDto(product))
             .ToListAsync(); 
     }
 
@@ -141,6 +141,6 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         if (!validation.IsValid)
             return Errors.ValidationError(validation.ToDictionary());
         
-        return mapper.ToDto(product);
+        return mapper.MapToDto(product);
     }
 }

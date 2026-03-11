@@ -27,7 +27,7 @@ public interface ICategoryService
     Task<CategoryResponseDto?> DeleteAsync(string categorySlug);
 }
 
-public class CategoryService(ECommerceContext context, IValidator<Category> validator, ICategoryMapper mapper) 
+public class CategoryService(ECommerceContext context, IValidator<Category> validator, CategoryMapper mapper) 
     : ICategoryService
 {
     public async Task<bool> EntryExistsAsync(int categoryId)
@@ -39,13 +39,13 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
     public async Task<CategoryResponseDto?> GetByIdAsync(int categoryId)
     {
         var category = await context.Categories.FindAsync(categoryId);
-        return category != null ? mapper.ToDto(category) : null;
+        return category != null ? mapper.MapToDto(category) : null;
     }
 
     public async Task<CategoryResponseDto?> GetBySlugAsync(string categorySlug)
     {
         var category = await context.Categories.FirstOrDefaultAsync(c => c.Slug == categorySlug);
-        return category != null ? mapper.ToDto(category) : null;
+        return category != null ? mapper.MapToDto(category) : null;
     }
 
     public async Task<IEnumerable<CategoryResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
@@ -55,12 +55,12 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         return categories
             .Where(c => c.Name.Contains(search ?? "", StringComparison.InvariantCultureIgnoreCase))
             .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
-            .Select(mapper.ToDto);
+            .Select(mapper.MapToDto);
     }
 
     public async Task<Result<CategoryResponseDto>> CreateAsync(CategoryCreateDto dto)
     {
-        var created = mapper.ToEntity(dto);
+        var created = mapper.MapToEntity(dto);
 
         var validationResult = await Validate(created);
         if (!validationResult.IsSuccess)
@@ -69,7 +69,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         await context.Categories.AddAsync(created);
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(created);
+        return mapper.MapToDto(created);
     }
     
 
@@ -78,7 +78,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         if (updated == null)
             return Errors.NotFound();
 
-        mapper.ApplyUpdateToEntity(updated, dto);
+        mapper.ApplyUpdate(updated, dto);
 
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)
@@ -89,7 +89,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
 
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(updated);
+        return mapper.MapToDto(updated);
     }
 
     public async Task<Result<CategoryResponseDto>> UpdateAsync(int categoryId, CategoryUpdateDto dto)
@@ -113,7 +113,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         context.Categories.Remove(category);
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(category);
+        return mapper.MapToDto(category);
     }
 
     public async Task<CategoryResponseDto?> DeleteAsync(int categoryId)

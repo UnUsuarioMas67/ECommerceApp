@@ -63,10 +63,11 @@ public static class ServiceCollectionExtensions
 
     public static void AddObjectMappers(this IServiceCollection services)
     {
-        services.AddScoped<IClientMapper,  ClientMapper>();
-        services.AddScoped<IAddressMapper, AddressMapper>();
-        services.AddScoped<ICategoryMapper, CategoryMapper>();
-        services.AddScoped<IProductMapper, ProductMapper>();
-        services.AddScoped<ICartMapper, CartMapper>();
+        services.AddScoped<ClientMapper>();
+        services.AddScoped<AddressMapper>();
+        services.AddScoped<CategoryMapper>();
+        services.AddScoped<ProductMapper>();
+        services.AddScoped<CartMapper>();
+        services.AddScoped<CartItemMapper>();
     }
 }

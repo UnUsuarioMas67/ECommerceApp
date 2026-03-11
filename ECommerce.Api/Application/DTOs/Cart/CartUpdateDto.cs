@@ -2,5 +2,5 @@
 
 public class CartUpdateDto
 {
-    public ICollection<CartItemEntry> Items { get; set; }
+    public ICollection<CartItemCreate> Items { get; set; }
 }

@@ -1,27 +1,21 @@
 ﻿using ECommerce.Api.Application.DTOs.Cart;
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Infrastructure.EF;
-using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Application.Services.Mapping;
 
-public interface ICartMapper : IEntityDtoAsyncMapper<Cart, CartResponseDto, CartCreateDto, CartUpdateDto>;
-
-public class CartMapper(IProductMapper productMapper) : ICartMapper
+public class CartMapper(CartItemMapper cartItemMapper, ECommerceContext context)
 {
-    public CartResponseDto ToDto(Cart cart)
+    public CartResponseDto MapToDto(Cart cart)
     {
         var dto = new CartResponseDto
         {
             Id = cart.Id,
             ClientId = cart.ClientId,
-            Items = cart.Items.Select(ci => new CartItemDto
-            {
-                Quantity = ci.Quantity,
-                Product = productMapper.ToDto(ci.Product
-                                              ?? throw new InvalidOperationException("Product must be included")),
-            }).ToList()
+            Items = cart.Items
+                .Select(cartItemMapper.MapToDto)
+                .ToList()
         };
 
         dto.TotalPrice = dto.Items.Sum(i => i.Product.Price * i.Quantity);
@@ -30,21 +24,21 @@ public class CartMapper(IProductMapper productMapper) : ICartMapper
         return dto;
     }
 
-    public async Task<Cart> ToEntityAsync(CartCreateDto dto, ECommerceContext context)
+    public async Task<Cart> MapToEntityAsync(CartCreateDto dto)
     {
         var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == dto.ClientId);
         
         var cart = new Cart { ClientId = dto.ClientId, Client = client };
-        cart.Items = await GetCartItems(cart, dto.Items, context);
+        cart.Items = await cartItemMapper.MapListToEntitiesAsync(cart, dto.Items.ToList());
         return cart;
     }
 
-    public async Task ApplyUpdateToEntityAsync(Cart toUpdate, CartUpdateDto dto, ECommerceContext context)
+    public async Task ApplyUpdateAsync(Cart toUpdate, CartUpdateDto dto)
     {
-        toUpdate.Items = await GetCartItems(toUpdate, dto.Items, context);
+        toUpdate.Items = await cartItemMapper.MapListToEntitiesAsync(toUpdate, dto.Items.ToList());
     }
 
-    private async Task<ICollection<CartItem>> GetCartItems(Cart cart, IEnumerable<CartItemEntry> items, ECommerceContext context)
+    private async Task<ICollection<CartItem>> GetCartItems(Cart cart, IEnumerable<CartItemCreate> items)
     {
         var cartItemEntries = items.ToList();
         var itemProductIds = cartItemEntries.Select(i => i.ProductId).Distinct();

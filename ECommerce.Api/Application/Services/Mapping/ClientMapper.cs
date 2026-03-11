@@ -4,11 +4,9 @@ using ECommerce.Api.Shared;
 
 namespace ECommerce.Api.Application.Services.Mapping;
 
-public interface IClientMapper : IEntityDtoMapper<Client, UserResponseDto, UserCreateDto, UserUpdateDto>;
-
-public class ClientMapper : IClientMapper
+public class ClientMapper
 {
-    public UserResponseDto ToDto(Client client)
+    public UserResponseDto MapToDto(Client client)
     {
         return new UserResponseDto
         {
@@ -22,7 +20,7 @@ public class ClientMapper : IClientMapper
         };
     }
 
-    public Client ToEntity(UserCreateDto dto)
+    public Client MapToEntity(UserCreateDto dto)
         => new Client
         {
             FirstName = dto.FirstName,
@@ -34,7 +32,7 @@ public class ClientMapper : IClientMapper
             CreatedAt = DateTime.UtcNow,
         };
 
-    public void ApplyUpdateToEntity(Client toUpdate, UserUpdateDto dto)
+    public void ApplyUpdate(Client toUpdate, UserUpdateDto dto)
     {
         if (dto.FirstName != null && dto.FirstName != toUpdate.FirstName)
             toUpdate.FirstName = dto.FirstName;

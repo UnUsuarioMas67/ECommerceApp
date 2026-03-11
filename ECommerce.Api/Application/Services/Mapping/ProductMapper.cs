@@ -1,17 +1,13 @@
 ﻿using ECommerce.Api.Application.DTOs.Product;
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Infrastructure.EF;
-using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Application.Services.Mapping;
 
-public interface IProductMapper
-    : IEntityDtoAsyncMapper<Product, ProductResponseDto, ProductCreateDto, ProductUpdateDto>;
-
-public class ProductMapper : IProductMapper
+public class ProductMapper(ECommerceContext context)
 {
-    public ProductResponseDto ToDto(Product product)
+    public ProductResponseDto MapToDto(Product product)
     {
         if (product.Category == null)
             throw new InvalidOperationException($"{nameof(product.Category)} must be included.");
@@ -29,7 +25,7 @@ public class ProductMapper : IProductMapper
         };
     }
 
-    public async Task<Product> ToEntityAsync(ProductCreateDto dto, ECommerceContext context)
+    public async Task<Product> MapToEntityAsync(ProductCreateDto dto)
     {
         var category = await FindCategory(dto.Category, context);
 
@@ -46,7 +42,7 @@ public class ProductMapper : IProductMapper
         };
     }
 
-    public async Task ApplyUpdateToEntityAsync(Product toUpdate, ProductUpdateDto dto, ECommerceContext context)
+    public async Task ApplyUpdateAsync(Product toUpdate, ProductUpdateDto dto)
     {
         if (toUpdate.Category == null)
             throw new InvalidOperationException($"{nameof(toUpdate.Category)} must be included.");
