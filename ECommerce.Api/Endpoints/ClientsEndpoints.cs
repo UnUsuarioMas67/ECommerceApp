@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using ECommerce.Api.Application.DTOs.Address;
 using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.DTOs.User;
 using ECommerce.Api.Application.Services.DataAccess;
