@@ -31,21 +31,10 @@ public static class RuleBuilderOptionsExtensions
             .WithMessage("Must not be in the future");
     }
 
-    public static IRuleBuilderOptions<T, string?> CanParseIntoDate<T>(this IRuleBuilder<T, string?> ruleBuilder)
+    public static IRuleBuilderOptions<T, string?> ParseableToDate<T>(this IRuleBuilder<T, string?> ruleBuilder)
     {
         return ruleBuilder
-            .Must(date => DateOnly.TryParse(date, out _))
-            .WithMessage("Not a valid date");
-    }
-
-    public static IRuleBuilderOptions<T, TProperty?> ExistsInDatabase<T, TProperty>(
-        this IRuleBuilder<T, TProperty?> ruleBuilder,
-        DbContext dbContext) where TProperty : class
-    {
-        var dbSet = dbContext.Set<TProperty>();
-        return ruleBuilder
-            .NotNull()
-            .MustAsync(async (entity, token) => await dbSet.AnyAsync(e => e == entity))
-            .WithMessage($"The specified {nameof(TProperty)} does not exist.");
+            .Must(date => DateOnly.TryParseExact(date, "yyyy-MM-dd", out _))
+            .WithMessage("{PropertyName} must be in valid date format. (yyyy-MM-dd)");
     }
 }

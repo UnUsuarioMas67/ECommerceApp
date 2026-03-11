@@ -19,6 +19,6 @@ public class UserCreateDtoValidator : AbstractValidator<UserCreateDto>
 
         RuleFor(u => u.BirthDate)
             .NotNull()
-            .CanParseIntoDate();
+            .ParseableToDate();
     }
 }

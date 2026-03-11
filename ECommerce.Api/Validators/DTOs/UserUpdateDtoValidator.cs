@@ -14,7 +14,7 @@ public class UserUpdateDtoValidator : AbstractValidator<UserUpdateDto>
             .Unless(u => u.Password == null);
 
         RuleFor(u => u.BirthDate)
-            .CanParseIntoDate()
+            .ParseableToDate()
             .Unless(u => u.BirthDate == null);
     }
 }
