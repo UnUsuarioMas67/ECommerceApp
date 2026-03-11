@@ -43,7 +43,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         return await context.Addresses
             .Include(a => a.Country)
             .Where(a => a.Country!.Cca2 == cca2)
-            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
+            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(a => mapper.MapToDto(a))
             .ToListAsync();
     }

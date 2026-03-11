@@ -42,7 +42,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
             .Include(cart => cart.Items)
             .ThenInclude(item => item.Product)
             .ThenInclude(product => product!.Category)
-            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
+            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(item => mapper.MapToDto(item))
             .ToListAsync();
     }
@@ -54,7 +54,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
             .ThenInclude(item => item.Product)
             .ThenInclude(product => product!.Category)
             .Where(c => c.ClientId == clientId)
-            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
+            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(item => mapper.MapToDto(item))
             .ToListAsync();
     }

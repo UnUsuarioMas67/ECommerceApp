@@ -5,19 +5,16 @@ namespace ECommerce.Api.Application.DTOs.Shared;
 public class PaginationQuery
 {
     public int? Limit { get; set; }
-    public int? Skip { get; set; }
-}
-
-public static class PaginationDefaults
-{
-    public const int Skip = 0;
-    public const int Limit = 100;
+    public int? Page { get; set; }
+    
+    public int LimitOrDefault => Limit ?? 20;
+    public int PageOrDefault => Page ?? 1;
 }
 
 public record PaginationInfo(
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] int? Skip, 
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] int? Limit)
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] int Page, 
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] int Limit)
 {
     public static implicit operator PaginationInfo(PaginationQuery query)
-        => new(query.Skip, query.Limit);
+        => new(query.PageOrDefault, query.LimitOrDefault);
 }

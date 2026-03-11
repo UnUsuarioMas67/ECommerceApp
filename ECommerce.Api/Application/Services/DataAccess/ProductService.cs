@@ -97,7 +97,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         var products = await context.Products
             .Include(p => p.Category)
             .Where(p => p.Category!.Name.Contains(search ?? ""))
-            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
+            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(product => mapper.MapToDto(product))
             .ToListAsync();
 
@@ -110,7 +110,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         return await context.Products
             .Include(p => p.Category)
             .Where(p => p.Name.Contains(search ?? "") && p.Category!.Id == categoryId)
-            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
+            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(product => mapper.MapToDto(product))
             .ToListAsync();
     }
@@ -121,7 +121,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         return await context.Products
             .Include(p => p.Category)
             .Where(p => p.Name.Contains(search ?? "") && p.Category!.Slug == categorySlug)
-            .Skip(pagination.Skip ?? PaginationDefaults.Skip).Take(pagination.Limit ?? PaginationDefaults.Limit)
+            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(product => mapper.MapToDto(product))
             .ToListAsync(); 
     }
