@@ -45,26 +45,31 @@ public class AddressMapper : IAddressMapper
         };
     }
 
-    public async Task<Address> GetUpdatedEntityAsync(Address address, AddressUpdateDto dto, ECommerceContext context)
+    public async Task ApplyUpdateToEntityAsync(Address toUpdate, AddressUpdateDto dto, ECommerceContext context)
     {
-        if (address.Country == null)
-            throw new InvalidOperationException($"{nameof(address.Country)} must be included.");
+        if (toUpdate.Country == null)
+            throw new InvalidOperationException($"{nameof(toUpdate.Country)} must be included.");
 
-        var updated = PropertyCopier.GetCopy(address);
+        if (dto.AddressLine1 != null && dto.AddressLine1 != toUpdate.AddressLine1)
+            toUpdate.AddressLine1 = dto.AddressLine1;
 
-        updated.AddressLine1 = dto.AddressLine1 ?? address.AddressLine1;
-        updated.AddressLine2 = dto.AddressLine2 ?? address.AddressLine2;
-        updated.City = dto.City ?? address.City;
-        updated.PostalCode = dto.PostalCode ?? address.PostalCode;
-        updated.Region = dto.Region ?? address.Region;
+        if (dto.AddressLine2 != null && dto.AddressLine2 != toUpdate.AddressLine2)
+            toUpdate.AddressLine2 = dto.AddressLine2;
 
-        if (dto.CountryCode != null)
+        if (dto.City != null && dto.City != toUpdate.City)
+            toUpdate.City = dto.City;
+
+        if (dto.PostalCode != null && dto.PostalCode != toUpdate.PostalCode)
+            toUpdate.PostalCode = dto.PostalCode;
+
+        if (dto.Region != null && dto.Region != toUpdate.Region)
+            toUpdate.Region = dto.Region;
+
+        if (dto.CountryCode != null && dto.CountryCode != toUpdate.Country.Cca2)
         {
             var country = await context.Countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
-            updated.Country = country;
-            updated.CountryCca2 = dto.CountryCode;
+            toUpdate.Country = country;
+            toUpdate.CountryCca2 = dto.CountryCode;
         }
-
-        return updated;
     }
 }

@@ -39,11 +39,9 @@ public class CartMapper(IProductMapper productMapper) : ICartMapper
         return cart;
     }
 
-    public async Task<Cart> GetUpdatedEntityAsync(Cart entity, CartUpdateDto dto, ECommerceContext context)
+    public async Task ApplyUpdateToEntityAsync(Cart toUpdate, CartUpdateDto dto, ECommerceContext context)
     {
-        var updated = PropertyCopier.GetCopy(entity);
-        updated.Items = await GetCartItems(updated, dto.Items, context);
-        return updated;
+        toUpdate.Items = await GetCartItems(toUpdate, dto.Items, context);
     }
 
     private async Task<ICollection<CartItem>> GetCartItems(Cart cart, IEnumerable<CartItemEntry> items, ECommerceContext context)

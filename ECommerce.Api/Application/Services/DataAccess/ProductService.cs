@@ -56,23 +56,25 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
 
     public async Task<Result<ProductResponseDto>> UpdateAsync(int productId, ProductUpdateDto dto)
     {
-        var product = await context.Products
+        var updated = await context.Products
             .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == productId);
 
-        if (product == null)
+        if (updated == null)
             return Errors.NotFound();
 
-        var updated = await mapper.GetUpdatedEntityAsync(product, dto, context);
+        await mapper.ApplyUpdateToEntityAsync(updated, dto, context);
 
         var validationResult = await validator.ValidateAsync(updated);
         if (!validationResult.IsValid)
+        {
+            await context.DisposeAsync();
             return Errors.ValidationError(validationResult.ToDictionary());
+        }
 
-        PropertyCopier.Mirror(updated, product);
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(product);
+        return mapper.ToDto(updated);
     }
 
     public async Task<ProductResponseDto?> DeleteAsync(int productId)

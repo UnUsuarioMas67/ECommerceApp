@@ -34,20 +34,25 @@ public class ClientMapper : IClientMapper
             CreatedAt = DateTime.UtcNow,
         };
 
-    public Client GetUpdatedEntity(Client client, UserUpdateDto dto)
+    public void ApplyUpdateToEntity(Client toUpdate, UserUpdateDto dto)
     {
-        var updated = PropertyCopier.GetCopy(client);
+        if (dto.FirstName != null && dto.FirstName != toUpdate.FirstName)
+            toUpdate.FirstName = dto.FirstName;
 
-        updated.FirstName = dto.FirstName ?? client.FirstName;
-        updated.LastName = dto.LastName ?? client.LastName;
-        updated.PhoneNumber = dto.PhoneNumber ?? client.PhoneNumber;
-        updated.BirthDate = !string.IsNullOrWhiteSpace(dto.BirthDate)
-            ? DateOnly.Parse(dto.BirthDate)
-            : client.BirthDate;
-        updated.PasswordHash = !string.IsNullOrWhiteSpace(dto.Password)
-            ? PasswordHasher.HashPassword(dto.Password)
-            : client.PasswordHash;
+        if (dto.LastName != null && dto.LastName != toUpdate.LastName)
+            toUpdate.LastName = dto.LastName;
 
-        return updated;
+        if (dto.PhoneNumber != null && dto.PhoneNumber != toUpdate.PhoneNumber)
+            toUpdate.PhoneNumber = dto.PhoneNumber;
+
+        if (DateOnly.TryParseExact(dto.BirthDate, "yyyy-MM-dd", out var birthDate) && birthDate != toUpdate.BirthDate)
+            toUpdate.BirthDate = birthDate;
+
+        if (!string.IsNullOrWhiteSpace(dto.Password))
+        {
+            var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            if (newPasswordHash != toUpdate.PasswordHash)
+                toUpdate.PasswordHash = newPasswordHash;
+        }
     }
 }

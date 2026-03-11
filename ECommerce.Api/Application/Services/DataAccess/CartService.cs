@@ -75,17 +75,19 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
 
     public async Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartUpdateDto dto)
     {
-        var cart = await context.Carts.FindAsync(cartId);
-        if (cart == null)
+        var updated = await context.Carts.FindAsync(cartId);
+        if (updated == null)
             return Errors.NotFound();
         
-        var updated = await mapper.GetUpdatedEntityAsync(cart, dto, context);
+        await mapper.ApplyUpdateToEntityAsync(updated, dto, context);
         
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)
+        {
+            await context.DisposeAsync();
             return Errors.ValidationError(validationResult.Error!.Details);
+        }
 
-        PropertyCopier.Mirror(updated, cart);
         await context.SaveChangesAsync();
          
         return mapper.ToDto(updated);

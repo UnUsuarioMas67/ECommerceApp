@@ -73,21 +73,23 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
     }
     
 
-    private async Task<Result<CategoryResponseDto>> UpdateAsync(Category? category, CategoryUpdateDto dto)
+    private async Task<Result<CategoryResponseDto>> UpdateAsync(Category? updated, CategoryUpdateDto dto)
     {
-        if (category == null)
+        if (updated == null)
             return Errors.NotFound();
 
-        var updated = mapper.GetUpdatedEntity(category, dto);
+        mapper.ApplyUpdateToEntity(updated, dto);
 
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)
+        {
+            await context.DisposeAsync();
             return Errors.ValidationError(validationResult.Error!.Details);
+        }
 
-        PropertyCopier.Mirror(updated, category);
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(category);
+        return mapper.ToDto(updated);
     }
 
     public async Task<Result<CategoryResponseDto>> UpdateAsync(int categoryId, CategoryUpdateDto dto)

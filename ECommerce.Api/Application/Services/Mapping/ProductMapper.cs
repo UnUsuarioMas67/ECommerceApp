@@ -14,7 +14,7 @@ public class ProductMapper : IProductMapper
     public ProductResponseDto ToDto(Product product)
     {
         if (product.Category == null)
-            throw new InvalidOperationException($"{nameof(product.Category)} must not be null.");
+            throw new InvalidOperationException($"{nameof(product.Category)} must be included.");
 
         return new ProductResponseDto
         {
@@ -46,24 +46,28 @@ public class ProductMapper : IProductMapper
         };
     }
 
-    public async Task<Product> GetUpdatedEntityAsync(Product product, ProductUpdateDto dto, ECommerceContext context)
+    public async Task ApplyUpdateToEntityAsync(Product toUpdate, ProductUpdateDto dto, ECommerceContext context)
     {
-        if (product.Category == null)
-            throw new InvalidOperationException($"{nameof(product.Category)} must not be null.");
+        if (toUpdate.Category == null)
+            throw new InvalidOperationException($"{nameof(toUpdate.Category)} must be included.");
+        
+        if (dto.Name != null && dto.Name != toUpdate.Name)
+            toUpdate.Name = dto.Name;
+        
+        if (dto.Description != null && dto.Description != toUpdate.Description)
+            toUpdate.Description = dto.Description;
+        
+        if (dto.Price != null && dto.Price != toUpdate.Price)
+            toUpdate.Price = dto.Price.Value;
+        
+        if (dto.ImageUrl != null && dto.ImageUrl != toUpdate.ImageUrl)
+            toUpdate.ImageUrl = dto.ImageUrl;
 
-        var updated = PropertyCopier.GetCopy(product);
-        updated.Name = dto.Name ?? updated.Name;
-        updated.Description = dto.Description ?? updated.Description;
-        updated.Price = dto.Price ?? updated.Price;
-        updated.ImageUrl = dto.ImageUrl ?? updated.ImageUrl;
-        
-        if (dto.Category != null)
+        if (dto.Category != null && dto.Category != toUpdate.Category.Slug)
         {
-            updated.Category = await FindCategory(dto.Category, context);
-            updated.CategoryId =  updated.Category?.Id;
+            toUpdate.Category = await FindCategory(dto.Category, context);
+            toUpdate.CategoryId =  toUpdate.Category?.Id;
         }
-        
-        return updated;
     }
 
     private static async Task<Category?> FindCategory(string category, ECommerceContext context)

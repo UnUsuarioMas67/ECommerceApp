@@ -20,7 +20,7 @@ public interface IAddressesService
     Task<string?> GetCountryNameAsync(string cca2);
 }
 
-public class AddressesService(ECommerceContext context, IValidator<Address> validator, IAddressMapper mapper) 
+public class AddressesService(ECommerceContext context, IValidator<Address> validator, IAddressMapper mapper)
     : IAddressesService
 {
     public async Task<AddressResponseDto?> GetByIdAsync(int addressId)
@@ -64,23 +64,25 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
 
     public async Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto)
     {
-        var address = await context.Addresses
+        var updated = await context.Addresses
             .Include(a => a.Country)
             .FirstOrDefaultAsync(a => a.Id == addressId);
-        
-        if (address == null)
+
+        if (updated == null)
             return Errors.NotFound();
 
-        var updated = await mapper.GetUpdatedEntityAsync(address, dto, context);
+        await mapper.ApplyUpdateToEntityAsync(updated, dto, context);
 
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)
+        {
+            await context.DisposeAsync();
             return Errors.ValidationError(validationResult.Error!.Details);
+        }
 
-        PropertyCopier.Mirror(updated, address);
         await context.SaveChangesAsync();
 
-        return mapper.ToDto(address);
+        return mapper.ToDto(updated);
     }
 
     public async Task<AddressResponseDto?> DeleteAsync(int addressId)
@@ -99,7 +101,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
             .Where(c => c.Cca2 == cca2)
             .Select(c => c.Name)
             .FirstOrDefaultAsync();
-    
+
 
     private async Task<Result> Validate(Address address)
     {
@@ -112,14 +114,14 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
 
         if (clientValid && countryValid)
             return Result.Success();
-        
+
         var errorDetails = new Dictionary<string, string[]>();
-        
+
         if (!clientValid)
             errorDetails.Add(nameof(address.Client), ["Invalid client"]);
         if (!countryValid)
             errorDetails.Add(nameof(address.Country), ["Invalid country"]);
-        
+
         return Errors.ValidationError(errorDetails);
     }
 
@@ -132,6 +134,5 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
     }
 
     private async Task<bool> CountryIsValid(Address address)
-        => await context.Countries.AnyAsync(
-            c => c.Cca2 == address.CountryCca2 || c == address.Country);
+        => await context.Countries.AnyAsync(c => c.Cca2 == address.CountryCca2 || c == address.Country);
 }
