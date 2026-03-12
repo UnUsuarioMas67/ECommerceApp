@@ -54,7 +54,7 @@ public static class RuleBuilderOptionsExtensions
                 
                 return await clients.AnyAsync(c => c.Id == client.Id, token);
             })
-            .WithMessage("The specified client does not exist");
+            .WithMessage("The specified client doesn't seem to exist");
     }
     
     public static IRuleBuilderOptions<T, int?> ClientExists<T>(

@@ -67,7 +67,7 @@ public static class AddressValidationExtensions
             .NotNull()
             .MustAsync(async (country, token)
                 => await countries.AnyAsync(c => country != null && c.Cca2 == country.Cca2, token))
-            .WithMessage("The specified country does not exist");
+            .WithMessage("The specified country doesn't seem to exist");
     }
 
     public static IRuleBuilderOptions<Address, string> CountryExists(
