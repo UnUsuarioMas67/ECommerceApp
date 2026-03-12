@@ -2,6 +2,7 @@
 using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Shared;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -75,19 +76,31 @@ public static class ProductEndpoints
     private static async Task<Results<Created<ProductResponseDto>, ValidationProblem>> CreateProduct(
         HttpContext httpContext,
         IProductService productService,
-        ProductCreateDto dto)
+        ProductCreateDto dto,
+        IValidator<ProductCreateDto> validator)
     {
+        var validation = await validator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return TypedResults.ValidationProblem(validation.ToDictionary());
+        
         var result = await productService.CreateAsync(dto);
-        var created = result.Value!;
+        var created = result.Value;
         var path = httpContext.Request.Path;
         return result.IsSuccess
-            ? TypedResults.Created($"{path}/{created.Id}", created)
+            ? TypedResults.Created($"{path}/{created?.Id}", created)
             : TypedResults.ValidationProblem(result.Error!.Details);
     }
 
     private static async Task<Results<Ok<ProductResponseDto>, ValidationProblem, NotFound>> UpdateProduct(
-        IProductService productService, int id, ProductUpdateDto dto)
+        IProductService productService, 
+        int id, 
+        ProductUpdateDto dto,
+        IValidator<ProductUpdateDto> validator)
     {
+        var validation = await validator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return TypedResults.ValidationProblem(validation.ToDictionary());
+        
         var result = await productService.UpdateAsync(id, dto);
         if (result is { IsSuccess: false, Error.ErrorType: ErrorType.NotFound })
             return TypedResults.NotFound();
