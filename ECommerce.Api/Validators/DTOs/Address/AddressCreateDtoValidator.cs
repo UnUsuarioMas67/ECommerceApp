@@ -1,7 +1,7 @@
 ﻿using ECommerce.Api.Application.DTOs.Address;
 using FluentValidation;
 
-namespace ECommerce.Api.Validators.DTOs;
+namespace ECommerce.Api.Validators.DTOs.Address;
 
 public class AddressCreateDtoValidator : AbstractValidator<AddressCreateDto>
 {

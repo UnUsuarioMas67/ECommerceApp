@@ -3,7 +3,7 @@ using ECommerce.Api.Domain.Validation;
 using ECommerce.Api.Extensions;
 using FluentValidation;
 
-namespace ECommerce.Api.Validators.DTOs;
+namespace ECommerce.Api.Validators.DTOs.User;
 
 public class UserCreateDtoValidator : AbstractValidator<UserCreateDto>
 {
