@@ -1,5 +1,6 @@
 ﻿using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Domain.Validation;
+using ECommerce.Api.Extensions;
 using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,9 @@ public class CategoryValidator : AbstractValidator<Category>
 {
     public CategoryValidator(ECommerceContext context)
     {
+        RuleFor(c => c.Id)
+            .IdIsDefaultOnNewEntry(context.Entry);
+        
         RuleFor(c => c.Slug)
             .NotEmpty()
             .NotANumber()
