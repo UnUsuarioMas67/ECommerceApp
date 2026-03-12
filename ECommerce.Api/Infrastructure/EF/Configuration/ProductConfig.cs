@@ -27,5 +27,10 @@ public class ProductConfig : IEntityTypeConfiguration<Product>
 
         builder.Property(x => x.Stock)
             .IsRequired();
+        
+        builder.HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
