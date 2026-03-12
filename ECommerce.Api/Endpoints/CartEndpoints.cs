@@ -47,13 +47,17 @@ public static class CartEndpoints
         return TypedResults.Ok(carts);
     }
 
-    private static async Task<Results<Ok<CartResponseDto>, ValidationProblem>> CreateCart(
+    private static async Task<Results<Created<CartResponseDto>, ValidationProblem>> CreateCart(
+        HttpContext httpContext,
         ICartsService cartsService,
         CartCreateDto dto)
     {
         var result = await cartsService.CreateAsync(dto);
+        var created = result.Value;
+        var path = httpContext.Request.Path.Value;
+        
         return result.IsSuccess 
-            ? TypedResults.Ok(result.Value) 
+            ? TypedResults.Created($"{path}/{created?.Id}", created) 
             : TypedResults.ValidationProblem(result.Error!.Details);
     }
     
