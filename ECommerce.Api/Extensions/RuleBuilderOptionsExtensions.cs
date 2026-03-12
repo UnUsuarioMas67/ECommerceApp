@@ -35,6 +35,44 @@ public static class RuleBuilderOptionsExtensions
     {
         return ruleBuilder
             .Must(date => DateOnly.TryParseExact(date, "yyyy-MM-dd", out _))
-            .WithMessage("{PropertyName} must be in valid date format. (yyyy-MM-dd)");
+            .WithMessage("{PropertyName} must be in valid date format (yyyy-MM-dd)");
+    }
+
+    public static IRuleBuilderOptions<T, Client?> ClientExists<T>(
+        this IRuleBuilder<T, Client?> ruleBuilder,
+        DbSet<Client> clients, 
+        bool isOptional = false)
+    {
+        return ruleBuilder
+            .NotNull()
+            .WithMessage("Client is required")
+            .Unless(_ => isOptional)
+            .MustAsync(async (client, token) =>
+            {
+                if (client == null)
+                    return true;
+                
+                return await clients.AnyAsync(c => c.Id == client.Id, token);
+            })
+            .WithMessage("The specified client does not exist");
+    }
+    
+    public static IRuleBuilderOptions<T, int?> ClientExists<T>(
+        this IRuleBuilder<T, int?> ruleBuilder,
+        DbSet<Client> clients, 
+        bool isOptional = false)
+    {
+        return ruleBuilder
+            .NotNull()
+            .WithMessage("Client is required")
+            .Unless(_ => isOptional)
+            .MustAsync(async (id, token) =>
+            {
+                if (id == null)
+                    return true;
+                
+                return await clients.AnyAsync(c => c.Id == id, token);
+            })
+            .WithMessage("Could not find client with the specified id");
     }
 }

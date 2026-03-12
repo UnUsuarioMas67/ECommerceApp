@@ -52,10 +52,10 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
     {
         var address = await mapper.MapToEntityAsync(dto);
 
-        var validationResult = await Validate(address);
-        if (!validationResult.IsSuccess)
-            return Errors.ValidationError(validationResult.Error!.Details);
-
+        var validation = await validator.ValidateAsync(address);
+        if (!validation.IsValid)
+            return Errors.ValidationError(validation.ToDictionary());
+        
         await context.Addresses.AddAsync(address);
         await context.SaveChangesAsync();
 
@@ -73,11 +73,11 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
 
         await mapper.ApplyUpdateAsync(updated, dto);
 
-        var validationResult = await Validate(updated);
-        if (!validationResult.IsSuccess)
+        var validation = await validator.ValidateAsync(updated);
+        if (!validation.IsValid)
         {
             await context.DisposeAsync();
-            return Errors.ValidationError(validationResult.Error!.Details);
+            return Errors.ValidationError(validation.ToDictionary());
         }
 
         await context.SaveChangesAsync();
@@ -101,38 +101,4 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
             .Where(c => c.Cca2 == cca2)
             .Select(c => c.Name)
             .FirstOrDefaultAsync();
-
-
-    private async Task<Result> Validate(Address address)
-    {
-        var validation = await validator.ValidateAsync(address);
-        if (!validation.IsValid)
-            return Errors.ValidationError(validation.ToDictionary());
-
-        var clientValid = await ClientIsValid(address);
-        var countryValid = await CountryIsValid(address);
-
-        if (clientValid && countryValid)
-            return Result.Success();
-
-        var errorDetails = new Dictionary<string, string[]>();
-
-        if (!clientValid)
-            errorDetails.Add(nameof(address.Client), ["Invalid client"]);
-        if (!countryValid)
-            errorDetails.Add(nameof(address.Country), ["Invalid country"]);
-
-        return Errors.ValidationError(errorDetails);
-    }
-
-    private async Task<bool> ClientIsValid(Address address)
-    {
-        if (address.Client == null && address.ClientId == 0)
-            return true;
-
-        return await context.Clients.AnyAsync(c => c.Id == address.ClientId || c == address.Client);
-    }
-
-    private async Task<bool> CountryIsValid(Address address)
-        => await context.Countries.AnyAsync(c => c.Cca2 == address.CountryCca2 || c == address.Country);
 }

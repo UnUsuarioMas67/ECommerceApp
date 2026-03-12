@@ -8,7 +8,8 @@ public class AddressCreateDtoValidator : AbstractValidator<AddressCreateDto>
     public AddressCreateDtoValidator()
     {
         RuleFor(a => a.ClientId)
-            .NotEmpty();
+            .NotNull()
+            .GreaterThan(0);
 
         RuleFor(a => a.CountryCode)
             .NotEmpty()
