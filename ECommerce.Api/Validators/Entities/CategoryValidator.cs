@@ -17,7 +17,7 @@ public class CategoryValidator : AbstractValidator<Category>
         RuleFor(c => c.Slug)
             .NotEmpty()
             .NotANumber()
-            .SlugNotDuplicate(context.Categories)
+            .SlugIsUnique(context.Categories)
             .MaximumLength(TextLengthRules.Name);
 
         RuleFor(c => c.Name)
@@ -35,7 +35,7 @@ public static class CategoryValidationExtensions
             .WithMessage("{PropertyName} must not be a number.");
     }
 
-    public static IRuleBuilderOptions<Category, string> SlugNotDuplicate(
+    public static IRuleBuilderOptions<Category, string> SlugIsUnique(
         this IRuleBuilder<Category, string> ruleBuilder, DbSet<Category> categories)
     {
         return ruleBuilder

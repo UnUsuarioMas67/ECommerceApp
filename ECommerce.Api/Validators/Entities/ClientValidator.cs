@@ -36,18 +36,18 @@ public class ClientValidator : AbstractValidator<Client>
         RuleFor(u => u.Email)
             .NotEmpty()
             .MaximumLength(TextLengthRules.Email)
-            .EmailNotDuplicate(context.Clients);
+            .EmailIsUnique(context.Clients);
 
         RuleFor(u => u.PhoneNumber)
             .NotEmpty()
             .MaximumLength(TextLengthRules.PhoneNumber)
-            .PhoneNumberNotDuplicate(context.Clients);
+            .PhoneNumberIsUnique(context.Clients);
     }
 }
 
 public static class ClientValidationExtensions
 {
-    public static IRuleBuilderOptions<Client, string> EmailNotDuplicate(
+    public static IRuleBuilderOptions<Client, string> EmailIsUnique(
         this IRuleBuilder<Client, string> ruleBuilder, DbSet<Client> clients)
     {
         return ruleBuilder
@@ -56,7 +56,7 @@ public static class ClientValidationExtensions
             .WithMessage("A client with that email already exists.");
     }
 
-    public static IRuleBuilderOptions<Client, string> PhoneNumberNotDuplicate(
+    public static IRuleBuilderOptions<Client, string> PhoneNumberIsUnique(
         this IRuleBuilder<Client, string> ruleBuilder, DbSet<Client> clients)
     {
         return ruleBuilder
