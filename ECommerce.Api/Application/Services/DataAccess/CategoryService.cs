@@ -62,9 +62,9 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
     {
         var created = mapper.MapToEntity(dto);
 
-        var validationResult = await Validate(created);
-        if (!validationResult.IsSuccess)
-            return Errors.ValidationError(validationResult.Error!.Details);
+        var validation = await validator.ValidateAsync(created);
+        if (!validation.IsValid)
+            return Errors.ValidationError(validation.ToDictionary());
 
         await context.Categories.AddAsync(created);
         await context.SaveChangesAsync();
@@ -80,11 +80,11 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
 
         mapper.ApplyUpdate(updated, dto);
 
-        var validationResult = await Validate(updated);
-        if (!validationResult.IsSuccess)
+        var validation = await validator.ValidateAsync(updated);
+        if (!validation.IsValid)
         {
             await context.DisposeAsync();
-            return Errors.ValidationError(validationResult.Error!.Details);
+            return Errors.ValidationError(validation.ToDictionary());
         }
 
         await context.SaveChangesAsync();
