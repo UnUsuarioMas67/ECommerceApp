@@ -127,19 +127,4 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         var category = await context.Categories.FirstOrDefaultAsync(c => c.Slug == categorySlug);
         return await DeleteAsync(category);
     }
-
-
-    private async Task<Result> Validate(Category category)
-    {
-        var validation = await validator.ValidateAsync(category);
-        if (!validation.IsValid)
-            return Errors.ValidationError(validation.ToDictionary());
-
-        var slugIsDuplicate = await context.Categories.AnyAsync(c 
-            => c.Slug == category.Slug && c.Id != category.Id);
-        
-        return slugIsDuplicate 
-            ? Errors.ValidationError(nameof(category.Slug), "A category with the same slug already exists.") 
-            : Result.Success();
-    }
 }
