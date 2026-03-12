@@ -52,7 +52,7 @@ public static class RuleBuilderOptionsExtensions
                 if (client == null)
                     return true;
                 
-                return await clients.AnyAsync(c => c.Id == client.Id, token);
+                return await clients.AnyAsync(c => c == client, token);
             })
             .WithMessage("The specified client doesn't seem to exist");
     }

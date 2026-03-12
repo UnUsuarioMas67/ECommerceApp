@@ -66,7 +66,7 @@ public static class AddressValidationExtensions
         return ruleBuilder
             .NotNull()
             .MustAsync(async (country, token)
-                => await countries.AnyAsync(c => country != null && c.Cca2 == country.Cca2, token))
+                => await countries.AnyAsync(c => country != null && c == country, token))
             .WithMessage("The specified country doesn't seem to exist");
     }
 
