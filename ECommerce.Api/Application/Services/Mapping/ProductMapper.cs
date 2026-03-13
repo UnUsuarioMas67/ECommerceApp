@@ -9,8 +9,8 @@ public class ProductMapper(ECommerceContext context)
 {
     public ProductResponseDto MapToDto(Product product)
     {
-        if (product.Category == null)
-            throw new InvalidOperationException($"{nameof(product.Category)} must be included.");
+        // if (product.Category == null)
+        //     throw new InvalidOperationException($"{nameof(product.Category)} must be included.");
 
         return new ProductResponseDto
         {
@@ -19,7 +19,7 @@ public class ProductMapper(ECommerceContext context)
             Description = product.Description,
             Price = product.Price,
             Sku = product.Sku,
-            Category = product.Category.Slug,
+            Category = product.Category?.Slug,
             ImageUrl = product.ImageUrl,
             Stock = product.Stock,
         };
@@ -27,7 +27,8 @@ public class ProductMapper(ECommerceContext context)
 
     public async Task<Product> MapToEntityAsync(ProductCreateDto dto)
     {
-        var category = await FindCategory(dto.Category, context);
+        // If the category can't be found, a dummy Category object is used to fail validation
+        var category = await FindCategory(dto.Category) ?? new Category();
 
         return new Product
         {
@@ -36,7 +37,7 @@ public class ProductMapper(ECommerceContext context)
             Price = dto.Price,
             Sku = dto.Sku,
             Category = category,
-            CategoryId = category?.Id,
+            CategoryId = category.Id,
             ImageUrl = dto.ImageUrl,
             Stock = dto.InitialStock
         };
@@ -44,29 +45,31 @@ public class ProductMapper(ECommerceContext context)
 
     public async Task ApplyUpdateAsync(Product toUpdate, ProductUpdateDto dto)
     {
-        if (toUpdate.Category == null)
-            throw new InvalidOperationException($"{nameof(toUpdate.Category)} must be included.");
-        
+        // if (toUpdate.Category == null)
+        //     throw new InvalidOperationException($"{nameof(toUpdate.Category)} must be included.");
+
         if (dto.Name != null && dto.Name != toUpdate.Name)
             toUpdate.Name = dto.Name;
-        
+
         if (dto.Description != null && dto.Description != toUpdate.Description)
             toUpdate.Description = dto.Description;
-        
+
         if (dto.Price != null && dto.Price != toUpdate.Price)
             toUpdate.Price = dto.Price.Value;
-        
+
         if (dto.ImageUrl != null && dto.ImageUrl != toUpdate.ImageUrl)
             toUpdate.ImageUrl = dto.ImageUrl;
 
-        if (dto.Category != null && dto.Category != toUpdate.Category.Slug)
+        if (dto.Category != null && dto.Category != toUpdate.Category?.Slug)
         {
-            toUpdate.Category = await FindCategory(dto.Category, context);
-            toUpdate.CategoryId =  toUpdate.Category?.Id;
+            // If the category can't be found, a dummy Category object is used to fail validation
+            var category = await FindCategory(dto.Category) ?? new Category();
+            toUpdate.Category = category;
+            toUpdate.CategoryId = category.Id;
         }
     }
 
-    private static async Task<Category?> FindCategory(string category, ECommerceContext context)
+    private async Task<Category?> FindCategory(string category)
     {
         if (int.TryParse(category, out var categoryId))
             return await context.Categories.FindAsync(categoryId);
