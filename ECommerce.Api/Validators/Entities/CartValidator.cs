@@ -1,27 +1,25 @@
 ﻿using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Extensions;
+using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
 
 namespace ECommerce.Api.Validators.Entities;
 
 public class CartValidator : AbstractValidator<Cart>
 {
-    public CartValidator()
+    public CartValidator(IValidator<CartItem> cartItemValidator, ECommerceContext context)
     {
-        When(c => c.Client == null, () =>
+        Unless(c => c.ClientId == 0, () =>
         {
             RuleFor(c => c.ClientId)
-                .GreaterThan(0)
-                .WithMessage("Client is required");
-        });
-
-        When(c => c.ClientId <= 0, () =>
+                .ClientIsValid(context.Clients);
+        }).Otherwise(() =>
         {
             RuleFor(c => c.Client)
-                .NotNull()
-                .WithMessage("Client is required");
+                .ClientIsValid(context.Clients);
         });
 
-        RuleFor(c => c.Items).NotEmpty();   
-        RuleForEach(c => c.Items).SetValidator(new CartItemValidator());
+        RuleFor(c => c.Items).NotEmpty();
+        RuleForEach(c => c.Items).SetValidator(cartItemValidator);
     }
 }

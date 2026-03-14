@@ -31,7 +31,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         var cart = await context.Carts
             .Include(cart => cart.Items)
             .ThenInclude(item => item.Product)
-            .ThenInclude(product => product!.Category)
+            .ThenInclude(product => product.Category)
             .FirstOrDefaultAsync(c => c.Id == cartId);
         return cart != null ? mapper.MapToDto(cart) : null;
     }
@@ -62,14 +62,14 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
     public async Task<Result<CartResponseDto>> CreateAsync(CartCreateDto dto)
     {
         var created = await mapper.MapToEntityAsync(dto);
-        
+
         var validationResult = await Validate(created);
         if (!validationResult.IsSuccess)
             return Errors.ValidationError(validationResult.Error!.Details);
-        
+
         await context.Carts.AddAsync(created);
         await context.SaveChangesAsync();
-        
+
         return mapper.MapToDto(created);
     }
 
@@ -78,14 +78,14 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         var updated = await context.Carts.FindAsync(cartId);
         if (updated == null)
             return Errors.NotFound();
-        
+
         await mapper.ApplyUpdateAsync(updated, dto);
-        
+
         // Delete previous cart item entries
         await context.CartItems
             .Where(ci => ci.CartId == updated.Id)
             .ExecuteDeleteAsync();
-        
+
         var validationResult = await Validate(updated);
         if (!validationResult.IsSuccess)
         {
@@ -94,7 +94,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         }
 
         await context.SaveChangesAsync();
-        
+
         return mapper.MapToDto(updated);
     }
 
@@ -103,10 +103,10 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         var deleted = await context.Carts.FindAsync(cartId);
         if (deleted == null)
             return null;
-        
+
         context.Carts.Remove(deleted);
         await context.SaveChangesAsync();
-        
+
         return mapper.MapToDto(deleted);
     }
 
@@ -115,21 +115,15 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         var validation = await validator.ValidateAsync(cart);
         if (!validation.IsValid)
             return Errors.ValidationError(validation.ToDictionary());
-        
-        var clientExists = await ClientExists(cart.ClientId);
+
         var invalidItems = await GetInvalidCartItems(cart.Items);
-        
-        if (clientExists && invalidItems.Length == 0)
+
+        if (invalidItems.Length == 0)
             return Result.Success();
         
         var errorDetails = new Dictionary<string, string[]>();
-        if (!clientExists)
-            errorDetails.Add(nameof(cart.Client), [$"Invalid client id: {cart.ClientId}"]);
-        if (invalidItems.Length != 0)
-        {
-            var ids = string.Join(", ", invalidItems);
-            errorDetails.Add(nameof(cart.Items), [$"Could not find the following product id(s): {ids}"]);
-        }
+        var ids = string.Join(", ", invalidItems);
+        errorDetails.Add(nameof(cart.Items), [$"Could not find the following product id(s): {ids}"]);
         
         return Errors.ValidationError(errorDetails);
     }
@@ -144,7 +138,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
             .Where(p => itemProductIds.Contains(p.Id))
             .Select(p => p.Id)
             .ToListAsync();
-        
+
         return itemProductIds.Except(dbProductIds).ToArray();
     }
 }
