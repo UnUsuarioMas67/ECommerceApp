@@ -40,7 +40,6 @@ public class ProductValidator : AbstractValidator<Product>
         Unless(p => p.CategoryId == null, () =>
         {
             RuleFor(p => p.CategoryId)
-                .GreaterThan(0)
                 .CategoryIsValid(context.Categories);
         })
         .Otherwise(() =>
@@ -57,12 +56,12 @@ public static class ProductValidationExtensions
         this IRuleBuilder<Product, int?> ruleBuilder, DbSet<Category> categories)
     {
         return ruleBuilder
+            .GreaterThan(0)
             .MustAsync(async (categoryId, token) =>
             {
                 if (categoryId == null)
                     return true;
-                if (categoryId <= 0)
-                    return false;
+                
                 return await categories.AnyAsync(c => c.Id == categoryId, token);
             })
             .WithMessage("The specified category doesn't seem to exist");

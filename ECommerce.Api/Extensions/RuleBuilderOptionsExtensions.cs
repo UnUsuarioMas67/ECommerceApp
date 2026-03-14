@@ -38,14 +38,14 @@ public static class RuleBuilderOptionsExtensions
             .WithMessage("{PropertyName} must be in valid date format (yyyy-MM-dd)");
     }
 
-    public static IRuleBuilderOptions<T, Client?> ClientExists<T>(
+    public static IRuleBuilderOptions<T, Client?> ClientIsValid<T>(
         this IRuleBuilder<T, Client?> ruleBuilder,
         DbSet<Client> clients, 
         bool isOptional = false)
     {
         return ruleBuilder
             .NotNull()
-            .WithMessage("Client is required")
+            .WithMessage("{PropertyName} is required")
             .Unless(_ => isOptional)
             .MustAsync(async (client, token) =>
             {
@@ -57,15 +57,12 @@ public static class RuleBuilderOptionsExtensions
             .WithMessage("The specified client doesn't seem to exist");
     }
     
-    public static IRuleBuilderOptions<T, int?> ClientExists<T>(
+    public static IRuleBuilderOptions<T, int?> ClientIsValid<T>(
         this IRuleBuilder<T, int?> ruleBuilder,
-        DbSet<Client> clients, 
-        bool isOptional = false)
+        DbSet<Client> clients)
     {
         return ruleBuilder
-            .NotNull()
-            .WithMessage("Client is required")
-            .Unless(_ => isOptional)
+            .GreaterThan(0)
             .MustAsync(async (id, token) =>
             {
                 if (id == null)
@@ -73,6 +70,17 @@ public static class RuleBuilderOptionsExtensions
                 
                 return await clients.AnyAsync(c => c.Id == id, token);
             })
+            .WithMessage("Could not find client with the specified id");
+    }
+    
+    public static IRuleBuilderOptions<T, int> ClientIsValid<T>(
+        this IRuleBuilder<T, int> ruleBuilder,
+        DbSet<Client> clients)
+    {
+        return ruleBuilder
+            .GreaterThan(0)
+            .NotEmpty().WithMessage("{PropertyName} is required")
+            .MustAsync(async (id, token) => await clients.AnyAsync(c => c.Id == id, token))
             .WithMessage("Could not find client with the specified id");
     }
 }

@@ -37,12 +37,12 @@ public class AddressValidator : AbstractValidator<Address>
         Unless(a => a.ClientId == null, () =>
             {
                 RuleFor(a => a.ClientId)
-                    .ClientExists(context.Clients, true);
+                    .ClientIsValid(context.Clients);
             })
             .Otherwise(() =>
             {
                 RuleFor(a => a.Client)
-                    .ClientExists(context.Clients, true);
+                    .ClientIsValid(context.Clients, true);
             });
 
         Unless(a => string.IsNullOrWhiteSpace(a.CountryCca2), () =>
