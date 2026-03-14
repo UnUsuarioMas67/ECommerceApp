@@ -63,9 +63,9 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
     {
         var created = await mapper.MapToEntityAsync(dto);
 
-        var validationResult = await Validate(created);
-        if (!validationResult.IsSuccess)
-            return Errors.ValidationError(validationResult.Error!.Details);
+        var validationResult = await validator.ValidateAsync(created);
+        if (!validationResult.IsValid)
+            return Errors.ValidationError(validationResult.ToDictionary());
 
         await context.Carts.AddAsync(created);
         await context.SaveChangesAsync();
@@ -86,11 +86,11 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
             .Where(ci => ci.CartId == updated.Id)
             .ExecuteDeleteAsync();
 
-        var validationResult = await Validate(updated);
-        if (!validationResult.IsSuccess)
+        var validationResult = await validator.ValidateAsync(updated);
+        if (!validationResult.IsValid)
         {
             await context.DisposeAsync();
-            return Errors.ValidationError(validationResult.Error!.Details);
+            return Errors.ValidationError(validationResult.ToDictionary());
         }
 
         await context.SaveChangesAsync();
@@ -108,37 +108,5 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         await context.SaveChangesAsync();
 
         return mapper.MapToDto(deleted);
-    }
-
-    private async Task<Result> Validate(Cart cart)
-    {
-        var validation = await validator.ValidateAsync(cart);
-        if (!validation.IsValid)
-            return Errors.ValidationError(validation.ToDictionary());
-
-        var invalidItems = await GetInvalidCartItems(cart.Items);
-
-        if (invalidItems.Length == 0)
-            return Result.Success();
-        
-        var errorDetails = new Dictionary<string, string[]>();
-        var ids = string.Join(", ", invalidItems);
-        errorDetails.Add(nameof(cart.Items), [$"Could not find the following product id(s): {ids}"]);
-        
-        return Errors.ValidationError(errorDetails);
-    }
-
-    private async Task<bool> ClientExists(int clientId)
-        => await context.Clients.AnyAsync(c => c.Id == clientId);
-
-    private async Task<int[]> GetInvalidCartItems(ICollection<CartItem> items)
-    {
-        var itemProductIds = items.Select(item => item.ProductId).Distinct().ToList();
-        var dbProductIds = await context.Products
-            .Where(p => itemProductIds.Contains(p.Id))
-            .Select(p => p.Id)
-            .ToListAsync();
-
-        return itemProductIds.Except(dbProductIds).ToArray();
     }
 }

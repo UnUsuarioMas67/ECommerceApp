@@ -40,6 +40,7 @@ public class CartItemMapper(ProductMapper productMapper, ECommerceContext contex
         return groupedItems.Select(i => new CartItem
         {
             Cart = cart,
+            CartId = cart.Id,
             Quantity = i.Quantity,
             ProductId = i.ProductId,
             Product = products.FirstOrDefault(p => p.Id == i.ProductId)
