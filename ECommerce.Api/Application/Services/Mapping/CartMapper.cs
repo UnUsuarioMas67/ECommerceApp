@@ -37,23 +37,4 @@ public class CartMapper(CartItemMapper cartItemMapper, ECommerceContext context)
     {
         toUpdate.Items = await cartItemMapper.MapListToEntitiesAsync(toUpdate, dto.Items.ToList());
     }
-
-    private async Task<ICollection<CartItem>> GetCartItems(Cart cart, IEnumerable<CartItemCreate> items)
-    {
-        var cartItemEntries = items.ToList();
-        var itemProductIds = cartItemEntries.Select(i => i.ProductId).Distinct();
-        
-        var products = await context.Products
-            .Include(p => p.Category)
-            .Where(p => itemProductIds.Contains(p.Id))
-            .ToListAsync();
-        
-        return cartItemEntries.Select(i => new CartItem
-        {
-            Cart = cart,
-            Quantity = i.Quantity,
-            ProductId = i.ProductId,
-            Product = products.FirstOrDefault(p => p.Id == i.ProductId)
-        }).ToList();
-    }
 }
