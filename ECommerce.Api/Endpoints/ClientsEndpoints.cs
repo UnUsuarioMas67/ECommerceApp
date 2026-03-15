@@ -88,7 +88,7 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Results<Ok<UserResponseDto>, ValidationProblem, NotFound>> UpdateClient(
+    private static async Task<Results<Ok<UserResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<Error>>> UpdateClient(
         IClientsService clientsService,
         int id,
         UserUpdateDto dto,
@@ -99,12 +99,15 @@ public static class ClientsEndpoints
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
         var result = await clientsService.UpdateAsync(id, dto);
-        if (result.Error is NotFoundError)
-            return TypedResults.NotFound();
+        if (result.IsSuccess)
+            return TypedResults.Ok(result.Value);
 
-        return result.IsSuccess
-            ? TypedResults.Ok(result.Value)
-            : TypedResults.ValidationProblem(((ValidationError)result.Error).Details);
+        return result.Error switch
+        {
+            NotFoundError => TypedResults.NotFound(),
+            ValidationError error => TypedResults.ValidationProblem(error.Details),
+            _ => TypedResults.UnprocessableEntity(result.Error)
+        };
     }
 
 
