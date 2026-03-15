@@ -3,6 +3,7 @@ using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.DTOs.User;
 using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Shared;
+using ECommerce.Api.Shared.Errors;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -62,21 +63,28 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Results<Created<UserResponseDto>, ValidationProblem>> CreateClient(
-        HttpContext httpContext,
-        IClientsService clientsService,
-        UserCreateDto dto,
-        IValidator<UserCreateDto> validator)
+    private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<Error>>> 
+        CreateClient(
+            HttpContext httpContext,
+            IClientsService clientsService,
+            UserCreateDto dto,
+            IValidator<UserCreateDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
         var result = await clientsService.CreateAsync(dto);
-        var path = httpContext.Request.Path;
-        return result.IsSuccess
-            ? TypedResults.Created($"{path}/{result.Value!.Id}", result.Value)
-            : TypedResults.ValidationProblem(result.Error!.Details);
+        if (result.IsSuccess)
+        {
+            var path = httpContext.Request.Path;
+            return TypedResults.Created($"{path}/{result.Value!.Id}", result.Value);
+        }
+
+        if (result.Error is ValidationError error)
+            return TypedResults.ValidationProblem(error.Details);
+        
+        return TypedResults.UnprocessableEntity(result.Error);
     }
 
 
@@ -91,10 +99,12 @@ public static class ClientsEndpoints
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
         var result = await clientsService.UpdateAsync(id, dto);
-        if (result.Error?.ErrorType == ErrorType.NotFound)
+        if (result.Error is NotFoundError)
             return TypedResults.NotFound();
 
-        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.ValidationProblem(result.Error!.Details);
+        return result.IsSuccess
+            ? TypedResults.Ok(result.Value)
+            : TypedResults.ValidationProblem(((ValidationError)result.Error).Details);
     }
 
 

@@ -4,6 +4,7 @@ using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
+using ECommerce.Api.Shared.Errors;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,11 +45,9 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
     {
         var client = mapper.MapToEntity(dto);
 
-        var validation = await validator.ValidateAsync(client);
-        if (!validation.IsValid)
-        {
-            return Errors.ValidationError(validation.ToDictionary());
-        }
+        var verification = await VerifyClient(client);
+        if (!verification.IsSuccess)
+            return verification.Error;
 
         await context.Clients.AddAsync(client);
         await context.SaveChangesAsync();
@@ -61,15 +60,15 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         // TODO Rewrite UpdateAsync methods in all services
         var updated = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
         if (updated == null)
-            return Errors.NotFound();
+            return new NotFoundError();
 
         mapper.ApplyUpdate(updated, dto);
 
-        var validation = await validator.ValidateAsync(updated);
-        if (!validation.IsValid)
+        var verification = await VerifyClient(updated);
+        if (!verification.IsSuccess)
         {
             await context.DisposeAsync();
-            return Errors.ValidationError(validation.ToDictionary());
+            return verification.Error;
         }
 
         await context.SaveChangesAsync();
@@ -88,4 +87,25 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
 
         return mapper.MapToDto(client);
     }
+
+    private async Task<Result> VerifyClient(Client client)
+    {
+        var validation = await validator.ValidateAsync(client);
+        
+        if (!validation.IsValid)
+            return new ValidationError(validation.ToDictionary());
+        if (!await EmailIsUnique(client))
+            return new DuplicateEmailError(client.Email, client.Id > 0 ? client.Id : null);
+        if (!await PhoneNumberIsUnique(client))
+            return new DuplicatePhoneNumberError(client.PhoneNumber, client.Id > 0 ? client.Id : null);
+        
+        return Result.Success();
+    }
+
+    private async Task<bool> EmailIsUnique(Client client)
+        => await context.Clients.AnyAsync(c => c.Email == client.Email && c != client);
+    
+    private async Task<bool> PhoneNumberIsUnique(Client client)
+        => await context.Clients.AnyAsync(c => c.PhoneNumber == client.PhoneNumber && c != client);
 }
+

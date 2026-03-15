@@ -1,7 +1,6 @@
 ﻿using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Domain.Validation;
 using ECommerce.Api.Extensions;
-using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +8,10 @@ namespace ECommerce.Api.Validators.Entities;
 
 public class ClientValidator : AbstractValidator<Client>
 {
-    public ClientValidator(ECommerceContext context)
+    public ClientValidator()
     {
         RuleFor(u => u.Id)
-            .IdIsDefaultOnNewEntry(context.Entry);
+            .GreaterThanOrEqualTo(0);
         
         RuleFor(u => u.FirstName)
             .NotEmpty()
@@ -35,13 +34,11 @@ public class ClientValidator : AbstractValidator<Client>
 
         RuleFor(u => u.Email)
             .NotEmpty()
-            .MaximumLength(TextLengthRules.Email)
-            .EmailIsUnique(context.Clients);
+            .MaximumLength(TextLengthRules.Email);
 
         RuleFor(u => u.PhoneNumber)
             .NotEmpty()
-            .MaximumLength(TextLengthRules.PhoneNumber)
-            .PhoneNumberIsUnique(context.Clients);
+            .MaximumLength(TextLengthRules.PhoneNumber);
     }
 }
 
