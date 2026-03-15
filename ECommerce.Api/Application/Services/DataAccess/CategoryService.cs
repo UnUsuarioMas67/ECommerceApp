@@ -4,6 +4,7 @@ using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
+using ECommerce.Api.Shared.Errors;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,21 +14,21 @@ public interface ICategoryService
 {
     Task<bool> EntryExistsAsync(int categoryId);
     Task<bool> EntryExistsAsync(string categorySlug);
-    
+
     Task<CategoryResponseDto?> GetByIdAsync(int categoryId);
     Task<CategoryResponseDto?> GetBySlugAsync(string categorySlug);
-    
+
     Task<IEnumerable<CategoryResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
     Task<Result<CategoryResponseDto>> CreateAsync(CategoryCreateDto dto);
-    
+
     Task<Result<CategoryResponseDto>> UpdateAsync(int categoryId, CategoryUpdateDto dto);
     Task<Result<CategoryResponseDto>> UpdateAsync(string categorySlug, CategoryUpdateDto dto);
-    
+
     Task<CategoryResponseDto?> DeleteAsync(int categoryId);
     Task<CategoryResponseDto?> DeleteAsync(string categorySlug);
 }
 
-public class CategoryService(ECommerceContext context, IValidator<Category> validator, CategoryMapper mapper) 
+public class CategoryService(ECommerceContext context, IValidator<Category> validator, CategoryMapper mapper)
     : ICategoryService
 {
     public async Task<bool> EntryExistsAsync(int categoryId)
@@ -62,29 +63,29 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
     {
         var created = mapper.MapToEntity(dto);
 
-        var validation = await validator.ValidateAsync(created);
-        if (!validation.IsValid)
-            return Errors.ValidationError(validation.ToDictionary());
+        var verification = await VerifyCategory(created);
+        if (!verification.IsSuccess)
+            return verification.Error;
 
         await context.Categories.AddAsync(created);
         await context.SaveChangesAsync();
 
         return mapper.MapToDto(created);
     }
-    
+
 
     private async Task<Result<CategoryResponseDto>> UpdateAsync(Category? updated, CategoryUpdateDto dto)
     {
         if (updated == null)
-            return Errors.NotFound();
+            return new NotFoundError();
 
         mapper.ApplyUpdate(updated, dto);
 
-        var validation = await validator.ValidateAsync(updated);
-        if (!validation.IsValid)
+        var verification = await VerifyCategory(updated);
+        if (!verification.IsSuccess)
         {
             await context.DisposeAsync();
-            return Errors.ValidationError(validation.ToDictionary());
+            return verification.Error;
         }
 
         await context.SaveChangesAsync();
@@ -103,7 +104,7 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         var category = await context.Categories.FirstOrDefaultAsync(c => c.Slug == categorySlug);
         return await UpdateAsync(category, dto);
     }
-    
+
 
     private async Task<CategoryResponseDto?> DeleteAsync(Category? category)
     {
@@ -127,4 +128,18 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         var category = await context.Categories.FirstOrDefaultAsync(c => c.Slug == categorySlug);
         return await DeleteAsync(category);
     }
+
+    private async Task<Result> VerifyCategory(Category category)
+    {
+        var validation = await validator.ValidateAsync(category);
+        if (!validation.IsValid)
+            return new ValidationError(validation.ToDictionary());
+        if (!await SlugIsUnique(category))
+            return new DuplicateCategorySlugError(category.Slug, category.Id > 0 ? category.Id : null);
+        
+        return Result.Success();
+    }
+
+    private async Task<bool> SlugIsUnique(Category category)
+        => !await context.Categories.AnyAsync(c => c.Slug == category.Slug && c != category);
 }

@@ -9,15 +9,14 @@ namespace ECommerce.Api.Validators.Entities;
 
 public class CategoryValidator : AbstractValidator<Category>
 {
-    public CategoryValidator(ECommerceContext context)
+    public CategoryValidator()
     {
         RuleFor(c => c.Id)
-            .IdIsDefaultOnNewEntry(context.Entry);
+            .GreaterThanOrEqualTo(0);
         
         RuleFor(c => c.Slug)
             .NotEmpty()
             .NotANumber()
-            .SlugIsUnique(context.Categories)
             .MaximumLength(TextLengthRules.Name);
 
         RuleFor(c => c.Name)

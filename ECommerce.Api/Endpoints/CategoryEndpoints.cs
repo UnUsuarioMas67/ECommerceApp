@@ -2,6 +2,7 @@
 using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Shared;
+using ECommerce.Api.Shared.Errors;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,7 @@ public static class CategoryEndpoints
     {
         var group = endpoints.MapGroup("api/categories")
             .RequireAuthorization(UserRoles.Client);
-        
+
         group.MapGet("", GetCategories);
         group.MapGet("{category}", GetCategory);
         group.MapPost("", CreateCategory)
@@ -26,18 +27,24 @@ public static class CategoryEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Created<CategoryResponseDto>, ValidationProblem>> CreateCategory(
-        HttpContext httpContext, ICategoryService categoryService, CategoryCreateDto dto)
+    private static async Task<Results<Created<CategoryResponseDto>, ValidationProblem, UnprocessableEntity<Error>>>
+        CreateCategory(HttpContext httpContext, ICategoryService categoryService, CategoryCreateDto dto)
     {
         var result = await categoryService.CreateAsync(dto);
-        var path = httpContext.Request.Path;
-        return result.IsSuccess
-            ? TypedResults.Created($"{path}/{result.Value!.Slug}", result.Value)
-            : TypedResults.ValidationProblem(result.Error!.Details);
+        if (result.IsSuccess)
+        {
+            var path = httpContext.Request.Path;
+            return TypedResults.Created($"{path}/{result.Value!.Id}", result.Value);
+        }
+
+        if (result.Error is ValidationError error)
+            return TypedResults.ValidationProblem(error.Details);
+
+        return TypedResults.UnprocessableEntity(result.Error);
     }
 
-    private static async Task<Results<Ok<CategoryResponseDto>, ValidationProblem, NotFound>> UpdateCategory(
-        ICategoryService categoryService, string category, CategoryUpdateDto dto)
+    private static async Task<Results<Ok<CategoryResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<Error>>>
+        UpdateCategory(ICategoryService categoryService, string category, CategoryUpdateDto dto)
     {
         Result<CategoryResponseDto> result;
 
@@ -46,10 +53,15 @@ public static class CategoryEndpoints
         else
             result = await categoryService.UpdateAsync(category, dto);
 
-        if (result is { IsSuccess: false, Error.ErrorType: ErrorType.NotFound })
-            return TypedResults.NotFound();
+        if (result.IsSuccess)
+            return TypedResults.Ok(result.Value);
 
-        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.ValidationProblem(result.Error!.Details);
+        return result.Error switch
+        {
+            NotFoundError => TypedResults.NotFound(),
+            ValidationError error => TypedResults.ValidationProblem(error.Details),
+            _ => TypedResults.UnprocessableEntity(result.Error)
+        };
     }
 
     private static async Task<Results<Ok<CategoryResponseDto>, NotFound>> DeleteCategory(
