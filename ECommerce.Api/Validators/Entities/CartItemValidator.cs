@@ -1,5 +1,4 @@
 ﻿using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,29 +6,20 @@ namespace ECommerce.Api.Validators.Entities;
 
 public class CartItemValidator : AbstractValidator<CartItem>
 {
-    public CartItemValidator(ECommerceContext context)
+    public CartItemValidator()
     {
-        Unless(ci => ci.ProductId == 0, () =>
-        {
-            RuleFor(ci => ci.ProductId)
-                .ProductIsValid(context.Products);
-        }).Otherwise(() =>
-        {
-            RuleFor(ci => ci.Product)
-                .ProductIsValid(context.Products);
-        });
-        
-        Unless(ci => ci.CartId == 0, () =>
-        {
-            RuleFor(ci => ci.CartId)
-                .GreaterThan(0);
-        }).Otherwise(() =>
-        {
-            RuleFor(ci => ci.Cart)
-                .NotNull()
-                .WithMessage("Cart is required");
-        });
+        RuleFor(ci => ci.ProductId)
+            .GreaterThan(0);
 
+        RuleFor(ci => ci.Product)
+            .NotNull();
+
+        RuleFor(ci => ci.CartId)
+            .GreaterThan(0);
+        
+        RuleFor(ci => ci.Cart)
+            .NotNull();
+        
         RuleFor(ci => ci.Quantity)
             .GreaterThan(0)
             .WithMessage("Quantity must be greater than zero");

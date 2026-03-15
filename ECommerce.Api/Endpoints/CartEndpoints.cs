@@ -2,6 +2,7 @@
 using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Shared;
+using ECommerce.Api.Shared.Errors;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -48,7 +49,7 @@ public static class CartEndpoints
         return TypedResults.Ok(carts);
     }
 
-    private static async Task<Results<Created<CartResponseDto>, ValidationProblem>> CreateCart(
+    private static async Task<Results<Created<CartResponseDto>, ValidationProblem, UnprocessableEntity<Error>>> CreateCart(
         HttpContext httpContext,
         ICartsService cartsService,
         CartCreateDto dto,
@@ -59,15 +60,19 @@ public static class CartEndpoints
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         
         var result = await cartsService.CreateAsync(dto);
-        var created = result.Value;
-        var path = httpContext.Request.Path.Value;
-        
-        return result.IsSuccess 
-            ? TypedResults.Created($"{path}/{created?.Id}", created) 
-            : TypedResults.ValidationProblem(result.Error!.Details);
+        if (result.IsSuccess)
+        {
+            var path = httpContext.Request.Path;
+            return TypedResults.Created($"{path}/{result.Value!.Id}", result.Value);
+        }
+
+        if (result.Error is ValidationError error)
+            return TypedResults.ValidationProblem(error.Details);
+
+        return TypedResults.UnprocessableEntity(result.Error);
     }
     
-    private static async Task<Results<Ok<CartResponseDto>, ValidationProblem, NotFound>> UpdateCart(
+    private static async Task<Results<Ok<CartResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<Error>>> UpdateCart(
         ICartsService cartsService,
         int id,
         CartUpdateDto dto,
@@ -78,12 +83,15 @@ public static class CartEndpoints
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
         
         var result = await cartsService.UpdateAsync(id, dto);
-        if (result is { IsSuccess: false, Error.ErrorType: ErrorType.NotFound })
-            return TypedResults.NotFound();
-        
-        return result.IsSuccess 
-            ? TypedResults.Ok(result.Value) 
-            : TypedResults.ValidationProblem(result.Error!.Details);
+        if (result.IsSuccess)
+            return TypedResults.Ok(result.Value);
+
+        return result.Error switch
+        {
+            NotFoundError => TypedResults.NotFound(),
+            ValidationError error => TypedResults.ValidationProblem(error.Details),
+            _ => TypedResults.UnprocessableEntity(result.Error)
+        };
     }
     
     private static async Task<Results<Ok<CartResponseDto>, NotFound>> DeleteCart(

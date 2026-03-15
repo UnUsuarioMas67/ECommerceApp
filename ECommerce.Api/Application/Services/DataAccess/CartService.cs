@@ -4,6 +4,7 @@ using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
+using ECommerce.Api.Shared.Errors;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -63,9 +64,9 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
     {
         var created = await mapper.MapToEntityAsync(dto);
 
-        var validationResult = await validator.ValidateAsync(created);
-        if (!validationResult.IsValid)
-            return Errors.ValidationError(validationResult.ToDictionary());
+        var verification = await VerifyCart(created);
+        if (!verification.IsSuccess)
+            return verification.Error;
 
         await context.Carts.AddAsync(created);
         await context.SaveChangesAsync();
@@ -77,7 +78,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
     {
         var updated = await context.Carts.FindAsync(cartId);
         if (updated == null)
-            return Errors.NotFound();
+            return new NotFoundError();
 
         await mapper.ApplyUpdateAsync(updated, dto);
 
@@ -86,11 +87,11 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
             .Where(ci => ci.CartId == updated.Id)
             .ExecuteDeleteAsync();
 
-        var validationResult = await validator.ValidateAsync(updated);
-        if (!validationResult.IsValid)
+        var verification = await VerifyCart(updated);
+        if (!verification.IsSuccess)
         {
             await context.DisposeAsync();
-            return Errors.ValidationError(validationResult.ToDictionary());
+            return verification.Error;
         }
 
         await context.SaveChangesAsync();
@@ -109,4 +110,58 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
 
         return mapper.MapToDto(deleted);
     }
+
+    private async Task<Result> VerifyCart(Cart cart)
+    {
+        var validation = await validator.ValidateAsync(cart);
+        if (!validation.IsValid)
+            return new ValidationError(validation.ToDictionary());
+
+        if (!await ClientExists(cart))
+            return new ClientNotExistsError(cart.ClientId, cart.Id > 0 ? cart.Id : null);
+
+        var invalidIds = await GetMissingProductIds(cart.Items);
+        if (invalidIds.Length != 0)
+            return new ProductsNotExistError(invalidIds);
+
+        var duplicateIds = GetDuplicateProductIds(cart.Items);
+        if (duplicateIds.Length != 0)
+            return new DuplicateItemsError(duplicateIds);
+
+        var invalidQuantitiesIds = GetProductIdsWithInvalidQuantities(cart.Items);
+        if (invalidQuantitiesIds.Length != 0)
+            return new InvalidQuantityError(invalidQuantitiesIds);
+
+        return Result.Success();
+    }
+
+    private async Task<bool> ClientExists(Cart cart)
+        => await context.Clients.AnyAsync(c => c.Id == cart.ClientId || c == cart.Client);
+
+    private async Task<int[]> GetMissingProductIds(ICollection<CartItem> items)
+    {
+        var productIds = items.Select(i => i.ProductId).ToList();
+        var idsOnDb = await context.Products
+            .AsNoTracking()
+            .Where(p => productIds.Contains(p.Id))
+            .Select(p => p.Id)
+            .ToListAsync();
+
+        var idsNotOnDb = productIds.Except(idsOnDb);
+        return idsNotOnDb.ToArray();
+    }
+
+    private int[] GetDuplicateProductIds(ICollection<CartItem> items)
+        => items
+            .GroupBy(i => i.ProductId)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key)
+            .ToArray();
+
+
+    private int[] GetProductIdsWithInvalidQuantities(ICollection<CartItem> items)
+        => items
+            .Where(i => i.Quantity <= 0)
+            .Select(i => i.ProductId)
+            .ToArray();
 }
