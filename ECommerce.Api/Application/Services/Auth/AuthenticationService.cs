@@ -2,6 +2,7 @@
 using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
+using ECommerce.Api.Shared.Errors;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Application.Services.Auth;
@@ -19,11 +20,11 @@ public class AuthenticationService(IJwtService jwtService, ECommerceContext cont
     {
         var client = await context.Clients.FirstOrDefaultAsync(c => c.Email == email);
         if (client == null)
-            return Errors.AuthenticationError("Login", "Invalid credentials");
+            return new AuthenticationError();
 
         var passwordValid = BCrypt.Net.BCrypt.Verify(password, client.PasswordHash);
         if (!passwordValid)
-            return Errors.AuthenticationError("Login", "Invalid credentials");
+            return new AuthenticationError();
 
         var token = jwtService.GenerateAccessToken(client);
         return new AuthenticationDto { Token = token, User = mapper.MapToDto(client) };
