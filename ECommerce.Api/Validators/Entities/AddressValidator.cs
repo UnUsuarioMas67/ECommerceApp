@@ -75,7 +75,7 @@ public static class AddressValidationExtensions
     {
         return ruleBuilder
             .NotEmpty()
-            .MaximumLength(2)
+            .Length(2)
             .MustAsync(async (cca2, token)
                 => await countries.AnyAsync(c => c.Cca2 == cca2, token))
             .WithMessage("Invalid country code");
