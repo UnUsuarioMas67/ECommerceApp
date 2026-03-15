@@ -1,5 +1,6 @@
 ﻿using ECommerce.Api.Application.DTOs.Auth;
 using ECommerce.Api.Application.Services.Auth;
+using ECommerce.Api.Shared.Errors;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -16,7 +17,7 @@ public static class AuthEndpoints
         return endpoints;
     }
     
-    private static async Task<Results<Ok<AuthenticationDto>, Ok<string>, ValidationProblem>> LoginClient(
+    private static async Task<Results<Ok<AuthenticationDto>, Ok<Error>, ValidationProblem>> LoginClient(
         IAuthenticationService authenticationService,
         LoginRequestDto requestDto,
         IValidator<LoginRequestDto> validator)
@@ -27,7 +28,7 @@ public static class AuthEndpoints
         
         var result = await authenticationService.LoginClient(requestDto.Email, requestDto.Password);
         
-        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Ok("Invalid credentials");
+        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Ok(result.Error);
     }
     
     private static async Task<Results<Ok<AuthenticationDto>, Ok<string>, ValidationProblem>> LoginAdmin(
