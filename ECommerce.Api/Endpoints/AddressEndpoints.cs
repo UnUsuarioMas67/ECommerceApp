@@ -2,6 +2,7 @@
 using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Shared;
+using ECommerce.Api.Shared.Errors;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -26,41 +27,52 @@ public static class AddressEndpoints
     }
 
 
-    private static async Task<Results<Created<AddressResponseDto>, ValidationProblem>> AddAddress(
-        HttpContext httpContext,
-        AddressCreateDto dto,
-        IAddressesService addressesService,
-        IValidator<AddressCreateDto> validator)
+    private static async Task<Results<Created<AddressResponseDto>, ValidationProblem, UnprocessableEntity<Error>>>
+        AddAddress(
+            HttpContext httpContext,
+            AddressCreateDto dto,
+            IAddressesService addressesService,
+            IValidator<AddressCreateDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
         var result = await addressesService.CreateAsync(dto);
-        var path = httpContext.Request.Path;
-        return result.IsSuccess
-            ? TypedResults.Created($"{path}/{result.Value!.Id}", result.Value)
-            : TypedResults.ValidationProblem(result.Error!.Details);
+        if (result.IsSuccess)
+        {
+            var path = httpContext.Request.Path;
+            return TypedResults.Created($"{path}/{result.Value!.Id}", result.Value);
+        }
+
+        if (result.Error is ValidationError error)
+            return TypedResults.ValidationProblem(error.Details);
+
+        return TypedResults.UnprocessableEntity(result.Error);
     }
 
 
-    private static async Task<Results<Ok<AddressResponseDto>, ValidationProblem, NotFound>> UpdateAddress(
-        int id,
-        AddressUpdateDto dto,
-        IAddressesService addressesService,
-        IValidator<AddressUpdateDto> validator)
+    private static async Task<Results<Ok<AddressResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<Error>>>
+        UpdateAddress(
+            int id,
+            AddressUpdateDto dto,
+            IAddressesService addressesService,
+            IValidator<AddressUpdateDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
         var result = await addressesService.UpdateAsync(id, dto);
-        if (result is { IsSuccess: false, Error.ErrorType: ErrorType.NotFound })
-            return TypedResults.NotFound();
+        if (result.IsSuccess)
+            return TypedResults.Ok(result.Value);
 
-        return result.IsSuccess
-            ? TypedResults.Ok(result.Value)
-            : TypedResults.ValidationProblem(result.Error!.Details);
+        return result.Error switch
+        {
+            NotFoundError => TypedResults.NotFound(),
+            ValidationError error => TypedResults.ValidationProblem(error.Details),
+            _ => TypedResults.UnprocessableEntity(result.Error)
+        };
     }
 
 
@@ -96,7 +108,7 @@ public static class AddressEndpoints
         var addresses = await addressesService.GetByCountry(countryCode, pagination);
         return TypedResults.Ok(addresses);
     }
-    
+
     private static async Task<Ok<IEnumerable<AddressResponseDto>>> GetAddressesByClient(
         int id,
         IAddressesService addressesService)

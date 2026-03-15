@@ -4,6 +4,7 @@ using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
+using ECommerce.Api.Shared.Errors;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,9 +53,9 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
     {
         var address = await mapper.MapToEntityAsync(dto);
 
-        var validation = await validator.ValidateAsync(address);
-        if (!validation.IsValid)
-            return Errors.ValidationError(validation.ToDictionary());
+        var verification = await VerifyAddress(address);
+        if (!verification.IsSuccess)
+            return verification.Error;
         
         await context.Addresses.AddAsync(address);
         await context.SaveChangesAsync();
@@ -69,15 +70,15 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
             .FirstOrDefaultAsync(a => a.Id == addressId);
 
         if (updated == null)
-            return Errors.NotFound();
+            return new NotFoundError();
 
         await mapper.ApplyUpdateAsync(updated, dto);
-
-        var validation = await validator.ValidateAsync(updated);
-        if (!validation.IsValid)
+        
+        var verification = await VerifyAddress(updated);
+        if (!verification.IsSuccess)
         {
             await context.DisposeAsync();
-            return Errors.ValidationError(validation.ToDictionary());
+            return verification.Error;
         }
 
         await context.SaveChangesAsync();
@@ -101,4 +102,28 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
             .Where(c => c.Cca2 == cca2)
             .Select(c => c.Name)
             .FirstOrDefaultAsync();
+
+    private async Task<Result> VerifyAddress(Address address)
+    {
+        var validation = await validator.ValidateAsync(address);
+        if (!validation.IsValid)
+            return new ValidationError(validation.ToDictionary());
+        if (!await CountryIsValid(address))
+            return new InvalidCountryError(address.CountryCca2, address.Id > 0 ? address.Id : null);
+        if (!await ClientIsValid(address))
+            return new ClientNotExistsError(address.ClientId ?? 0, address.Id > 0 ? address.Id : null);
+        
+        return Result.Success();
+    }
+    
+    private async Task<bool> CountryIsValid(Address address)
+        => await context.Countries.AnyAsync(c => c.Cca2 == address.CountryCca2 || c == address.Country);
+
+    private async Task<bool> ClientIsValid(Address address)
+    {
+        if (address.Client == null)
+            return true;
+        
+        return await context.Clients.AnyAsync(c => c.Id == address.ClientId || c == address.Client);
+    }
 }

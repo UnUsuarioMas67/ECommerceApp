@@ -9,10 +9,10 @@ namespace ECommerce.Api.Validators.Entities;
 
 public class AddressValidator : AbstractValidator<Address>
 {
-    public AddressValidator(ECommerceContext context)
+    public AddressValidator()
     {
         RuleFor(a => a.Id)
-            .IdIsDefaultOnNewEntry(context.Entry);
+            .GreaterThanOrEqualTo(0);
 
         RuleFor(a => a.AddressLine1)
             .NotEmpty()
@@ -34,27 +34,13 @@ public class AddressValidator : AbstractValidator<Address>
             .NotEmpty()
             .MaximumLength(TextLengthRules.ShortText);
 
-        Unless(a => a.ClientId == null, () =>
-            {
-                RuleFor(a => a.ClientId)
-                    .ClientIsValid(context.Clients);
-            })
-            .Otherwise(() =>
-            {
-                RuleFor(a => a.Client)
-                    .ClientIsValid(context.Clients, true);
-            });
-
-        Unless(a => string.IsNullOrWhiteSpace(a.CountryCca2), () =>
-            {
-                RuleFor(a => a.CountryCca2)
-                    .CountryExists(context.Countries);
-            })
-            .Otherwise(() =>
-            {
-                RuleFor(a => a.Country)
-                    .CountryExists(context.Countries);
-            });
+        RuleFor(a => a.ClientId)
+            .GreaterThan(0)
+            .Unless(a => a.ClientId == null);
+        
+        RuleFor(a => a.CountryCca2)
+            .Length(2)
+            .Unless(a => string.IsNullOrEmpty(a.CountryCca2));
     }
 }
 
