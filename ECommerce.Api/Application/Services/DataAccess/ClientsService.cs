@@ -90,14 +90,14 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
 
     private async Task<Result> VerifyClient(Client client)
     {
-        var validation = await validator.ValidateAsync(client);
-        
-        if (!validation.IsValid)
-            return new ValidationError(validation.ToDictionary());
         if (!await EmailIsUnique(client))
             return new DuplicateEmailError(client.Email, client.Id > 0 ? client.Id : null);
         if (!await PhoneNumberIsUnique(client))
             return new DuplicatePhoneNumberError(client.PhoneNumber, client.Id > 0 ? client.Id : null);
+        
+        var validation = await validator.ValidateAsync(client);
+        if (!validation.IsValid)
+            return new ValidationError(validation.ToDictionary());
         
         return Result.Success();
     }

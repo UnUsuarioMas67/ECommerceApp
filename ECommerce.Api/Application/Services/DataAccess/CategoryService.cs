@@ -131,11 +131,12 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
 
     private async Task<Result> VerifyCategory(Category category)
     {
+        if (!await SlugIsUnique(category))
+            return new DuplicateCategorySlugError(category.Slug, category.Id > 0 ? category.Id : null);
+        
         var validation = await validator.ValidateAsync(category);
         if (!validation.IsValid)
             return new ValidationError(validation.ToDictionary());
-        if (!await SlugIsUnique(category))
-            return new DuplicateCategorySlugError(category.Slug, category.Id > 0 ? category.Id : null);
         
         return Result.Success();
     }

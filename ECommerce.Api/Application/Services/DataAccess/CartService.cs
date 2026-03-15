@@ -113,10 +113,6 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
 
     private async Task<Result> VerifyCart(Cart cart)
     {
-        var validation = await validator.ValidateAsync(cart);
-        if (!validation.IsValid)
-            return new ValidationError(validation.ToDictionary());
-
         if (!await ClientExists(cart))
             return new ClientNotExistsError(cart.ClientId, cart.Id > 0 ? cart.Id : null);
 
@@ -131,6 +127,10 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         var invalidQuantitiesIds = GetProductIdsWithInvalidQuantities(cart.Items);
         if (invalidQuantitiesIds.Length != 0)
             return new InvalidQuantityError(invalidQuantitiesIds);
+        
+        var validation = await validator.ValidateAsync(cart);
+        if (!validation.IsValid)
+            return new ValidationError(validation.ToDictionary());
 
         return Result.Success();
     }

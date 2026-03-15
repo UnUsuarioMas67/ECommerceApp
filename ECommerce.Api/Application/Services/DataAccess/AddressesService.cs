@@ -105,13 +105,14 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
 
     private async Task<Result> VerifyAddress(Address address)
     {
-        var validation = await validator.ValidateAsync(address);
-        if (!validation.IsValid)
-            return new ValidationError(validation.ToDictionary());
         if (!await CountryIsValid(address))
             return new InvalidCountryError(address.CountryCca2, address.Id > 0 ? address.Id : null);
         if (!await ClientIsValid(address))
             return new ClientNotExistsError(address.ClientId ?? 0, address.Id > 0 ? address.Id : null);
+        
+        var validation = await validator.ValidateAsync(address);
+        if (!validation.IsValid)
+            return new ValidationError(validation.ToDictionary());
         
         return Result.Success();
     }
@@ -121,7 +122,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
 
     private async Task<bool> ClientIsValid(Address address)
     {
-        if (address.Client == null)
+        if (address.Client == null && address.ClientId == null)
             return true;
         
         return await context.Clients.AnyAsync(c => c.Id == address.ClientId || c == address.Client);
