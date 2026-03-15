@@ -23,7 +23,6 @@ public class CartValidator : AbstractValidator<Cart>
         });
 
         RuleFor(c => c.Items)
-            .NotEmpty()
             .NoDuplicateItems();
         
         RuleForEach(c => c.Items).SetValidator(cartItemValidator);

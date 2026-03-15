@@ -10,9 +10,6 @@ public class CartCreateDtoValidator : AbstractValidator<CartCreateDto>
         RuleFor(c => c.ClientId)
             .GreaterThan(0);
 
-        RuleFor(c => c.Items)
-            .NotEmpty();
-
         RuleForEach(c => c.Items)
             .SetValidator(cartItemValidator);
     }

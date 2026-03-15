@@ -8,9 +8,6 @@ public class CartUpdateDtoValidator : AbstractValidator<CartUpdateDto>
 {
     public CartUpdateDtoValidator(IValidator<CartItemCreate> cartItemValidator)
     {
-        RuleFor(c => c.Items)
-            .NotEmpty();
-
         RuleForEach(c => c.Items)
             .SetValidator(cartItemValidator);
     }
