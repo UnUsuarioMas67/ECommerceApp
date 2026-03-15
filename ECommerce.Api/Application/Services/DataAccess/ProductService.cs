@@ -4,6 +4,7 @@ using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Infrastructure.EF;
 using ECommerce.Api.Shared;
+using ECommerce.Api.Shared.Errors;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,9 +45,9 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
     {
         var created = await mapper.MapToEntityAsync(dto);
 
-        var validationResult = await validator.ValidateAsync(created);
-        if (!validationResult.IsValid)
-            return Errors.ValidationError(validationResult.ToDictionary());
+        var verification = await VerifyProduct(created, dto.Category);
+        if (!verification.IsSuccess)
+            return verification.Error;
 
         await context.Products.AddAsync(created);
         await context.SaveChangesAsync();
@@ -61,15 +62,15 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             .FirstOrDefaultAsync(p => p.Id == productId);
 
         if (updated == null)
-            return Errors.NotFound();
+            return new NotFoundError();
 
         await mapper.ApplyUpdateAsync(updated, dto);
 
-        var validationResult = await validator.ValidateAsync(updated);
-        if (!validationResult.IsValid)
+        var verification = await VerifyProduct(updated, dto.Category ?? "");
+        if (!verification.IsSuccess)
         {
             await context.DisposeAsync();
-            return Errors.ValidationError(validationResult.ToDictionary());
+            return verification.Error;
         }
 
         await context.SaveChangesAsync();
@@ -133,14 +134,58 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             .FirstOrDefaultAsync(p => p.Id == productId);
         
         if (product == null)
-            return Errors.NotFound();
+            return new NotFoundError();
 
-        product.Stock = newStock;
+        if (product.Stock != newStock)
+            product.Stock = newStock;
+        
+        if (product.Stock < 0)
+        {
+            await context.DisposeAsync();
+            return new InvalidProductStockError();
+        }
         
         var validation = await validator.ValidateAsync(product);
         if (!validation.IsValid)
-            return Errors.ValidationError(validation.ToDictionary());
+        {
+            await context.DisposeAsync();
+            return new ValidationError(validation.ToDictionary());
+        }
+        
+        await context.SaveChangesAsync();
         
         return mapper.MapToDto(product);
+    }
+
+    private async Task<Result> VerifyProduct(Product product, string categorySlug)
+    {
+        if (!await CategoryIsValid(product))
+            return new CategoryNotExistsError(categorySlug, product.Id > 0 ? product.Id : 0);
+        
+        if (!await SkuIsUnique(product))
+            return new DuplicateProductSkuError(product.Sku, product.Id > 0 ? product.Id : 0);
+        
+        if (product.Price < 0)
+            return new InvalidProductPriceError();
+        
+        if (product.Stock < 0)
+            return new InvalidProductStockError();
+        
+        var validation = await validator.ValidateAsync(product);
+        if (!validation.IsValid)
+            return new ValidationError(validation.ToDictionary());
+        
+        return Result.Success();
+    }
+    
+    private async Task<bool> SkuIsUnique(Product product)
+     => !await context.Products.AnyAsync(p => p.Sku == product.Sku && p != product);
+
+    private async Task<bool> CategoryIsValid(Product product)
+    {
+        if (product.Category == null && product.CategoryId == null)
+            return true;
+        
+        return await context.Categories.AnyAsync(c => c.Id == product.CategoryId || c == product.Category);
     }
 }

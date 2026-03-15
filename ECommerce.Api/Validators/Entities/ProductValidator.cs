@@ -1,7 +1,5 @@
 ﻿using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Domain.Validation;
-using ECommerce.Api.Extensions;
-using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,14 +7,13 @@ namespace ECommerce.Api.Validators.Entities;
 
 public class ProductValidator : AbstractValidator<Product>
 {
-    public ProductValidator(ECommerceContext context, IValidator<Category> categoryValidator)
+    public ProductValidator()
     {
         RuleFor(p => p.Id)
-            .IdIsDefaultOnNewEntry(context.Entry);
+            .GreaterThanOrEqualTo(0);
         
         RuleFor(p => p.Sku)
             .NotEmpty()
-            .SkuIsUnique(context.Products)
             .MaximumLength(TextLengthRules.Sku);
 
         RuleFor(p => p.Name)
@@ -37,16 +34,9 @@ public class ProductValidator : AbstractValidator<Product>
             .GreaterThanOrEqualTo(0)
             .WithMessage("Stock cannot be negative");
 
-        Unless(p => p.CategoryId == null, () =>
-        {
-            RuleFor(p => p.CategoryId)
-                .CategoryIsValid(context.Categories);
-        })
-        .Otherwise(() =>
-        {
-            RuleFor(p => p.Category)
-                .CategoryIsValid(context.Categories);
-        });
+        RuleFor(p => p.CategoryId)
+            .GreaterThan(0)
+            .Unless(p => p.CategoryId == null);
     }
 }
 
