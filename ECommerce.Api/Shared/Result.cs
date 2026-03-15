@@ -1,4 +1,6 @@
-﻿namespace ECommerce.Api.Shared;
+﻿using ECommerce.Api.Shared.Errors;
+
+namespace ECommerce.Api.Shared;
 
 public record Result
 {
