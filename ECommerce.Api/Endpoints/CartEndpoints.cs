@@ -2,6 +2,7 @@
 using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Shared;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ECommerce.Api.Endpoints;
@@ -50,8 +51,13 @@ public static class CartEndpoints
     private static async Task<Results<Created<CartResponseDto>, ValidationProblem>> CreateCart(
         HttpContext httpContext,
         ICartsService cartsService,
-        CartCreateDto dto)
+        CartCreateDto dto,
+        IValidator<CartCreateDto> cartValidator)
     {
+        var validationResult = await cartValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        
         var result = await cartsService.CreateAsync(dto);
         var created = result.Value;
         var path = httpContext.Request.Path.Value;
@@ -64,8 +70,13 @@ public static class CartEndpoints
     private static async Task<Results<Ok<CartResponseDto>, ValidationProblem, NotFound>> UpdateCart(
         ICartsService cartsService,
         int id,
-        CartUpdateDto dto)
+        CartUpdateDto dto,
+        IValidator<CartUpdateDto> cartValidator)
     {
+        var validationResult = await cartValidator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        
         var result = await cartsService.UpdateAsync(id, dto);
         if (result is { IsSuccess: false, Error.ErrorType: ErrorType.NotFound })
             return TypedResults.NotFound();

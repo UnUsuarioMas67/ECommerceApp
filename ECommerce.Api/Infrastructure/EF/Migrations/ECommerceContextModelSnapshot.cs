@@ -68,7 +68,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasIndex("CountryCca2");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.Admin", b =>
@@ -112,7 +112,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Admins");
+                    b.ToTable("Admins", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.Cart", b =>
@@ -130,7 +130,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.CartItem", b =>
@@ -148,7 +148,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.Category", b =>
@@ -171,7 +171,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.Client", b =>
@@ -215,7 +215,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Clients", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.ClientReview", b =>
@@ -249,7 +249,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasIndex("OrderLineId");
 
-                    b.ToTable("ClientReviews");
+                    b.ToTable("ClientReviews", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.Country", b =>
@@ -265,7 +265,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasKey("Cca2");
 
-                    b.ToTable("Countries");
+                    b.ToTable("Countries", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.OrderLine", b =>
@@ -295,7 +295,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderLines");
+                    b.ToTable("OrderLines", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.OrderStatus", b =>
@@ -313,7 +313,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderStatuses");
+                    b.ToTable("OrderStatuses", (string)null);
 
                     b.HasData(
                         new
@@ -388,7 +388,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.ShopOrder", b =>
@@ -419,7 +419,7 @@ namespace ECommerce.Api.Infrastructure.EF.Migrations
 
                     b.HasIndex("StatusId");
 
-                    b.ToTable("ShopOrders");
+                    b.ToTable("ShopOrders", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Domain.Entities.Address", b =>
