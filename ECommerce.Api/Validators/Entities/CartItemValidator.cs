@@ -15,7 +15,7 @@ public class CartItemValidator : AbstractValidator<CartItem>
             .NotNull();
 
         RuleFor(ci => ci.CartId)
-            .GreaterThan(0);
+            .GreaterThanOrEqualTo(0);
         
         RuleFor(ci => ci.Cart)
             .NotNull();
