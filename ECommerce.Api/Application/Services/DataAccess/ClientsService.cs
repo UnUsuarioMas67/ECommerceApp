@@ -103,9 +103,9 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
     }
 
     private async Task<bool> EmailIsUnique(Client client)
-        => await context.Clients.AnyAsync(c => c.Email == client.Email && c != client);
+        => !await context.Clients.AnyAsync(c => c.Email == client.Email && c != client);
     
     private async Task<bool> PhoneNumberIsUnique(Client client)
-        => await context.Clients.AnyAsync(c => c.PhoneNumber == client.PhoneNumber && c != client);
+        => !await context.Clients.AnyAsync(c => c.PhoneNumber == client.PhoneNumber && c != client);
 }
 
