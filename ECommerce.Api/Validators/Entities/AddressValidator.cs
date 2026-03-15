@@ -41,6 +41,9 @@ public class AddressValidator : AbstractValidator<Address>
         RuleFor(a => a.CountryCca2)
             .Length(2)
             .Unless(a => string.IsNullOrEmpty(a.CountryCca2));
+
+        RuleFor(a => a.Country)
+            .NotNull();
     }
 }
 
