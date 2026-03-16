@@ -1,6 +1,6 @@
 ﻿using ECommerce.Api.Application.DTOs.Auth;
 using ECommerce.Api.Application.Services.Auth;
-using ECommerce.Api.Shared.Errors;
+using ECommerce.Api.Errors;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 

@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Shared.Errors;
+﻿namespace ECommerce.Api.Errors;
 
 public record DuplicateProductSkuError(string Sku, int? ProductId)
     : Error("A product with the specified SKU already exists");

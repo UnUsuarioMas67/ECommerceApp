@@ -1,8 +1,8 @@
 ﻿using ECommerce.Api.Application.DTOs.Cart;
 using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.Services.DataAccess;
+using ECommerce.Api.Errors;
 using ECommerce.Api.Shared;
-using ECommerce.Api.Shared.Errors;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 

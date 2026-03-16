@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Shared.Errors;
+﻿namespace ECommerce.Api.Errors;
 
 public record Error(string Message);
 public record AuthenticationError() : Error("Invalid login credentials");

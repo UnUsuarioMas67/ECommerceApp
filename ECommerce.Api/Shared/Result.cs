@@ -1,4 +1,4 @@
-﻿using ECommerce.Api.Shared.Errors;
+﻿using ECommerce.Api.Errors;
 
 namespace ECommerce.Api.Shared;
 

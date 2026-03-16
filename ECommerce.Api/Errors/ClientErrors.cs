@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Shared.Errors;
+﻿namespace ECommerce.Api.Errors;
 
 public record DuplicateEmailError(string Email, int? ClientId) 
     : Error("This email address is already in use");

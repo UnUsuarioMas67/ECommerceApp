@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Shared.Errors;
+﻿namespace ECommerce.Api.Errors;
 
 public record ProductsNotExistError(int[] MissingProductIds)
     : Error("One or more of the specified products don't seem to exist");
