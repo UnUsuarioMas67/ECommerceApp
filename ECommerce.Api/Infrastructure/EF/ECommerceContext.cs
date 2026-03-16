@@ -52,7 +52,7 @@ public class ECommerceContext : DbContext
                     LastName = "Pruebas",
                     Email = "rp456@julio.com",
                     PhoneNumber = "849-666-7777",
-                    PasswordHash = PasswordHasher.HashPassword("cliente123"),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("cliente123"),
                     BirthDate = new DateOnly(2005, 4, 13),
                     CreatedAt = DateTime.Parse("2026-01-26"),
                 };
@@ -69,7 +69,7 @@ public class ECommerceContext : DbContext
                     LastName = "Pruebas",
                     Email = "jp123@julio.com",
                     PhoneNumber = "809-111-2222",
-                    PasswordHash = PasswordHasher.HashPassword("admin123"),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
                     BirthDate = new DateOnly(2001, 7, 22),
                     CreatedAt = DateTime.Parse("2026-01-26"),
                 };

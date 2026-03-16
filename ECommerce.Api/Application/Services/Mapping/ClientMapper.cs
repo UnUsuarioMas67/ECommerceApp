@@ -26,7 +26,7 @@ public class ClientMapper
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Email = dto.Email,
-            PasswordHash = PasswordHasher.HashPassword(dto.Password),
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
             PhoneNumber = dto.PhoneNumber,
             BirthDate = DateOnly.Parse(dto.BirthDate),
             CreatedAt = DateTime.UtcNow,
