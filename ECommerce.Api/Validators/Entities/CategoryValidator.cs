@@ -1,9 +1,6 @@
 ﻿using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.Domain.Validation;
-using ECommerce.Api.Extensions;
-using ECommerce.Api.Infrastructure.EF;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Validators.Entities;
 
@@ -32,14 +29,5 @@ public static class CategoryValidationExtensions
         return ruleBuilder
             .Must(slug => !double.TryParse(slug, out _))
             .WithMessage("{PropertyName} must not be a number.");
-    }
-
-    public static IRuleBuilderOptions<Category, string> SlugIsUnique(
-        this IRuleBuilder<Category, string> ruleBuilder, DbSet<Category> categories)
-    {
-        return ruleBuilder
-            .MustAsync(async (slug, token) 
-                => !await categories.AnyAsync(c => c.Slug == slug, token))
-            .WithMessage("A category with the same slug already exists.");
     }
 }
