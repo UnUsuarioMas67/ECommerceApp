@@ -63,6 +63,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPaymentService, PaymentService>();
     }
 
+    public static void AddStripeSettings(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
+    }
+
     public static void AddObjectMappers(this IServiceCollection services)
     {
         services.AddScoped<ClientMapper>();

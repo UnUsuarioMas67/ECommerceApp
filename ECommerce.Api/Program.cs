@@ -15,6 +15,7 @@ builder.Services.AddDbContext<ECommerceContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb")));
 
 builder.Services.ConfigureAuth(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.AddStripeSettings(builder.Configuration);
 builder.Services.AddValidators();
 builder.Services.AddObjectMappers();
 builder.Services.AddApiServices();
