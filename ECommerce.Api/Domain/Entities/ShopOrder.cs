@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Domain.Entities;
+namespace ECommerce.Api.Domain.Entities;
 
 public class ShopOrder
 {
@@ -12,6 +12,7 @@ public class ShopOrder
     public Client? Client { get; set; }
     public Address Address { get; set; }
     public OrderStatus Status { get; set; }
+    public Payment? Payment { get; set; }
     
     public ICollection<OrderLine> Items { get; set; } = new List<OrderLine>();
 }

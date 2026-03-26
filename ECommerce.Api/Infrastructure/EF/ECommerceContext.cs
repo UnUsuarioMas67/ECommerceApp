@@ -25,6 +25,8 @@ public class ECommerceContext : DbContext
     public DbSet<OrderStatus> OrderStatuses { get; set; }
     public DbSet<OrderLine> OrderLines { get; set; }
 
+    public DbSet<Payment> Payments { get; set; }
+
     public ECommerceContext()
     {
     }
