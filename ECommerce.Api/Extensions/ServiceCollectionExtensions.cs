@@ -2,6 +2,7 @@
 using ECommerce.Api.Application.Services.Auth;
 using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Application.Services.Mapping;
+using ECommerce.Api.Application.Services.Payment;
 using ECommerce.Api.Shared;
 using ECommerce.Api.Validators.Entities;
 using FluentValidation;
@@ -61,6 +62,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICartsService, CartsService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<IStripeCheckoutService, StripeCheckoutService>();
     }
 
     public static void AddStripeSettings(this IServiceCollection services, IConfiguration configuration)
