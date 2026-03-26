@@ -70,5 +70,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ProductMapper>();
         services.AddScoped<CartMapper>();
         services.AddScoped<CartItemMapper>();
+        services.AddScoped<OrderMapper>();
     }
 }
