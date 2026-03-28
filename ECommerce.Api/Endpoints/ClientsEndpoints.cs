@@ -30,9 +30,6 @@ public static class ClientsEndpoints
         group.MapDelete("{id:int}", DeleteClient)
             .WithSummary("Delete Client");
 
-        group.MapPost("", CreateClient)
-            .AllowAnonymous();
-
         return endpoints;
     }
 
@@ -68,33 +65,7 @@ public static class ClientsEndpoints
         var clients = await clientsService.GetManyAsync(pagination, search);
         return TypedResults.Ok(clients);
     }
-
-
-    private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<Error>>> 
-        CreateClient(
-            HttpContext httpContext,
-            IClientsService clientsService,
-            UserCreateDto dto,
-            IValidator<UserCreateDto> validator)
-    {
-        var validation = await validator.ValidateAsync(dto);
-        if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
-
-        var result = await clientsService.CreateAsync(dto);
-        if (result.IsSuccess)
-        {
-            var path = httpContext.Request.Path;
-            return TypedResults.Created($"{path}/{result.Value!.Id}", result.Value);
-        }
-
-        if (result.Error is ValidationError error)
-            return TypedResults.ValidationProblem(error.Details);
-        
-        return TypedResults.UnprocessableEntity(result.Error);
-    }
-
-
+    
     private static async Task<Results<Ok<UserResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<Error>>> UpdateClient(
         IClientsService clientsService,
         int id,
