@@ -14,6 +14,7 @@ public static class ProductEndpoints
     public static IEndpointRouteBuilder MapProductEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("api/products")
+            .WithTags("Product")
             .RequireAuthorization(UserRoles.Client);
 
         group.MapGet("", GetProducts);

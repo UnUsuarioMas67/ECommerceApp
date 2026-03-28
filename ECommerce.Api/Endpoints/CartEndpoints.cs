@@ -13,6 +13,7 @@ public static class CartEndpoints
     public static IEndpointRouteBuilder MapCartEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("api/carts")
+            .WithTags("Cart")
             .RequireAuthorization(UserRoles.Client);
 
         group.MapGet("{id:int}", GetCartById);

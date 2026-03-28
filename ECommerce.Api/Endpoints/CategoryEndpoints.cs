@@ -13,6 +13,7 @@ public static class CategoryEndpoints
     public static IEndpointRouteBuilder MapCategoryEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("api/categories")
+            .WithTags("Category")
             .RequireAuthorization(UserRoles.Client);
 
         group.MapGet("", GetCategories);

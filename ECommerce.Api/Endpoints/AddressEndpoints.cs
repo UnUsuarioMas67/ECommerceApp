@@ -14,6 +14,7 @@ public static class AddressEndpoints
     public static IEndpointRouteBuilder MapAddressEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("api/addresses")
+            .WithTags("Address")
             .RequireAuthorization(UserRoles.Client);
 
         group.MapGet("{id:int}", GetById);

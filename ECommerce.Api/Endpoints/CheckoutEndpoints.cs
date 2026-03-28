@@ -16,14 +16,15 @@ public static class CheckoutEndpoints
             .WithTags("Checkout");
 
         group.MapPost("/session", CreateCheckoutSession)
-            .WithSummary("Create a Checkout Session")
+            .WithSummary("Create a Stripe Checkout Session")
             .RequireAuthorization(UserRoles.Client);
 
         group.MapGet("/payment/{sessionId}", GetPaymentBySession)
+            .WithSummary("Get Payment by Session")
             .RequireAuthorization();
 
         group.MapPost("/webhook", ProcessWebhook)
-            .WithName("StripeWebhook")
+            .WithSummary("Stripe Webhook")
             .AllowAnonymous();
 
         return endpoints;

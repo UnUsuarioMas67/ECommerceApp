@@ -15,13 +15,20 @@ public static class ClientsEndpoints
     public static IEndpointRouteBuilder MapClientsEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("api/clients")
+            .WithTags("Client")
             .RequireAuthorization(UserRoles.Client);
 
-        group.MapGet("me", GetAuthClient);
-        group.MapGet("{id:int}", GetClientById);
-        group.MapGet("", GetClients);
-        group.MapPut("{id:int}", UpdateClient);
-        group.MapDelete("{id:int}", DeleteClient);
+        group.MapGet("me", GetAuthClient)
+            .WithSummary("Get Authenticated Client");
+        group.MapGet("{id:int}", GetClientById)
+            .WithSummary("Get Client by Id");
+        group.MapGet("", GetClients)
+            .WithSummary("Get Clients");
+        
+        group.MapPut("{id:int}", UpdateClient)
+            .WithSummary("Update Client");
+        group.MapDelete("{id:int}", DeleteClient)
+            .WithSummary("Delete Client");
 
         group.MapPost("", CreateClient)
             .AllowAnonymous();

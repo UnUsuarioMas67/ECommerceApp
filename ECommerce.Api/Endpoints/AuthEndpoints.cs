@@ -10,9 +10,13 @@ public static class AuthEndpoints
 {
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("api/login");
-        group.MapPost("client", LoginClient);
-        group.MapPost("admin", LoginAdmin);
+        var group = endpoints.MapGroup("api/login")
+            .WithTags("Authentication");
+        
+        group.MapPost("client", LoginClient)
+            .WithSummary("Login as Client");
+        group.MapPost("admin", LoginAdmin)
+            .WithSummary("Login as Admin");
 
         return endpoints;
     }
