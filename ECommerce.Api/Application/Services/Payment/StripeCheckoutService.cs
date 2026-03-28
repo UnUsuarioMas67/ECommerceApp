@@ -128,8 +128,6 @@ public class StripeCheckoutService : IStripeCheckoutService
 
     public async Task<PaymentResultDto?> ProcessWebhookAsync(string payload, string signature)
     {
-        throw new NotImplementedException();
-        
         Event stripeEvent;
         try
         {
