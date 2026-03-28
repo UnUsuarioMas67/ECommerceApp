@@ -18,7 +18,7 @@ public static class AuthEndpoints
         
         clientGroup.MapPost("login", LoginClient)
             .WithSummary("Login Client");
-        clientGroup.MapPost("register", LoginClient)
+        clientGroup.MapPost("register", RegisterClient)
             .WithSummary("Register Client");
 
         var adminGroup = endpoints.MapGroup("api/admins")
