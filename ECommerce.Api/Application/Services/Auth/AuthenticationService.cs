@@ -20,11 +20,11 @@ public class AuthenticationService(IJwtService jwtService, ECommerceContext cont
     {
         var client = await context.Clients.FirstOrDefaultAsync(c => c.Email == email);
         if (client == null)
-            return new AuthenticationError();
+            return new InvalidLoginError();
 
         var passwordValid = BCrypt.Net.BCrypt.Verify(password, client.PasswordHash);
         if (!passwordValid)
-            return new AuthenticationError();
+            return new InvalidLoginError();
 
         var token = jwtService.GenerateAccessToken(client);
         return new AuthenticationDto { Token = token, User = mapper.MapToDto(client) };
