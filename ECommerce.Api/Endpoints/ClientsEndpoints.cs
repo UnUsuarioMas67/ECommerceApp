@@ -20,15 +20,15 @@ public static class ClientsEndpoints
 
         group.MapGet("me", GetAuthClient)
             .WithSummary("Get Authenticated Client");
+        group.MapPut("", UpdateClient)
+            .WithSummary("Update Authenticated Client");
+        group.MapDelete("", DeleteClient)
+            .WithSummary("Delete Authenticated Client");
+
         group.MapGet("{id:int}", GetClientById)
             .WithSummary("Get Client by Id");
         group.MapGet("", GetClients)
             .WithSummary("Get Clients");
-        
-        group.MapPut("{id:int}", UpdateClient)
-            .WithSummary("Update Client");
-        group.MapDelete("{id:int}", DeleteClient)
-            .WithSummary("Delete Client");
 
         return endpoints;
     }
@@ -43,17 +43,18 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Results<Ok<UserResponseDto>, NotFound>> GetAuthClient(
+    private static async Task<Results<Ok<UserResponseDto>, BadRequest<InvalidAuthenticationError>>> GetAuthClient(
         HttpContext context,
         IClientsService clientsService)
     {
-        var idClaim = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var success = int.TryParse(idClaim, out var id);
-        if (!success)
-            return TypedResults.NotFound();
+        var clientId = AuthUser.GetAuthUserId(context);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
 
-        var clientDto = await clientsService.GetByIdAsync(id);
-        return clientDto != null ? TypedResults.Ok(clientDto) : TypedResults.NotFound();
+        var clientDto = await clientsService.GetByIdAsync(clientId.Value);
+        return clientDto != null
+            ? TypedResults.Ok(clientDto)
+            : TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value));
     }
 
 
@@ -65,35 +66,47 @@ public static class ClientsEndpoints
         var clients = await clientsService.GetManyAsync(pagination, search);
         return TypedResults.Ok(clients);
     }
-    
-    private static async Task<Results<Ok<UserResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<Error>>> UpdateClient(
-        IClientsService clientsService,
-        int id,
-        UserUpdateDto dto,
-        IValidator<UserUpdateDto> validator)
+
+
+    private static async Task<Results<Ok<UserResponseDto>, ValidationProblem, BadRequest<InvalidAuthenticationError>,
+            UnprocessableEntity<Error>>>
+        UpdateClient(
+            HttpContext context,
+            IClientsService clientsService,
+            UserUpdateDto dto,
+            IValidator<UserUpdateDto> validator)
     {
+        var clientId = AuthUser.GetAuthUserId(context);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
-        var result = await clientsService.UpdateAsync(id, dto);
+        var result = await clientsService.UpdateAsync(clientId.Value, dto);
         if (result.IsSuccess)
             return TypedResults.Ok(result.Value);
 
         return result.Error switch
         {
-            NotFoundError => TypedResults.NotFound(),
+            NotFoundError => TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value)),
             ValidationError error => TypedResults.ValidationProblem(error.Details),
             _ => TypedResults.UnprocessableEntity(result.Error)
         };
     }
 
-
-    private static async Task<Results<Ok<UserResponseDto>, NotFound>> DeleteClient(
-        IClientsService clientsService,
-        int id)
+    private static async Task<Results<Ok<UserResponseDto>, BadRequest<InvalidAuthenticationError>>> DeleteClient(
+        HttpContext context,
+        IClientsService clientsService)
     {
-        var client = await clientsService.DeleteAsync(id);
-        return client != null ? TypedResults.Ok(client) : TypedResults.NotFound();
+        var clientId = AuthUser.GetAuthUserId(context);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
+        var client = await clientsService.DeleteAsync(clientId.Value);
+        return client != null 
+            ? TypedResults.Ok(client) 
+            : TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value));
     }
 }
