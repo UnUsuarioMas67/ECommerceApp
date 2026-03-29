@@ -1,4 +1,4 @@
-namespace ECommerce.Api.Shared;
+namespace ECommerce.Api.Settings;
 
 public class StripeSettings
 {
