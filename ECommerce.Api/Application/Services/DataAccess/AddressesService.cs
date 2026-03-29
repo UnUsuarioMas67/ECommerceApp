@@ -16,8 +16,8 @@ public interface IAddressesService
     Task<IEnumerable<AddressResponseDto>> GetByClient(int clientId);
     Task<IEnumerable<AddressResponseDto>> GetByCountry(string cca2, PaginationQuery pagination);
     Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto, int clientId);
-    Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto);
-    Task<AddressResponseDto?> DeleteAsync(int addressId);
+    Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto, int? clientId = null);
+    Task<AddressResponseDto?> DeleteAsync(int addressId, int? clientId = null);
     Task<string?> GetCountryNameAsync(string cca2);
 }
 
@@ -63,11 +63,16 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         return mapper.MapToDto(address);
     }
 
-    public async Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto)
+    public async Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto, int? clientId = null)
     {
-        var updated = await context.Addresses
+        var query = context.Addresses
             .Include(a => a.Country)
-            .FirstOrDefaultAsync(a => a.Id == addressId);
+            .Where(a => a.Id == addressId);
+
+        if (clientId.HasValue)
+            query = query.Where(a => a.ClientId == clientId.Value);
+
+        var updated = await query.FirstOrDefaultAsync();
 
         if (updated == null)
             return new NotFoundError();
@@ -86,9 +91,14 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         return mapper.MapToDto(updated);
     }
 
-    public async Task<AddressResponseDto?> DeleteAsync(int addressId)
+    public async Task<AddressResponseDto?> DeleteAsync(int addressId, int? clientId = null)
     {
-        var address = await context.Addresses.FindAsync(addressId);
+        var query = context.Addresses.Where(a => a.Id == addressId);
+
+        if (clientId.HasValue)
+            query = query.Where(a => a.ClientId == clientId.Value);
+
+        var address = await query.FirstOrDefaultAsync();
         if (address == null)
             return null;
 

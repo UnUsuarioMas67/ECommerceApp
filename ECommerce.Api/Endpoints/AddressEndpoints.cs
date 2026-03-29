@@ -17,29 +17,35 @@ public static class AddressEndpoints
             .WithTags("Address")
             .RequireAuthorization(UserRoles.Client);
 
-        group.MapGet("{id:int}", GetById);
         group.MapPost("", AddAddress);
         group.MapPut("{id:int}", UpdateAddress);
         group.MapDelete("{id:int}", DeleteAddress);
-        group.MapGet("country/{countryCode}", GetAddressesByCountry);
-        group.MapGet("clients/{id:int}", GetAddressesByClient);
+        group.MapGet("me", GetAuthClientAddresses);
+        group.MapGet("{id:int}", GetAddressById);
+
+        // group.MapGet("country/{countryCode}", GetAddressesByCountry);
 
         return endpoints;
     }
 
 
-    private static async Task<Results<Created<AddressResponseDto>, ValidationProblem, UnprocessableEntity<Error>>>
+    private static async Task<Results<Created<AddressResponseDto>, ValidationProblem,
+            BadRequest<InvalidAuthenticationError>, UnprocessableEntity<Error>>>
         AddAddress(
             HttpContext httpContext,
             AddressCreateDto dto,
             IAddressesService addressesService,
             IValidator<AddressCreateDto> validator)
     {
+        var clientId = AuthUser.GetAuthUserId(httpContext);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
-        var result = await addressesService.CreateAsync(dto);
+        var result = await addressesService.CreateAsync(dto, clientId.Value);
         if (result.IsSuccess)
         {
             var path = httpContext.Request.Path;
@@ -53,18 +59,24 @@ public static class AddressEndpoints
     }
 
 
-    private static async Task<Results<Ok<AddressResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<Error>>>
+    private static async Task<Results<Ok<AddressResponseDto>, ValidationProblem, NotFound,
+            BadRequest<InvalidAuthenticationError>, UnprocessableEntity<Error>>>
         UpdateAddress(
+            HttpContext httpContext,
             int id,
             AddressUpdateDto dto,
             IAddressesService addressesService,
             IValidator<AddressUpdateDto> validator)
     {
+        var clientId = AuthUser.GetAuthUserId(httpContext);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
-        var result = await addressesService.UpdateAsync(id, dto);
+        var result = await addressesService.UpdateAsync(id, dto, clientId);
         if (result.IsSuccess)
             return TypedResults.Ok(result.Value);
 
@@ -77,11 +89,17 @@ public static class AddressEndpoints
     }
 
 
-    private static async Task<Results<Ok<AddressResponseDto>, NotFound>> DeleteAddress(
-        int id,
-        IAddressesService addressesService)
+    private static async Task<Results<Ok<AddressResponseDto>, NotFound, BadRequest<InvalidAuthenticationError>>>
+        DeleteAddress(
+            HttpContext httpContext,
+            int id,
+            IAddressesService addressesService)
     {
-        var deleted = await addressesService.DeleteAsync(id);
+        var clientId = AuthUser.GetAuthUserId(httpContext);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
+        var deleted = await addressesService.DeleteAsync(id, clientId);
         if (deleted == null)
             return TypedResults.NotFound();
 
@@ -89,7 +107,7 @@ public static class AddressEndpoints
     }
 
 
-    private static async Task<Results<Ok<AddressResponseDto>, NotFound>> GetById(
+    private static async Task<Results<Ok<AddressResponseDto>, NotFound>> GetAddressById(
         int id,
         IAddressesService addressesService)
     {
@@ -100,6 +118,19 @@ public static class AddressEndpoints
         return TypedResults.Ok(address);
     }
 
+    private static async Task<Results<Ok<IEnumerable<AddressResponseDto>>, BadRequest<InvalidAuthenticationError>>>
+        GetAuthClientAddresses(
+            HttpContext httpContext,
+            IAddressesService addressesService)
+    {
+        var clientId = AuthUser.GetAuthUserId(httpContext);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
+        var addresses = await addressesService.GetByClient(clientId.Value);
+        return TypedResults.Ok(addresses);
+    }
+
     private static async Task<Ok<IEnumerable<AddressResponseDto>>> GetAddressesByCountry(
         IAddressesService addressesService,
         [FromRoute] string countryCode,
@@ -107,14 +138,6 @@ public static class AddressEndpoints
     )
     {
         var addresses = await addressesService.GetByCountry(countryCode, pagination);
-        return TypedResults.Ok(addresses);
-    }
-
-    private static async Task<Ok<IEnumerable<AddressResponseDto>>> GetAddressesByClient(
-        int id,
-        IAddressesService addressesService)
-    {
-        var addresses = await addressesService.GetByClient(id);
         return TypedResults.Ok(addresses);
     }
 }
