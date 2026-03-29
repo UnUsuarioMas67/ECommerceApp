@@ -25,13 +25,13 @@ public class AddressMapper(ECommerceContext context)
         };
     }
 
-    public async Task<Address> MapToEntityAsync(AddressCreateDto dto)
+    public async Task<Address> MapToEntityAsync(AddressCreateDto dto, int clientId)
     {
         var country = await context.Countries.FirstOrDefaultAsync(c => c.Cca2 == dto.CountryCode);
 
         return new Address
         {
-            ClientId = dto.ClientId,
+            ClientId = clientId,
             AddressLine1 = dto.AddressLine1,
             AddressLine2 = dto.AddressLine2 ?? "",
             Country = country,

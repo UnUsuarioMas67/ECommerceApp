@@ -15,7 +15,7 @@ public interface IAddressesService
     Task<AddressResponseDto?> GetByIdAsync(int addressId);
     Task<IEnumerable<AddressResponseDto>> GetByClient(int clientId);
     Task<IEnumerable<AddressResponseDto>> GetByCountry(string cca2, PaginationQuery pagination);
-    Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto);
+    Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto, int clientId);
     Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto);
     Task<AddressResponseDto?> DeleteAsync(int addressId);
     Task<string?> GetCountryNameAsync(string cca2);
@@ -49,9 +49,9 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
             .ToListAsync();
     }
 
-    public async Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto)
+    public async Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto, int clientId)
     {
-        var address = await mapper.MapToEntityAsync(dto);
+        var address = await mapper.MapToEntityAsync(dto, clientId);
 
         var verification = await VerifyAddress(address);
         if (!verification.IsSuccess)

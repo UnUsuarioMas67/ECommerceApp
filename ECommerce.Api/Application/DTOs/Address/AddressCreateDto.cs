@@ -3,8 +3,6 @@
 // ReSharper disable once ClassNeverInstantiated.Global
 public class AddressCreateDto
 {
-    public int ClientId { get; set; }
-    
     public string AddressLine1 { get; set; }
     public string? AddressLine2 { get; set; }
     

@@ -8,9 +8,6 @@ public class AddressCreateDtoValidator : AbstractValidator<AddressCreateDto>
 {
     public AddressCreateDtoValidator()
     {
-        RuleFor(a => a.ClientId)
-            .GreaterThan(0);
-        
         RuleFor(p => p.AddressLine1)
             .NotEmpty()
             .MaximumLength(TextLengthRules.ShortText);
