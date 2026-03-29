@@ -16,8 +16,8 @@ public interface ICartsService
     Task<CartResponseDto?> GetByIdAsync(int cartId);
     Task<IEnumerable<CartResponseDto>> GetManyAsync(PaginationQuery pagination);
     Task<IEnumerable<CartResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
-    Task<Result<CartResponseDto>> CreateAsync(CartCreateDto dto);
-    Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartUpdateDto dto, int? clientId = null);
+    Task<Result<CartResponseDto>> CreateAsync(CartRequestDto dto, int clientId);
+    Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartRequestDto dto, int? clientId = null);
     Task<CartResponseDto?> DeleteAsync(int cartId, int? clientId = null);
 }
 
@@ -60,9 +60,9 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
             .ToListAsync();
     }
 
-    public async Task<Result<CartResponseDto>> CreateAsync(CartCreateDto dto)
+    public async Task<Result<CartResponseDto>> CreateAsync(CartRequestDto dto, int clientId)
     {
-        var created = await mapper.MapToEntityAsync(dto);
+        var created = await mapper.MapToEntityAsync(dto, clientId);
 
         var verification = await VerifyCart(created);
         if (!verification.IsSuccess)
@@ -74,7 +74,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         return mapper.MapToDto(created);
     }
 
-    public async Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartUpdateDto dto, int? clientId = null)
+    public async Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartRequestDto dto, int? clientId = null)
     {
         var query = context.Carts.Where(c => c.Id == cartId);
 

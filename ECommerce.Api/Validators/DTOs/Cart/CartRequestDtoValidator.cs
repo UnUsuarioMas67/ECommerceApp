@@ -1,12 +1,11 @@
 ﻿using ECommerce.Api.Application.DTOs.Cart;
 using FluentValidation;
-using FluentValidation.Validators;
 
 namespace ECommerce.Api.Validators.DTOs.Cart;
 
-public class CartUpdateDtoValidator : AbstractValidator<CartUpdateDto>
+public class CartRequestDtoValidator : AbstractValidator<CartRequestDto>
 {
-    public CartUpdateDtoValidator(IValidator<CartItemCreate> cartItemValidator)
+    public CartRequestDtoValidator(IValidator<CartItemCreate> cartItemValidator)
     {
         RuleForEach(c => c.Items)
             .SetValidator(cartItemValidator);

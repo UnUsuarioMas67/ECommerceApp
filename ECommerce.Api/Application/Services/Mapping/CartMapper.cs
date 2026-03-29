@@ -24,16 +24,16 @@ public class CartMapper(CartItemMapper cartItemMapper, ECommerceContext context)
         return dto;
     }
 
-    public async Task<Cart> MapToEntityAsync(CartCreateDto dto)
+    public async Task<Cart> MapToEntityAsync(CartRequestDto dto, int clientId)
     {
-        var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == dto.ClientId);
+        var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
         
-        var cart = new Cart { ClientId = dto.ClientId, Client = client };
+        var cart = new Cart { ClientId = clientId, Client = client };
         cart.Items = await cartItemMapper.MapListToEntitiesAsync(cart, dto.Items.ToList());
         return cart;
     }
 
-    public async Task ApplyUpdateAsync(Cart toUpdate, CartUpdateDto dto)
+    public async Task ApplyUpdateAsync(Cart toUpdate, CartRequestDto dto)
     {
         toUpdate.Items = await cartItemMapper.MapListToEntitiesAsync(toUpdate, dto.Items.ToList());
     }

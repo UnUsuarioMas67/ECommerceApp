@@ -16,14 +16,21 @@ public static class CartEndpoints
             .WithTags("Cart")
             .RequireAuthorization(UserRoles.Client);
 
-        group.MapGet("{id:int}", GetCartById);
-        group.MapGet("", GetCarts);
-        group.MapGet("clients/me", GetAuthClientCarts);
-        group.MapGet("clients/{id:int}", GetCartsByClient);
-
-        group.MapPost("", CreateCart);
-        group.MapPut("{id:int}", UpdateCart);
-        group.MapDelete("{id:int}", DeleteCart);
+        group.MapGet("{id:int}", GetCartById)
+            .WithSummary("Get Cart by Id")
+            .RequireAuthorization(o => o.RequireRole(UserRoles.Client, UserRoles.Admin));
+        group.MapGet("clients/{id:int}", GetCartsByClient)
+            .WithSummary("Get Carts by Client Id")
+            .RequireAuthorization(o => o.RequireRole(UserRoles.Client, UserRoles.Admin));
+        
+        group.MapGet("clients/me", GetAuthClientCarts)
+            .WithSummary("Get authenticated Client's Carts");
+        group.MapPost("", AddCart)
+            .WithSummary("Add cart to authenticated Client");
+        group.MapPut("{id:int}", UpdateCart)
+            .WithSummary("Update authenticated Client's Carts");
+        group.MapDelete("{id:int}", DeleteCart)
+            .WithSummary("Delete authenticated Client's Carts");
 
         return endpoints;
     }
@@ -65,17 +72,23 @@ public static class CartEndpoints
         return TypedResults.Ok(carts);
     }
 
-    private static async Task<Results<Created<CartResponseDto>, ValidationProblem, UnprocessableEntity<Error>>> CreateCart(
-        HttpContext httpContext,
-        ICartsService cartsService,
-        CartCreateDto dto,
-        IValidator<CartCreateDto> cartValidator)
+    private static async Task<Results<Created<CartResponseDto>, ValidationProblem, UnprocessableEntity<Error>,
+            BadRequest<InvalidAuthenticationError>>>
+        AddCart(
+            HttpContext httpContext,
+            ICartsService cartsService,
+            CartRequestDto dto,
+            IValidator<CartRequestDto> cartValidator)
     {
+        var clientId = AuthUser.GetAuthUserId(httpContext);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
         var validationResult = await cartValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        
-        var result = await cartsService.CreateAsync(dto);
+
+        var result = await cartsService.CreateAsync(dto, clientId.Value);
         if (result.IsSuccess)
         {
             var path = httpContext.Request.Path;
@@ -93,8 +106,8 @@ public static class CartEndpoints
         HttpContext httpContext,
         ICartsService cartsService,
         int id,
-        CartUpdateDto dto,
-        IValidator<CartUpdateDto> cartValidator)
+        CartRequestDto dto,
+        IValidator<CartRequestDto> cartValidator)
     {
         var clientId = AuthUser.GetAuthUserId(httpContext);
         if (clientId == null)

@@ -1,7 +1,6 @@
 ﻿namespace ECommerce.Api.Application.DTOs.Cart;
 
-public class CartCreateDto
+public class CartRequestDto
 {
-    public int ClientId { get; set; }
     public ICollection<CartItemCreate> Items { get; set; }
 }
