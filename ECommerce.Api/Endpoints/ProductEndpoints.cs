@@ -15,21 +15,29 @@ public static class ProductEndpoints
     {
         var group = endpoints.MapGroup("api/products")
             .WithTags("Product")
-            .RequireAuthorization(UserRoles.Client);
+            .AllowAnonymous();
 
-        group.MapGet("", GetProducts);
-        group.MapGet("categories/{category}", GetProductsByCategory);
-        group.MapGet("categories", GetCategoriesList);
-        group.MapGet("{id:int}", GetProductById);
+        group.MapGet("", GetProducts)
+            .WithSummary("Get all Products");
+        group.MapGet("categories/{category}", GetProductsByCategory)
+            .WithSummary("Get Products by Category");
+        // group.MapGet("categories", GetCategoriesList)
+        //     .WithSummary("Get all Categories slugs");
+        group.MapGet("{id:int}", GetProductById)
+            .WithSummary("Get Product by Id");
 
         group.MapPost("", CreateProduct)
+            .WithSummary("Create a new Product")
             .RequireAuthorization(UserRoles.Admin);
         group.MapPut("{id:int}", UpdateProduct)
+            .WithSummary("Update a Product")
             .RequireAuthorization(UserRoles.Admin);
         group.MapDelete("{id:int}", DeleteProduct)
+            .WithSummary("Delete a Product")
             .RequireAuthorization(UserRoles.Admin);
 
         group.MapPut("{id:int}/restock", RestockProduct)
+            .WithSummary("Restock a Product")
             .RequireAuthorization(UserRoles.Admin);
 
         return endpoints;
