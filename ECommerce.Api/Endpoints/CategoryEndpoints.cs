@@ -14,22 +14,26 @@ public static class CategoryEndpoints
     {
         var group = endpoints.MapGroup("api/categories")
             .WithTags("Category")
-            .RequireAuthorization(UserRoles.Client);
+            .RequireAuthorization(UserRoles.Admin);
 
-        group.MapGet("", GetCategories);
-        group.MapGet("{category}", GetCategory);
-        group.MapPost("", CreateCategory)
-            .RequireAuthorization(UserRoles.Admin);
+        group.MapGet("", GetCategories)
+            .WithSummary("Get Categories")
+            .AllowAnonymous();
+        group.MapGet("{category}", GetCategory)
+            .WithSummary("Get Single Category")
+            .AllowAnonymous();
+        group.MapPost("", AddCategory)
+            .WithSummary("Add New Category");
         group.MapPut("{category}", UpdateCategory)
-            .RequireAuthorization(UserRoles.Admin);
+            .WithSummary("Update Category");
         group.MapDelete("{category}", DeleteCategory)
-            .RequireAuthorization(UserRoles.Admin);
+            .WithSummary("Delete Category");
 
         return endpoints;
     }
 
     private static async Task<Results<Created<CategoryResponseDto>, ValidationProblem, UnprocessableEntity<Error>>>
-        CreateCategory(HttpContext httpContext, ICategoryService categoryService, CategoryCreateDto dto)
+        AddCategory(HttpContext httpContext, ICategoryService categoryService, CategoryCreateDto dto)
     {
         var result = await categoryService.CreateAsync(dto);
         if (result.IsSuccess)
