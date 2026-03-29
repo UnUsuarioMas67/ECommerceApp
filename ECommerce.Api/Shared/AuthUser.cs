@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace ECommerce.Api.Endpoints;
+namespace ECommerce.Api.Shared;
 
 public static class AuthUser
 {
