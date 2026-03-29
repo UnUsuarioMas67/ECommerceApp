@@ -17,11 +17,16 @@ public static class AddressEndpoints
             .WithTags("Address")
             .RequireAuthorization(UserRoles.Client);
 
-        group.MapPost("", AddAddress);
-        group.MapPut("{id:int}", UpdateAddress);
-        group.MapDelete("{id:int}", DeleteAddress);
-        group.MapGet("me", GetAuthClientAddresses);
-        group.MapGet("{id:int}", GetAddressById);
+        group.MapPost("", AddAddress)
+            .WithSummary("Add new Address to authenticated Client");
+        group.MapPut("{id:int}", UpdateAddress)
+            .WithSummary("Update authenticated Client's Address");
+        group.MapDelete("{id:int}", DeleteAddress)
+            .WithSummary("Delete authenticated Client's Address");
+        group.MapGet("me", GetAuthClientAddresses)
+            .WithSummary("Get authenticated Client's Addresses");
+        group.MapGet("{id:int}", GetAddressById)
+            .WithSummary("Get Address by Id");
 
         // group.MapGet("country/{countryCode}", GetAddressesByCountry);
 
