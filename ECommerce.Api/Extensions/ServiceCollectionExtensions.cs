@@ -42,7 +42,7 @@ public static class ServiceCollectionExtensions
 
         services.AddAuthorization(o =>
         {
-            o.AddPolicy(UserRoles.Client, policy => policy.RequireRole(UserRoles.Client, UserRoles.Admin));
+            o.AddPolicy(UserRoles.Client, policy => policy.RequireRole(UserRoles.Client));
             o.AddPolicy(UserRoles.Admin, policy => policy.RequireRole(UserRoles.Admin));
         });
     }
