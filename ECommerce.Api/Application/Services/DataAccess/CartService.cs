@@ -17,8 +17,8 @@ public interface ICartsService
     Task<IEnumerable<CartResponseDto>> GetManyAsync(PaginationQuery pagination);
     Task<IEnumerable<CartResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
     Task<Result<CartResponseDto>> CreateAsync(CartCreateDto dto);
-    Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartUpdateDto dto);
-    Task<CartResponseDto?> DeleteAsync(int cartId);
+    Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartUpdateDto dto, int? clientId = null);
+    Task<CartResponseDto?> DeleteAsync(int cartId, int? clientId = null);
 }
 
 public class CartsService(ECommerceContext context, IValidator<Cart> validator, CartMapper mapper)
@@ -74,9 +74,14 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         return mapper.MapToDto(created);
     }
 
-    public async Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartUpdateDto dto)
+    public async Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartUpdateDto dto, int? clientId = null)
     {
-        var updated = await context.Carts.FindAsync(cartId);
+        var query = context.Carts.Where(c => c.Id == cartId);
+
+        if (clientId.HasValue)
+            query = query.Where(c => c.ClientId == clientId.Value);
+
+        var updated = await query.FirstOrDefaultAsync();
         if (updated == null)
             return new NotFoundError();
 
@@ -99,9 +104,14 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         return mapper.MapToDto(updated);
     }
 
-    public async Task<CartResponseDto?> DeleteAsync(int cartId)
+    public async Task<CartResponseDto?> DeleteAsync(int cartId, int? clientId = null)
     {
-        var deleted = await context.Carts.FindAsync(cartId);
+        var query = context.Carts.Where(c => c.Id == cartId);
+
+        if (clientId.HasValue)
+            query = query.Where(c => c.ClientId == clientId.Value);
+
+        var deleted = await query.FirstOrDefaultAsync();
         if (deleted == null)
             return null;
 

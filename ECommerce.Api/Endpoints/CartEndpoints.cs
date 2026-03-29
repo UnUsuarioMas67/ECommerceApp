@@ -18,12 +18,13 @@ public static class CartEndpoints
 
         group.MapGet("{id:int}", GetCartById);
         group.MapGet("", GetCarts);
+        group.MapGet("clients/me", GetAuthClientCarts);
         group.MapGet("clients/{id:int}", GetCartsByClient);
-        
+
         group.MapPost("", CreateCart);
         group.MapPut("{id:int}", UpdateCart);
         group.MapDelete("{id:int}", DeleteCart);
-        
+
         return endpoints;
     }
 
@@ -40,10 +41,24 @@ public static class CartEndpoints
         var carts = await cartsService.GetManyAsync(pagination);
         return TypedResults.Ok(carts);
     }
-    
+
+    private static async Task<Results<Ok<IEnumerable<CartResponseDto>>, BadRequest<InvalidAuthenticationError>>>
+        GetAuthClientCarts(
+            HttpContext httpContext,
+            ICartsService cartsService,
+            [AsParameters] PaginationQuery pagination)
+    {
+        var clientId = AuthUser.GetAuthUserId(httpContext);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
+        var carts = await cartsService.GetByClientAsync(clientId.Value, pagination);
+        return TypedResults.Ok(carts);
+    }
+
     private static async Task<Ok<IEnumerable<CartResponseDto>>> GetCartsByClient(
         ICartsService cartsService,
-        int id, 
+        int id,
         [AsParameters] PaginationQuery pagination)
     {
         var carts = await cartsService.GetByClientAsync(id, pagination);
@@ -72,18 +87,24 @@ public static class CartEndpoints
 
         return TypedResults.UnprocessableEntity(result.Error);
     }
-    
-    private static async Task<Results<Ok<CartResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<Error>>> UpdateCart(
+
+    private static async Task<Results<Ok<CartResponseDto>, ValidationProblem, NotFound,
+        BadRequest<InvalidAuthenticationError>, UnprocessableEntity<Error>>> UpdateCart(
+        HttpContext httpContext,
         ICartsService cartsService,
         int id,
         CartUpdateDto dto,
         IValidator<CartUpdateDto> cartValidator)
     {
+        var clientId = AuthUser.GetAuthUserId(httpContext);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
         var validationResult = await cartValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
             return TypedResults.ValidationProblem(validationResult.ToDictionary());
-        
-        var result = await cartsService.UpdateAsync(id, dto);
+
+        var result = await cartsService.UpdateAsync(id, dto, clientId);
         if (result.IsSuccess)
             return TypedResults.Ok(result.Value);
 
@@ -94,11 +115,17 @@ public static class CartEndpoints
             _ => TypedResults.UnprocessableEntity(result.Error)
         };
     }
-    
-    private static async Task<Results<Ok<CartResponseDto>, NotFound>> DeleteCart(
-        ICartsService cartsService, int id)
+
+    private static async Task<Results<Ok<CartResponseDto>, NotFound, BadRequest<InvalidAuthenticationError>>>
+        DeleteCart(
+            HttpContext httpContext,
+            ICartsService cartsService, int id)
     {
-        var deleted = await cartsService.DeleteAsync(id);
-        return deleted != null ? TypedResults.Ok(deleted) : TypedResults.NotFound(); 
+        var clientId = AuthUser.GetAuthUserId(httpContext);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
+        var deleted = await cartsService.DeleteAsync(id, clientId);
+        return deleted != null ? TypedResults.Ok(deleted) : TypedResults.NotFound();
     }
 }

@@ -23,7 +23,7 @@ public static class AddressEndpoints
             .WithSummary("Update authenticated Client's Address");
         group.MapDelete("{id:int}", DeleteAddress)
             .WithSummary("Delete authenticated Client's Address");
-        group.MapGet("me", GetAuthClientAddresses)
+        group.MapGet("clients/me", GetAuthClientAddresses)
             .WithSummary("Get authenticated Client's Addresses");
         group.MapGet("{id:int}", GetAddressById)
             .WithSummary("Get Address by Id");
