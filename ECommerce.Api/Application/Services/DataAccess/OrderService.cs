@@ -11,7 +11,7 @@ namespace ECommerce.Api.Application.Services.DataAccess;
 
 public interface IOrderService
 {
-    Task<Result<ShopOrder>> CreateAsync(int cartId, int addressId);
+    Task<Result<ShopOrder>> CreateAsync(int cartId, int addressId, int? clientId = null);
     Task<OrderResponseDto?> GetByIdAsync(int orderId);
     Task<IEnumerable<OrderResponseDto>> GetManyAsync(PaginationQuery pagination);
     Task<IEnumerable<OrderResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
@@ -20,27 +20,23 @@ public interface IOrderService
 
 public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrderService
 {
-    public async Task<Result<ShopOrder>> CreateAsync(int cartId, int addressId)
+    public async Task<Result<ShopOrder>> CreateAsync(int cartId, int addressId, int? clientId = null)
     {
-        var cart = await context.Carts
-            .Include(c => c.Items)
-            .ThenInclude(i => i.Product)
-            .FirstOrDefaultAsync(c => c.Id == cartId);
+        var cartResult = await GetAndValidateCartAsync(cartId, clientId);
+        if (!cartResult.IsSuccess)
+            return cartResult.Error;
+        var cart = cartResult.Value;
 
-        if (cart == null)
-            return new CartNotFoundError(cartId);
-
-        if (!cart.Items.Any())
-            return new CartIsEmptyError(cartId);
-
-        var address = await context.Addresses.FindAsync(addressId);
-        if (address == null)
-            return new AddressNotFoundError(addressId);
+        var addressResult = await GetAndValidateAddressAsync(addressId, clientId);
+        if (!addressResult.IsSuccess)
+            return addressResult.Error;
+        var address = addressResult.Value;
 
         var order = new ShopOrder
         {
             ClientId = cart.ClientId,
             AddressId = addressId,
+            Address = address,
             OrderDate = DateTime.UtcNow,
             StatusId = 1,
             Items = cart.Items.Select(item => new OrderLine
@@ -54,11 +50,55 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
 
         context.ShopOrders.Add(order);
         context.Carts.Remove(cart);
-        
+
         await context.SaveChangesAsync();
 
         return order;
     }
+
+    private async Task<Result<Cart>> GetAndValidateCartAsync(int cartId, int? clientId = null)
+    {
+        /*
+         * TODOS
+         * - Make sure products are still in stock
+         */
+        
+        var query = context.Carts
+            .Include(c => c.Items)
+            .ThenInclude(i => i.Product)
+            .Where(c => c.Id == cartId);
+
+        if (clientId.HasValue)
+            query = query.Where(c => c.ClientId == clientId.Value);
+
+        var cart = await query.FirstOrDefaultAsync();
+
+        if (cart == null)
+            return new CartNotFoundError(cartId);
+
+        if (!cart.Items.Any())
+            return new CartIsEmptyError(cartId);
+
+        return cart;
+    }
+
+    private async Task<Result<Address>> GetAndValidateAddressAsync(int addressId, int? clientId = null)
+    {
+        var query = context.Addresses
+            .AsNoTracking()
+            .Where(a => a.Id == addressId);
+        
+        if (clientId.HasValue)
+            query = query.Where(a => a.ClientId == clientId.Value);
+
+        var address = await query.FirstOrDefaultAsync();
+        
+        if (address == null)
+            return new AddressNotFoundError(addressId);
+
+        return address;
+    }
+
 
     public async Task<OrderResponseDto?> GetByIdAsync(int orderId)
     {
