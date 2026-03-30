@@ -14,6 +14,8 @@ public interface IOrderService
     Task<Result<ShopOrder>> CreateAsync(int cartId, int addressId);
     Task<OrderResponseDto?> GetByIdAsync(int orderId);
     Task<IEnumerable<OrderResponseDto>> GetManyAsync(PaginationQuery pagination);
+    Task<IEnumerable<OrderResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
+    Task<IEnumerable<OrderResponseDto>> GetByProductAsync(int productId, PaginationQuery pagination);
 }
 
 public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrderService
@@ -74,6 +76,34 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
             .AsNoTracking()
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
+            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
+            .Take(pagination.LimitOrDefault)
+            .ToListAsync();
+
+        return orders.Select(mapper.MapToDto);
+    }
+
+    public async Task<IEnumerable<OrderResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination)
+    {
+        var orders = await context.ShopOrders
+            .AsNoTracking()
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .Where(o => o.ClientId == clientId)
+            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
+            .Take(pagination.LimitOrDefault)
+            .ToListAsync();
+
+        return orders.Select(mapper.MapToDto);
+    }
+
+    public async Task<IEnumerable<OrderResponseDto>> GetByProductAsync(int productId, PaginationQuery pagination)
+    {
+        var orders = await context.ShopOrders
+            .AsNoTracking()
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .Where(o => o.Items.Any(i => i.ProductId == productId))
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
             .Take(pagination.LimitOrDefault)
             .ToListAsync();
