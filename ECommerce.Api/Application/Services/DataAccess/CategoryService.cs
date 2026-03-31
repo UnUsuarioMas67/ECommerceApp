@@ -12,9 +12,6 @@ namespace ECommerce.Api.Application.Services.DataAccess;
 
 public interface ICategoryService
 {
-    Task<bool> EntryExistsAsync(int categoryId);
-    Task<bool> EntryExistsAsync(string categorySlug);
-
     Task<CategoryResponseDto?> GetByIdAsync(int categoryId);
     Task<CategoryResponseDto?> GetBySlugAsync(string categorySlug);
 
@@ -31,12 +28,6 @@ public interface ICategoryService
 public class CategoryService(ECommerceContext context, IValidator<Category> validator, CategoryMapper mapper)
     : ICategoryService
 {
-    public async Task<bool> EntryExistsAsync(int categoryId)
-        => await context.Categories.AnyAsync(c => c.Id == categoryId);
-
-    public async Task<bool> EntryExistsAsync(string categorySlug)
-        => await context.Categories.AnyAsync(c => c.Slug == categorySlug);
-
     public async Task<CategoryResponseDto?> GetByIdAsync(int categoryId)
     {
         var category = await context.Categories.FindAsync(categoryId);

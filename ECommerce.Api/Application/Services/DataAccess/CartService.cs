@@ -12,7 +12,6 @@ namespace ECommerce.Api.Application.Services.DataAccess;
 
 public interface ICartsService
 {
-    Task<bool> EntryExistsAsync(int cartId);
     Task<CartResponseDto?> GetByIdAsync(int cartId);
     Task<IEnumerable<CartResponseDto>> GetManyAsync(PaginationQuery pagination);
     Task<IEnumerable<CartResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
@@ -24,9 +23,6 @@ public interface ICartsService
 public class CartsService(ECommerceContext context, IValidator<Cart> validator, CartMapper mapper)
     : ICartsService
 {
-    public async Task<bool> EntryExistsAsync(int cartId)
-        => await context.Carts.AnyAsync(c => c.Id == cartId);
-
     public async Task<CartResponseDto?> GetByIdAsync(int cartId)
     {
         var cart = await context.Carts

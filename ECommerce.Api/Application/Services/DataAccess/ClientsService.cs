@@ -12,7 +12,6 @@ namespace ECommerce.Api.Application.Services.DataAccess;
 
 public interface IClientsService
 {
-    Task<bool> EntryExistsAsync(int clientId);
     Task<UserResponseDto?> GetByIdAsync(int clientId);
     Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
     Task<Result<UserResponseDto>> CreateAsync(UserCreateDto dto);
@@ -23,9 +22,6 @@ public interface IClientsService
 public class ClientsService(ECommerceContext context, IValidator<Client> validator, ClientMapper mapper)
     : IClientsService
 {
-    public async Task<bool> EntryExistsAsync(int clientId)
-        => await context.Clients.AnyAsync(c => c.Id == clientId);
-
     public async Task<UserResponseDto?> GetByIdAsync(int clientId)
     {
         var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);

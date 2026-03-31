@@ -12,7 +12,6 @@ namespace ECommerce.Api.Application.Services.DataAccess;
 
 public interface IProductService
 {
-    Task<bool> EntryExistsAsync(int productId);
     Task<ProductResponseDto?> GetByIdAsync(int productId);
     Task<Result<ProductResponseDto>> CreateAsync(ProductCreateDto dto);
     Task<Result<ProductResponseDto>> UpdateAsync(int productId, ProductUpdateDto dto);
@@ -30,9 +29,6 @@ public interface IProductService
 public class ProductService(ECommerceContext context, IValidator<Product> validator, ProductMapper mapper) 
     : IProductService
 {
-    public async Task<bool> EntryExistsAsync(int productId)
-        => await context.Products.FindAsync(productId) != null;
-
     public async Task<ProductResponseDto?> GetByIdAsync(int productId)
     {
         var product = await context.Products
