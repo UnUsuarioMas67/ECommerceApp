@@ -89,7 +89,6 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
     private async Task<Result<Address>> GetAndValidateAddressAsync(int addressId, int? clientId = null)
     {
         var query = context.Addresses
-            .AsNoTracking()
             .Where(a => a.Id == addressId);
         
         if (clientId.HasValue)
@@ -107,6 +106,7 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
     public async Task<OrderResponseDto?> GetByIdAsync(int orderId)
     {
         var order = await context.ShopOrders
+            .AsNoTracking()
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .FirstOrDefaultAsync(o => o.Id == orderId);
