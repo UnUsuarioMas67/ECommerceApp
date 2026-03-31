@@ -47,6 +47,8 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
                 UnitPrice = item.Product.Price
             }).ToList()
         };
+        
+        // TODO - Validate ShopOrder here
 
         context.ShopOrders.Add(order);
         context.Carts.Remove(cart);
@@ -58,11 +60,6 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
 
     private async Task<Result<Cart>> GetAndValidateCartAsync(int cartId, int? clientId = null)
     {
-        /*
-         * TODOS
-         * - Make sure products are still in stock
-         */
-        
         var query = context.Carts
             .Include(c => c.Items)
             .ThenInclude(i => i.Product)
@@ -76,8 +73,15 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
         if (cart == null)
             return new CartNotFoundError(cartId);
 
-        if (!cart.Items.Any())
+        if (cart.Items.Count == 0)
             return new CartIsEmptyError(cartId);
+
+        var productsWithoutStock = cart.Items
+            .Where(i => i.Product.Stock < i.Quantity)
+            .Select(i => new ProductsNotEnoughStockErrorItem(i.Product.Id, i.Quantity, i.Product.Stock))
+            .ToList();
+        if (productsWithoutStock.Count != 0)
+            return new ProductsNotEnoughStockError(productsWithoutStock);
 
         return cart;
     }

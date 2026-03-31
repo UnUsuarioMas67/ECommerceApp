@@ -42,7 +42,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         return await context.Carts
             .Include(cart => cart.Items)
             .ThenInclude(item => item.Product)
-            .ThenInclude(product => product!.Category)
+            .ThenInclude(product => product.Category)
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(item => mapper.MapToDto(item))
             .ToListAsync();
@@ -53,7 +53,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         return await context.Carts
             .Include(cart => cart.Items)
             .ThenInclude(item => item.Product)
-            .ThenInclude(product => product!.Category)
+            .ThenInclude(product => product.Category)
             .Where(c => c.ClientId == clientId)
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(item => mapper.MapToDto(item))
@@ -137,6 +137,13 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         var invalidQuantitiesIds = GetProductIdsWithInvalidQuantities(cart.Items);
         if (invalidQuantitiesIds.Length != 0)
             return new InvalidQuantityError(invalidQuantitiesIds);
+        
+        var productsWithoutStock = cart.Items
+            .Where(i => i.Product.Stock < i.Quantity)
+            .Select(i => new ProductsNotEnoughStockErrorItem(i.Product.Id, i.Quantity, i.Product.Stock))
+            .ToList();
+        if (productsWithoutStock.Count != 0)
+            return new ProductsNotEnoughStockError(productsWithoutStock);
         
         var validation = await validator.ValidateAsync(cart);
         if (!validation.IsValid)
