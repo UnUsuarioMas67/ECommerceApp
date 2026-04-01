@@ -28,7 +28,7 @@ public class PaymentService(ECommerceContext context) : IPaymentService
         if (order == null)
             return new OrderNotExistsError(orderId);
         if (order.Payment != null)
-            return new OrderAlreadyPaid(orderId);
+            return new OrderPaymentAlreadyExistsError(orderId);
 
         var totalAmount = order.Items.Sum(i => i.UnitPrice * i.Quantity);
 
