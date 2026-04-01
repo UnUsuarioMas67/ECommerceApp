@@ -13,37 +13,6 @@ public class OrderStatusConfig : IEntityTypeConfiguration<OrderStatus>
             .IsRequired()
             .HasMaxLength(TextLengthRules.ShortName);
 
-        builder.HasData(
-            new OrderStatus
-            {
-                Id = 1,
-                Status = "Awaiting Payment"
-            },
-            new OrderStatus
-            {
-                Id = 2,
-                Status = "In Progress"
-            },
-            new OrderStatus
-            {
-                Id = 3,
-                Status = "Awaiting Shipping"
-            },
-            new OrderStatus
-            {
-                Id = 4,
-                Status = "Shipped"
-            },
-            new OrderStatus
-            {
-                Id = 5,
-                Status = "Out for Delivery"
-            },
-            new OrderStatus
-            {
-                Id = 6,
-                Status = "Delivered"
-            }
-        );
+        builder.HasData(OrderStatuses.GetAll());
     }
 }
