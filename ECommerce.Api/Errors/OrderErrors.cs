@@ -9,6 +9,6 @@ public record CartIsEmptyError(int CartId)
 public record AddressNotFoundError(int AddressId)
     : Error($"Address with id {AddressId} not found");
 
-public record ProductsNotEnoughStockError(ICollection<ProductsNotEnoughStockErrorItem> Products)
+public record ProductsStockError(ICollection<ProductsStockErrorItem> Products)
     : Error("One or more products have insufficient stock");
-public record ProductsNotEnoughStockErrorItem(int ProductId, int QuantityRequested, int StockAvailable);
+public record ProductsStockErrorItem(int ProductId, int QuantityRequested, int StockAvailable);

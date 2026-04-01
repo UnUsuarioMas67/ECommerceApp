@@ -78,10 +78,10 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
 
         var productsWithoutStock = cart.Items
             .Where(i => i.Product.Stock < i.Quantity)
-            .Select(i => new ProductsNotEnoughStockErrorItem(i.Product.Id, i.Quantity, i.Product.Stock))
+            .Select(i => new ProductsStockErrorItem(i.Product.Id, i.Quantity, i.Product.Stock))
             .ToList();
         if (productsWithoutStock.Count != 0)
-            return new ProductsNotEnoughStockError(productsWithoutStock);
+            return new ProductsStockError(productsWithoutStock);
 
         return cart;
     }
