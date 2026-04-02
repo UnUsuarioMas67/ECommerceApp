@@ -12,7 +12,7 @@ namespace ECommerce.Api.Application.Services.DataAccess;
 public interface IOrderService
 {
     Task<Result<ShopOrder>> CreateAsync(int cartId, int addressId, int? clientId = null);
-    Task<OrderResponseDto?> GetByIdAsync(int orderId);
+    Task<OrderResponseDto?> GetByIdAsync(int orderId, int? clientId = null);
     Task<IEnumerable<OrderResponseDto>> GetManyAsync(PaginationQuery pagination);
     Task<IEnumerable<OrderResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
     Task<IEnumerable<OrderResponseDto>> GetByProductAsync(int productId, PaginationQuery pagination);
@@ -103,13 +103,18 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
     }
 
 
-    public async Task<OrderResponseDto?> GetByIdAsync(int orderId)
+    public async Task<OrderResponseDto?> GetByIdAsync(int orderId, int? clientId = null)
     {
-        var order = await context.ShopOrders
+        var query = context.ShopOrders
             .AsNoTracking()
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
-            .FirstOrDefaultAsync(o => o.Id == orderId);
+            .Where(o => o.Id == orderId);
+
+        if (clientId.HasValue)
+            query = query.Where(o => o.ClientId == clientId.Value);
+
+        var order = await query.FirstOrDefaultAsync();
 
         return order != null ? mapper.MapToDto(order) : null;
     }
