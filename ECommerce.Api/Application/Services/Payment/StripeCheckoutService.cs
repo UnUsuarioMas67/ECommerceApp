@@ -14,7 +14,7 @@ namespace ECommerce.Api.Application.Services.Payment;
 
 public interface IStripeCheckoutService
 {
-    Task<Result<CheckoutResponseDto>> CreateCheckoutSessionAsync(CheckoutRequestDto request);
+    Task<Result<CheckoutResponseDto>> CreateCheckoutSessionAsync(CheckoutRequestDto request, int clientId);
     Task<PaymentResultDto?> ProcessWebhookAsync(string payload, string signature);
     Task<PaymentResultDto?> GetPaymentBySessionIdAsync(string sessionId);
 }
@@ -43,10 +43,11 @@ public class StripeCheckoutService : IStripeCheckoutService
     }
 
     public async Task<Result<CheckoutResponseDto>> CreateCheckoutSessionAsync(CheckoutRequestDto request)
+    public async Task<Result<CheckoutResponseDto>> CreateCheckoutSessionAsync(CheckoutRequestDto request, int clientId)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
-        
-        var orderResult = await _orderService.CreateAsync(request.CartId, request.AddressId);
+
+        var orderResult = await _orderService.CreateAsync(request.CartId, request.AddressId, clientId);
         if (!orderResult.IsSuccess)
         {
             await transaction.RollbackAsync();

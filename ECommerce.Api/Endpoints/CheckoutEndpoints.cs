@@ -30,16 +30,23 @@ public static class CheckoutEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Ok<CheckoutResponseDto>, ValidationProblem, UnprocessableEntity<Error>>> CreateCheckoutSession(
-        [FromBody] CheckoutRequestDto request,
-        IValidator<CheckoutRequestDto> validator,
-        IStripeCheckoutService stripeService)
+    private static async Task<Results<Ok<CheckoutResponseDto>, ValidationProblem, UnprocessableEntity<Error>,
+            BadRequest<InvalidAuthenticationError>>> 
+        CreateCheckoutSession(
+            HttpContext context,
+            [FromBody] CheckoutRequestDto request,
+            IValidator<CheckoutRequestDto> validator,
+            IStripeCheckoutService stripeService)
     {
-        var validation =  await validator.ValidateAsync(request);
+        var clientId = AuthUser.GetAuthUserId(context);
+        if (!clientId.HasValue)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+
+        var validation = await validator.ValidateAsync(request);
         if (!validation.IsValid)
             return TypedResults.ValidationProblem(validation.ToDictionary());
-        
-        var result = await stripeService.CreateCheckoutSessionAsync(request);
+
+        var result = await stripeService.CreateCheckoutSessionAsync(request, clientId.Value);
         if (result.IsSuccess)
             return TypedResults.Ok(result.Value);
 
@@ -60,11 +67,11 @@ public static class CheckoutEndpoints
     {
         using var reader = new StreamReader(context.Request.Body);
         var payload = await reader.ReadToEndAsync();
-        
+
         var signature = context.Request.Headers["Stripe-Signature"].FirstOrDefault() ?? string.Empty;
 
         if (string.IsNullOrEmpty(signature))
-            return TypedResults.BadRequest(new Error("Missing Stripe-Signature header" ));
+            return TypedResults.BadRequest(new Error("Missing Stripe-Signature header"));
 
         var result = await stripeService.ProcessWebhookAsync(payload, signature);
 
