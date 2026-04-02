@@ -1,13 +1,13 @@
 namespace ECommerce.Api.Errors;
 
 public record CartNotFoundError(int CartId)
-    : Error($"Cart with id {CartId} not found");
+    : Error("Could not find cart");
 
 public record CartIsEmptyError(int CartId)
-    : Error($"Cart with id {CartId} is empty");
+    : Error("Cart cannot be empty");
 
 public record AddressNotFoundError(int AddressId)
-    : Error($"Address with id {AddressId} not found");
+    : Error("Could not find address");
 
 public record ProductsStockError(ICollection<ProductsStockErrorItem> Products)
     : Error("One or more products have insufficient stock");
