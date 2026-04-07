@@ -38,7 +38,7 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
             AddressId = addressId,
             Address = address,
             OrderDate = DateTime.UtcNow,
-            StatusId = 1,
+            StatusId = OrderStatuses.Pending,
             Items = cart.Items.Select(item => new OrderLine
             {
                 ProductId = item.ProductId,
@@ -47,7 +47,10 @@ public class OrderService(ECommerceContext context, OrderMapper mapper) : IOrder
                 UnitPrice = item.Product.Price
             }).ToList()
         };
-        
+
+        foreach (var item in cart.Items)
+            item.Product.Stock -= item.Quantity;
+
         // TODO - Validate ShopOrder here
 
         context.ShopOrders.Add(order);

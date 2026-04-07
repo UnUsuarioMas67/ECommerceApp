@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
-using Stripe.Climate;
 
 namespace ECommerce.Api.Application.Services.Payment;
 
@@ -30,8 +29,8 @@ public class StripeCheckoutService : IStripeCheckoutService
     public StripeCheckoutService(
         ECommerceContext context,
         IOptions<StripeSettings> stripeSettings,
-        ILogger<StripeCheckoutService> logger, 
-        IOrderService orderService, 
+        ILogger<StripeCheckoutService> logger,
+        IOrderService orderService,
         IPaymentService paymentService)
     {
         _context = context;
@@ -42,7 +41,8 @@ public class StripeCheckoutService : IStripeCheckoutService
         StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
     }
 
-    public async Task<Result<CheckoutResponseDto>> CreateCheckoutSessionAsync(CheckoutRequestDto request)
+    #region Checkout Session
+
     public async Task<Result<CheckoutResponseDto>> CreateCheckoutSessionAsync(CheckoutRequestDto request, int clientId)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
@@ -53,25 +53,27 @@ public class StripeCheckoutService : IStripeCheckoutService
             await transaction.RollbackAsync();
             return orderResult.Error;
         }
+
         var order = orderResult.Value ?? throw new InvalidOperationException();
-        
+
         var paymentResult = await _paymentService.CreateAsync(order.Id);
         if (!paymentResult.IsSuccess)
         {
             await transaction.RollbackAsync();
             return paymentResult.Error;
         }
+
         var payment = paymentResult.Value ?? throw new InvalidOperationException();
-        
+
         var session = await CreateStripeSessionAsync(request, order, payment);
 
         payment.StripeSessionId = session.Id;
         payment.StripePaymentIntentId = session.PaymentIntentId ?? string.Empty;
-        
+
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Created Stripe session {SessionId} for order {OrderId}", session.Id, order.Id);
-        
+
         await transaction.CommitAsync();
 
         return new CheckoutResponseDto
@@ -124,9 +126,15 @@ public class StripeCheckoutService : IStripeCheckoutService
             sessionOptions.SuccessUrl = request.SuccessUrl;
         if (!string.IsNullOrWhiteSpace(request.CancelUrl))
             sessionOptions.CancelUrl = request.CancelUrl;
-
+        
+        sessionOptions.ExpiresAt =  DateTime.UtcNow.AddMinutes(30);
+        
         return await new SessionService().CreateAsync(sessionOptions);
     }
+
+    #endregion
+
+    #region Webhook
 
     public async Task<PaymentResultDto?> ProcessWebhookAsync(string payload, string signature)
     {
@@ -141,23 +149,39 @@ public class StripeCheckoutService : IStripeCheckoutService
             return null;
         }
 
-        if (stripeEvent.Type == "checkout.session.completed")
+        switch (stripeEvent.Type)
         {
-            var session = stripeEvent.Data.Object as Session;
-            if (session == null) return null;
+            case EventTypes.CheckoutSessionCompleted:
+            {
+                var session = stripeEvent.Data.Object as Session;
+                if (session == null) return null;
 
-            return await HandleCheckoutCompleted(session);
+                return await HandleCheckoutCompleted(session);
+            }
+            case EventTypes.PaymentIntentSucceeded:
+            {
+                var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+                if (paymentIntent == null) return null;
+
+                return await HandlePaymentIntentSucceeded(paymentIntent);
+            }
+            case EventTypes.CheckoutSessionExpired:
+            {
+                var session = stripeEvent.Data.Object as Session;
+                if (session == null) return null;
+
+                return await HandleCheckoutExpired(session);
+            }
+            // case EventTypes.PaymentIntentPaymentFailed:
+            // {
+            //     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+            //     if (paymentIntent == null) return null;
+            //
+            //     return await HandlePaymentFailed(paymentIntent);
+            // }
+            default:
+                return null;
         }
-
-        if (stripeEvent.Type == "payment_intent.succeeded")
-        {
-            var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-            if (paymentIntent == null) return null;
-
-            return await HandlePaymentIntentSucceeded(paymentIntent);
-        }
-
-        return null;
     }
 
     private async Task<PaymentResultDto?> HandleCheckoutCompleted(Session session)
@@ -176,23 +200,14 @@ public class StripeCheckoutService : IStripeCheckoutService
         payment.Status = PaymentStatus.Succeeded;
         payment.StripePaymentIntentId = session.PaymentIntentId ?? payment.StripePaymentIntentId;
         payment.UpdatedAt = DateTime.UtcNow;
-
-        payment.Order.StatusId = 2;
+        
+        payment.Order.StatusId = OrderStatuses.Success;
 
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Payment {PaymentId} completed for order {OrderId}", payment.Id, payment.OrderId);
 
-        return new PaymentResultDto
-        {
-            PaymentId = payment.Id,
-            OrderId = payment.OrderId,
-            SessionId = payment.StripeSessionId,
-            Status = payment.Status,
-            Amount = payment.Amount,
-            Currency = payment.Currency,
-            CreatedAt = payment.CreatedAt
-        };
+        return MapToDto(payment);
     }
 
     private async Task<PaymentResultDto?> HandlePaymentIntentSucceeded(PaymentIntent paymentIntent)
@@ -212,13 +227,76 @@ public class StripeCheckoutService : IStripeCheckoutService
             payment.StatusId = (int)PaymentStatus.Succeeded;
             payment.Status = PaymentStatus.Succeeded;
             payment.UpdatedAt = DateTime.UtcNow;
+            
+            payment.Order.StatusId = OrderStatuses.Success;
 
-            payment.Order.StatusId = 2;
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("Payment {PaymentId} succeeded for order {OrderId}", payment.Id, payment.OrderId);
         }
 
+        return MapToDto(payment);
+    }
+
+    private async Task<PaymentResultDto?> HandleCheckoutExpired(Session session)
+    {
+        var payment = await _context.Payments
+            .Include(p => p.Order)
+            .ThenInclude(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(p => p.StripeSessionId == session.Id);
+
+        if (payment == null) return null;
+
+        foreach (var item in payment.Order.Items)
+            item.Product.Stock += item.Quantity;
+
+        payment.StatusId = (int)PaymentStatus.Failed;
+        payment.Status = PaymentStatus.Failed;
+        payment.UpdatedAt = DateTime.UtcNow;
+        
+        payment.Order.StatusId = OrderStatuses.Failed;
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Payment {PaymentId} expired for order {OrderId}, stock reverted", payment.Id,
+            payment.OrderId);
+
+        return MapToDto(payment);
+    }
+
+    private async Task<PaymentResultDto?> HandlePaymentFailed(PaymentIntent paymentIntent)
+    {
+        var payment = await _context.Payments
+            .Include(p => p.Order)
+            .ThenInclude(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(p => p.StripePaymentIntentId == paymentIntent.Id);
+
+        if (payment == null) return null;
+
+        if (payment.Status != PaymentStatus.Succeeded)
+        {
+            foreach (var item in payment.Order.Items)
+                item.Product.Stock += item.Quantity;
+
+            payment.StatusId = (int)PaymentStatus.Failed;
+            payment.Status = PaymentStatus.Failed;
+            payment.UpdatedAt = DateTime.UtcNow;
+            
+            payment.Order.StatusId = OrderStatuses.Failed;
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Payment {PaymentId} failed for order {OrderId}, stock reverted", payment.Id,
+                payment.OrderId);
+        }
+
+        return MapToDto(payment);
+    }
+
+    private static PaymentResultDto MapToDto(Domain.Entities.Payment payment)
+    {
         return new PaymentResultDto
         {
             PaymentId = payment.Id,
@@ -230,7 +308,9 @@ public class StripeCheckoutService : IStripeCheckoutService
             CreatedAt = payment.CreatedAt
         };
     }
-    
+
+    #endregion
+
     public async Task<PaymentResultDto?> GetPaymentBySessionIdAsync(string sessionId)
     {
         var payment = await _context.Payments
