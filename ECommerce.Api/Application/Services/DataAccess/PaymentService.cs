@@ -10,7 +10,6 @@ namespace ECommerce.Api.Application.Services.DataAccess;
 
 public interface IPaymentService
 {
-    Task<Result<Domain.Entities.Payment>> CreateAsync(int orderId);
     Task<PaymentResultDto?> GetByIdAsync(int paymentId);
     Task<IEnumerable<PaymentResultDto>> GetManyAsync(PaginationQuery pagination);
     Task<PaymentResultDto?> GetByShopOrderAsync(int orderId);
@@ -18,37 +17,6 @@ public interface IPaymentService
 
 public class PaymentService(ECommerceContext context) : IPaymentService
 {
-    public async Task<Result<Domain.Entities.Payment>> CreateAsync(int orderId)
-    {
-        var order = await context.ShopOrders
-            .Include(o => o.Items)
-            .Include(o => o.Payment)
-            .FirstOrDefaultAsync(o => o.Id == orderId);
-        
-        if (order == null)
-            return new OrderNotExistsError(orderId);
-        if (order.Payment != null)
-            return new OrderPaymentAlreadyExistsError(orderId);
-
-        var totalAmount = order.Items.Sum(i => i.UnitPrice * i.Quantity);
-
-        var payment = new Domain.Entities.Payment
-        {
-            OrderId = orderId,
-            Order = order,
-            Amount = totalAmount,
-            Currency = "usd",
-            StatusId = (int)PaymentStatus.Pending,
-            Status = PaymentStatus.Pending,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        context.Payments.Add(payment);
-        await context.SaveChangesAsync();
-
-        return payment;
-    }
-
     public async Task<PaymentResultDto?> GetByIdAsync(int paymentId)
     {
         var payment = await context.Payments

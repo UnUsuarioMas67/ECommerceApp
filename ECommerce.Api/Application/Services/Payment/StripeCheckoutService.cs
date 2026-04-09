@@ -23,21 +23,21 @@ public class StripeCheckoutService : IStripeCheckoutService
     private readonly ECommerceContext _context;
     private readonly StripeSettings _stripeSettings;
     private readonly ILogger<StripeCheckoutService> _logger;
-    private readonly IOrderService _orderService;
-    private readonly IPaymentService _paymentService;
+    private readonly IOrderBuilderService _orderBuilderService;
+    private readonly IPaymentBuilderService _paymentBuilderService;
 
     public StripeCheckoutService(
         ECommerceContext context,
         IOptions<StripeSettings> stripeSettings,
         ILogger<StripeCheckoutService> logger,
-        IOrderService orderService,
-        IPaymentService paymentService)
+        IOrderBuilderService orderBuilderService,
+        IPaymentBuilderService paymentBuilderService)
     {
         _context = context;
         _stripeSettings = stripeSettings.Value;
         _logger = logger;
-        _orderService = orderService;
-        _paymentService = paymentService;
+        _orderBuilderService = orderBuilderService;
+        _paymentBuilderService = paymentBuilderService;
         StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
     }
 
@@ -47,7 +47,7 @@ public class StripeCheckoutService : IStripeCheckoutService
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
 
-        var orderResult = await _orderService.CreateAsync(request.CartId, request.AddressId, clientId);
+        var orderResult = await _orderBuilderService.BuildAsync(request.CartId, request.AddressId, clientId);
         if (!orderResult.IsSuccess)
         {
             await transaction.RollbackAsync();
@@ -56,12 +56,14 @@ public class StripeCheckoutService : IStripeCheckoutService
 
         var order = orderResult.Value ?? throw new InvalidOperationException();
 
-        var paymentResult = await _paymentService.CreateAsync(order.Id);
+        var paymentResult = await _paymentBuilderService.BuildAsync(order);
         if (!paymentResult.IsSuccess)
         {
             await transaction.RollbackAsync();
             return paymentResult.Error;
         }
+        
+        await _context.SaveChangesAsync();
 
         var payment = paymentResult.Value ?? throw new InvalidOperationException();
 
