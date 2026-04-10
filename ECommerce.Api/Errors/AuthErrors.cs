@@ -7,13 +7,13 @@ public record InvalidAuthenticationError : Error
     public int? InvalidClientId { get; set; }
 
     public InvalidAuthenticationError(int clientId)
-        : base("Invalid client authentication")
+        : base("User does not have permission to access this resource")
     {
         InvalidClientId = clientId;
     }
 
     public InvalidAuthenticationError()
-        : base("Invalid client authentication")
+        : base("Missing user identifier")
     {
     }
 }
