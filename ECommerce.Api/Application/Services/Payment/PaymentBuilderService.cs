@@ -1,5 +1,5 @@
-using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.EF;
+using ECommerce.Api.Entities;
 using ECommerce.Api.Errors;
 
 using ECommerce.Api.Shared;
@@ -9,12 +9,12 @@ namespace ECommerce.Api.Application.Services.Payment;
 
 public interface IPaymentBuilderService
 {
-    Task<Result<Domain.Entities.Payment>> BuildAsync(ShopOrder order);
+    Task<Result<Entities.Payment>> BuildAsync(ShopOrder order);
 }
 
 public class PaymentBuilderService(ECommerceContext context) : IPaymentBuilderService
 {
-    public async Task<Result<Domain.Entities.Payment>> BuildAsync(ShopOrder order)
+    public async Task<Result<Entities.Payment>> BuildAsync(ShopOrder order)
     {
         // var order = await context.ShopOrders
         //     .Include(o => o.Items)
@@ -28,7 +28,7 @@ public class PaymentBuilderService(ECommerceContext context) : IPaymentBuilderSe
 
         var totalAmount = order.Items.Sum(i => i.UnitPrice * i.Quantity);
 
-        var payment = new Domain.Entities.Payment
+        var payment = new Entities.Payment
         {
             Order = order,
             Amount = totalAmount,

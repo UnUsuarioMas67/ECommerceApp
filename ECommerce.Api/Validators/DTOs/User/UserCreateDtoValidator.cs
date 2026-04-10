@@ -1,6 +1,6 @@
 ﻿using ECommerce.Api.Application.DTOs.User;
-using ECommerce.Api.Domain.Validation;
 using ECommerce.Api.Extensions;
+using ECommerce.Api.Shared;
 using FluentValidation;
 
 namespace ECommerce.Api.Validators.DTOs.User;

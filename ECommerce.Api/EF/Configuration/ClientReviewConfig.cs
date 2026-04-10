@@ -1,5 +1,5 @@
-﻿using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Domain.Validation;
+﻿using ECommerce.Api.Entities;
+using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

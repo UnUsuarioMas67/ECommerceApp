@@ -1,6 +1,5 @@
 using ECommerce.Api.Application.DTOs.Checkout;
 using ECommerce.Api.Application.DTOs.Shared;
-using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.EF;
 using ECommerce.Api.Errors;
 
@@ -44,7 +43,7 @@ public class PaymentService(ECommerceContext context) : IPaymentService
         return payment != null ? MapToDto(payment) : null;
     }
 
-    private static PaymentResultDto MapToDto(Domain.Entities.Payment payment)
+    private static PaymentResultDto MapToDto(Entities.Payment payment)
     {
         return new PaymentResultDto
         {

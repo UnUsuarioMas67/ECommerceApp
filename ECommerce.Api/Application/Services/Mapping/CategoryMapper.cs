@@ -1,5 +1,5 @@
 ﻿using ECommerce.Api.Application.DTOs.Category;
-using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Entities;
 
 namespace ECommerce.Api.Application.Services.Mapping;
 

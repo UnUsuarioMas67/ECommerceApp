@@ -1,4 +1,4 @@
-using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Entities;
 
 namespace ECommerce.Api.Application.DTOs.Checkout;
 

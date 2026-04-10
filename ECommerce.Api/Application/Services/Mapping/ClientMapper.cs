@@ -1,5 +1,5 @@
 ﻿using ECommerce.Api.Application.DTOs.User;
-using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Entities;
 using ECommerce.Api.Shared;
 
 namespace ECommerce.Api.Application.Services.Mapping;

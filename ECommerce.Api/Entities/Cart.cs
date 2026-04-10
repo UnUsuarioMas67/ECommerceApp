@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Domain.Entities;
+﻿namespace ECommerce.Api.Entities;
 
 public class Cart
 {

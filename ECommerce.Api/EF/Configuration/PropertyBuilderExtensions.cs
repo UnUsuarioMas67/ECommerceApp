@@ -1,4 +1,4 @@
-﻿using ECommerce.Api.Domain.Validation;
+﻿using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ECommerce.Api.EF.Configuration;

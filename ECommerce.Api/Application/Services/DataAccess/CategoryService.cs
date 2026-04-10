@@ -1,8 +1,8 @@
 ﻿using ECommerce.Api.Application.DTOs.Category;
 using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.Services.Mapping;
-using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.EF;
+using ECommerce.Api.Entities;
 using ECommerce.Api.Errors;
 
 using ECommerce.Api.Shared;

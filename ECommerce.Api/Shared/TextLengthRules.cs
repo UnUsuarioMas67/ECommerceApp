@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Domain.Validation;
+﻿namespace ECommerce.Api.Shared;
 
 public static class TextLengthRules
 {

@@ -1,8 +1,7 @@
 using ECommerce.Api.Application.DTOs.Checkout;
 using ECommerce.Api.Application.Services.DataAccess;
-using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.EF;
-
+using ECommerce.Api.Entities;
 using ECommerce.Api.Settings;
 using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -111,7 +110,7 @@ public class StripeCheckoutService : IStripeCheckoutService
     private async Task<Session> CreateStripeSessionAsync(
         CheckoutRequestDto request,
         ShopOrder order,
-        Domain.Entities.Payment payment)
+        Entities.Payment payment)
     {
         var sessionOptions = new SessionCreateOptions
         {
@@ -298,7 +297,7 @@ public class StripeCheckoutService : IStripeCheckoutService
         return MapToDto(payment);
     }
 
-    private static PaymentResultDto MapToDto(Domain.Entities.Payment payment)
+    private static PaymentResultDto MapToDto(Entities.Payment payment)
     {
         return new PaymentResultDto
         {

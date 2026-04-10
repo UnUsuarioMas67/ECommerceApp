@@ -1,6 +1,6 @@
-﻿namespace ECommerce.Api.Domain.Entities;
+﻿namespace ECommerce.Api.Entities;
 
-public class Admin : IUser
+public interface IUser
 {
     public int Id { get; set; }
     public string FirstName { get; set; }

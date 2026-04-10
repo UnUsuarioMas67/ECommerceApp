@@ -1,5 +1,5 @@
 ﻿using ECommerce.Api.Application.DTOs.Product;
-using ECommerce.Api.Domain.Validation;
+using ECommerce.Api.Shared;
 using FluentValidation;
 
 namespace ECommerce.Api.Validators.DTOs.Product;

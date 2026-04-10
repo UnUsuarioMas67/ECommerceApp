@@ -1,5 +1,5 @@
-using ECommerce.Api.Domain.Entities;
 using ECommerce.Api.EF;
+using ECommerce.Api.Entities;
 using ECommerce.Api.Errors;
 
 using ECommerce.Api.Shared;

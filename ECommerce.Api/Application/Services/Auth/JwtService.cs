@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text;
-using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.Entities;
 using ECommerce.Api.Settings;
 using ECommerce.Api.Shared;
 using Microsoft.Extensions.Options;
