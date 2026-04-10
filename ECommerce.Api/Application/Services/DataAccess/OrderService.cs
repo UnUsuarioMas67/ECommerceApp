@@ -2,7 +2,8 @@ using ECommerce.Api.Application.DTOs.Order;
 using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Infrastructure.EF;
+using ECommerce.Api.EF;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Application.Services.DataAccess;

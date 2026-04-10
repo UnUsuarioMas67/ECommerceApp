@@ -1,5 +1,6 @@
+using ECommerce.Api.EF;
 using ECommerce.Api.Extensions;
-using ECommerce.Api.Infrastructure.EF;
+
 using ECommerce.Api.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

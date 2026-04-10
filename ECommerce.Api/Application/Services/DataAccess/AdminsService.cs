@@ -2,8 +2,9 @@ using ECommerce.Api.Application.DTOs.Shared;
 using ECommerce.Api.Application.DTOs.User;
 using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.EF;
 using ECommerce.Api.Errors;
-using ECommerce.Api.Infrastructure.EF;
+
 using ECommerce.Api.Shared;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;

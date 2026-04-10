@@ -1,7 +1,8 @@
 ﻿using ECommerce.Api.Application.DTOs.Auth;
 using ECommerce.Api.Application.Services.Mapping;
+using ECommerce.Api.EF;
 using ECommerce.Api.Errors;
-using ECommerce.Api.Infrastructure.EF;
+
 using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 

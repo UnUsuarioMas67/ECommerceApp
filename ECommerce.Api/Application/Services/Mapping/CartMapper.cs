@@ -1,6 +1,7 @@
 ﻿using ECommerce.Api.Application.DTOs.Cart;
 using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Infrastructure.EF;
+using ECommerce.Api.EF;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Application.Services.Mapping;

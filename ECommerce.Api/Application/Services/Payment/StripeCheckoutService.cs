@@ -1,7 +1,8 @@
 using ECommerce.Api.Application.DTOs.Checkout;
 using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Domain.Entities;
-using ECommerce.Api.Infrastructure.EF;
+using ECommerce.Api.EF;
+
 using ECommerce.Api.Settings;
 using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;

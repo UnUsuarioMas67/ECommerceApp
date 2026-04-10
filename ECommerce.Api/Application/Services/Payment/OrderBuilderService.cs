@@ -1,6 +1,7 @@
 using ECommerce.Api.Domain.Entities;
+using ECommerce.Api.EF;
 using ECommerce.Api.Errors;
-using ECommerce.Api.Infrastructure.EF;
+
 using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
