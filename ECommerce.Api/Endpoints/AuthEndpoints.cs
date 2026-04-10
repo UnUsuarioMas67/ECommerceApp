@@ -25,8 +25,10 @@ public static class AuthEndpoints
             .AllowAnonymous()
             .WithTags("Admin");
         
-        adminGroup.MapPost("admin", LoginAdmin)
+        adminGroup.MapPost("login", LoginAdmin)
             .WithSummary("Login Admin");
+        adminGroup.MapPost("register", RegisterAdmin)
+            .WithSummary("Register Admin");
 
         return endpoints;
     }
@@ -57,6 +59,30 @@ public static class AuthEndpoints
         var result = await authenticationService.LoginAdmin(requestDto.Email, requestDto.Password);
         
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Ok("Invalid credentials");
+    }
+
+    private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<Error>>> 
+        RegisterAdmin(
+            HttpContext httpContext,
+            IAdminsService adminsService,
+            UserCreateDto dto,
+            IValidator<UserCreateDto> validator)
+    {
+        var validation = await validator.ValidateAsync(dto);
+        if (!validation.IsValid)
+            return TypedResults.ValidationProblem(validation.ToDictionary());
+
+        var result = await adminsService.CreateAsync(dto);
+        if (result.IsSuccess)
+        {
+            var path = httpContext.Request.Path;
+            return TypedResults.Created($"{path}/{result.Value!.Id}", result.Value);
+        }
+
+        if (result.Error is ValidationError error)
+            return TypedResults.ValidationProblem(error.Details);
+        
+        return TypedResults.UnprocessableEntity(result.Error);
     }
     
     private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<Error>>> 

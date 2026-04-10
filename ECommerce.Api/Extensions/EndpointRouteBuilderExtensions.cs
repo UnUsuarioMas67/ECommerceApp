@@ -14,6 +14,7 @@ public static class EndpointRouteBuilderExtensions
             .MapProductEndpoints()
             .MapCartEndpoints()
             .MapCheckoutEndpoints()
-            .MapOrderEndpoints();
+            .MapOrderEndpoints()
+            .MapAdminEndpoints();
     }
 }

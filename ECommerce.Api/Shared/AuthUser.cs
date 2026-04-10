@@ -7,9 +7,9 @@ public static class AuthUser
     public static int? GetAuthUserId(HttpContext context)
     {
         var idClaim = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!int.TryParse(idClaim, out var clientId))
+        if (!int.TryParse(idClaim, out var id))
             return null;
         
-        return clientId;
+        return id;
     }
 }

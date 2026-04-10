@@ -57,6 +57,7 @@ public static class ServiceCollectionExtensions
     public static void AddApiServices(this IServiceCollection services)
     {
         services.AddScoped<IClientsService, ClientsService>();
+        services.AddScoped<IAdminsService, AdminsService>();
         services.AddScoped<IAddressesService, AddressesService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
@@ -76,6 +77,7 @@ public static class ServiceCollectionExtensions
     public static void AddObjectMappers(this IServiceCollection services)
     {
         services.AddScoped<ClientMapper>();
+        services.AddScoped<AdminMapper>();
         services.AddScoped<AddressMapper>();
         services.AddScoped<CategoryMapper>();
         services.AddScoped<ProductMapper>();

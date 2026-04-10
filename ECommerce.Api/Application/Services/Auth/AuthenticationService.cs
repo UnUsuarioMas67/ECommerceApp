@@ -13,7 +13,7 @@ public interface IAuthenticationService
     Task<Result<AuthenticationDto>> LoginAdmin(string email, string password);
 }
 
-public class AuthenticationService(IJwtService jwtService, ECommerceContext context, ClientMapper mapper)
+public class AuthenticationService(IJwtService jwtService, ECommerceContext context, ClientMapper clientMapper, AdminMapper adminMapper)
     : IAuthenticationService
 {
     public async Task<Result<AuthenticationDto>> LoginClient(string email, string password)
@@ -27,11 +27,20 @@ public class AuthenticationService(IJwtService jwtService, ECommerceContext cont
             return new InvalidLoginError();
 
         var token = jwtService.GenerateAccessToken(client);
-        return new AuthenticationDto { Token = token, User = mapper.MapToDto(client) };
+        return new AuthenticationDto { Token = token, User = clientMapper.MapToDto(client) };
     }
 
-    public Task<Result<AuthenticationDto>> LoginAdmin(string email, string password)
+    public async Task<Result<AuthenticationDto>> LoginAdmin(string email, string password)
     {
-        throw new NotImplementedException();
+        var admin = await context.Admins.FirstOrDefaultAsync(a => a.Email == email);
+        if (admin == null)
+            return new InvalidLoginError();
+
+        var passwordValid = BCrypt.Net.BCrypt.Verify(password, admin.PasswordHash);
+        if (!passwordValid)
+            return new InvalidLoginError();
+
+        var token = jwtService.GenerateAccessToken(admin);
+        return new AuthenticationDto { Token = token, User = adminMapper.MapToDto(admin) };
     }
 }
