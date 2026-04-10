@@ -16,5 +16,4 @@ public class Client : IUser
     public ICollection<ShopOrder> Orders { get; set; } = new List<ShopOrder>();
     public ICollection<Cart> Carts { get; set; } = new List<Cart>();
     public ICollection<Address> Addresses { get; set; } = new List<Address>();
-    public ICollection<ClientReview> Reviews { get; set; } = new List<ClientReview>();
 }

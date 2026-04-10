@@ -11,6 +11,4 @@ public class OrderLine
 
     public ShopOrder Order { get; set; }
     public Product Product { get; set; }
-
-    public ICollection<ClientReview> Reviews { get; set; } = new List<ClientReview>();
 }

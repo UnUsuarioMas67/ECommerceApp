@@ -9,7 +9,6 @@ public class ECommerceContext : DbContext
     public DbSet<Admin> Admins { get; set; }
 
     public DbSet<Client> Clients { get; set; }
-    public DbSet<ClientReview> ClientReviews { get; set; }
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
