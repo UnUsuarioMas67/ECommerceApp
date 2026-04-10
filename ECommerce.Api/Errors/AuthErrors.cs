@@ -4,12 +4,14 @@ public record InvalidLoginError() : Error("Invalid login credentials");
 
 public record InvalidAuthenticationError : Error
 {
-    public int? InvalidClientId { get; set; }
+    public int? UserId { get; set; }
+    public string? UserRole { get; set; }
 
-    public InvalidAuthenticationError(int clientId)
+    public InvalidAuthenticationError(int userId, string userRole)
         : base("User does not have permission to access this resource")
     {
-        InvalidClientId = clientId;
+        UserId = userId;
+        UserRole = userRole;
     }
 
     public InvalidAuthenticationError()

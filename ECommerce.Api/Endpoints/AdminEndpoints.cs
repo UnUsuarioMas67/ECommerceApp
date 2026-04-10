@@ -51,7 +51,7 @@ public static class AdminEndpoints
         var admin = await adminsService.GetByIdAsync(adminId.Value);
         return admin != null 
             ? TypedResults.Ok(admin) 
-            : TypedResults.BadRequest(new InvalidAuthenticationError(adminId.Value));
+            : TypedResults.BadRequest(new InvalidAuthenticationError(adminId.Value, UserRoles.Admin));
     }
 
     private static async Task<Results<Ok<UserResponseDto>, NotFound>> GetAdminById(
@@ -85,7 +85,7 @@ public static class AdminEndpoints
 
         return result.Error switch
         {
-            NotFoundError => TypedResults.BadRequest(new InvalidAuthenticationError(adminId.Value)),
+            NotFoundError => TypedResults.BadRequest(new InvalidAuthenticationError(adminId.Value, UserRoles.Admin)),
             ValidationError error => TypedResults.ValidationProblem(error.Details),
             _ => TypedResults.UnprocessableEntity(result.Error)
         };
@@ -103,6 +103,6 @@ public static class AdminEndpoints
         var admin = await adminsService.DeleteAsync(adminId.Value);
         return admin != null 
             ? TypedResults.Ok(admin) 
-            : TypedResults.BadRequest(new InvalidAuthenticationError(adminId.Value));
+            : TypedResults.BadRequest(new InvalidAuthenticationError(adminId.Value, UserRoles.Admin));
     }
 }

@@ -54,7 +54,7 @@ public static class ClientsEndpoints
         var clientDto = await clientsService.GetByIdAsync(clientId.Value);
         return clientDto != null
             ? TypedResults.Ok(clientDto)
-            : TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value));
+            : TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value, UserRoles.Client));
     }
 
 
@@ -90,7 +90,7 @@ public static class ClientsEndpoints
 
         return result.Error switch
         {
-            NotFoundError => TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value)),
+            NotFoundError => TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value, UserRoles.Client)),
             ValidationError error => TypedResults.ValidationProblem(error.Details),
             _ => TypedResults.UnprocessableEntity(result.Error)
         };
@@ -107,6 +107,6 @@ public static class ClientsEndpoints
         var client = await clientsService.DeleteAsync(clientId.Value);
         return client != null 
             ? TypedResults.Ok(client) 
-            : TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value));
+            : TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value, UserRoles.Client));
     }
 }
