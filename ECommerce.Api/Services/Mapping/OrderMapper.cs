@@ -1,7 +1,7 @@
 using ECommerce.Api.Application.DTOs.Order;
 using ECommerce.Api.Entities;
 
-namespace ECommerce.Api.Application.Services.Mapping;
+namespace ECommerce.Api.Services.Mapping;
 
 public class OrderMapper
 {

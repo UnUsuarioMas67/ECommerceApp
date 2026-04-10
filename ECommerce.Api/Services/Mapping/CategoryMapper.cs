@@ -1,7 +1,7 @@
 ﻿using ECommerce.Api.Application.DTOs.Category;
 using ECommerce.Api.Entities;
 
-namespace ECommerce.Api.Application.Services.Mapping;
+namespace ECommerce.Api.Services.Mapping;
 
 public class CategoryMapper
 {

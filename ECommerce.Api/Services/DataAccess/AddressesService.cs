@@ -1,15 +1,14 @@
 ﻿using ECommerce.Api.Application.DTOs.Address;
 using ECommerce.Api.Application.DTOs.Shared;
-using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.EF;
 using ECommerce.Api.Entities;
 using ECommerce.Api.Errors;
-
+using ECommerce.Api.Services.Mapping;
 using ECommerce.Api.Shared;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Api.Application.Services.DataAccess;
+namespace ECommerce.Api.Services.DataAccess;
 
 public interface IAddressesService
 {

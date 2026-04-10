@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace ECommerce.Api.Application.Services.Auth;
+namespace ECommerce.Api.Services.Auth;
 
 public interface IJwtService
 {

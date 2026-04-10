@@ -1,11 +1,10 @@
 using ECommerce.Api.EF;
 using ECommerce.Api.Entities;
 using ECommerce.Api.Errors;
-
 using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Api.Application.Services.Payment;
+namespace ECommerce.Api.Services.Payment;
 
 public interface IOrderBuilderService
 {

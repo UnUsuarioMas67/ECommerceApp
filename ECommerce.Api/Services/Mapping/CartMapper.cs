@@ -3,7 +3,7 @@ using ECommerce.Api.EF;
 using ECommerce.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Api.Application.Services.Mapping;
+namespace ECommerce.Api.Services.Mapping;
 
 public class CartMapper(CartItemMapper cartItemMapper, ECommerceContext context)
 {

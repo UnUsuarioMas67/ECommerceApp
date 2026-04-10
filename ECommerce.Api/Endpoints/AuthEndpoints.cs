@@ -1,8 +1,8 @@
 ﻿using ECommerce.Api.Application.DTOs.Auth;
 using ECommerce.Api.Application.DTOs.User;
-using ECommerce.Api.Application.Services.Auth;
-using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.Errors;
+using ECommerce.Api.Services.Auth;
+using ECommerce.Api.Services.DataAccess;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 

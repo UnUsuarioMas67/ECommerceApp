@@ -1,11 +1,10 @@
 using ECommerce.Api.Application.DTOs.Order;
 using ECommerce.Api.Application.DTOs.Shared;
-using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.EF;
-
+using ECommerce.Api.Services.Mapping;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Api.Application.Services.DataAccess;
+namespace ECommerce.Api.Services.DataAccess;
 
 public interface IOrderService
 {

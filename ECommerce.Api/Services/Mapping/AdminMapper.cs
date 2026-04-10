@@ -1,27 +1,26 @@
-﻿using ECommerce.Api.Application.DTOs.User;
+using ECommerce.Api.Application.DTOs.User;
 using ECommerce.Api.Entities;
-using ECommerce.Api.Shared;
 
-namespace ECommerce.Api.Application.Services.Mapping;
+namespace ECommerce.Api.Services.Mapping;
 
-public class ClientMapper
+public class AdminMapper
 {
-    public UserResponseDto MapToDto(Client client)
+    public UserResponseDto MapToDto(Admin admin)
     {
         return new UserResponseDto
         {
-            Id = client.Id,
-            FirstName = client.FirstName,
-            LastName = client.LastName,
-            Email = client.Email,
-            PhoneNumber = client.PhoneNumber,
-            BirthDate = client.BirthDate,
-            CreatedAt = client.CreatedAt,
+            Id = admin.Id,
+            FirstName = admin.FirstName,
+            LastName = admin.LastName,
+            Email = admin.Email,
+            PhoneNumber = admin.PhoneNumber,
+            BirthDate = admin.BirthDate,
+            CreatedAt = admin.CreatedAt,
         };
     }
 
-    public Client MapToEntity(UserCreateDto dto)
-        => new Client
+    public Admin MapToEntity(UserCreateDto dto)
+        => new Admin
         {
             FirstName = dto.FirstName,
             LastName = dto.LastName,
@@ -32,7 +31,7 @@ public class ClientMapper
             CreatedAt = DateTime.UtcNow,
         };
 
-    public void ApplyUpdate(Client toUpdate, UserUpdateDto dto)
+    public void ApplyUpdate(Admin toUpdate, UserUpdateDto dto)
     {
         if (dto.FirstName != null && dto.FirstName != toUpdate.FirstName)
             toUpdate.FirstName = dto.FirstName;

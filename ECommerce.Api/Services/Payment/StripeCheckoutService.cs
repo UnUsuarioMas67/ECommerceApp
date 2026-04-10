@@ -1,5 +1,4 @@
 using ECommerce.Api.Application.DTOs.Checkout;
-using ECommerce.Api.Application.Services.DataAccess;
 using ECommerce.Api.EF;
 using ECommerce.Api.Entities;
 using ECommerce.Api.Settings;
@@ -9,7 +8,7 @@ using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
 
-namespace ECommerce.Api.Application.Services.Payment;
+namespace ECommerce.Api.Services.Payment;
 
 public interface IStripeCheckoutService
 {

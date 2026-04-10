@@ -1,12 +1,11 @@
 ﻿using ECommerce.Api.Application.DTOs.Auth;
-using ECommerce.Api.Application.Services.Mapping;
 using ECommerce.Api.EF;
 using ECommerce.Api.Errors;
-
+using ECommerce.Api.Services.Mapping;
 using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce.Api.Application.Services.Auth;
+namespace ECommerce.Api.Services.Auth;
 
 public interface IAuthenticationService
 {
