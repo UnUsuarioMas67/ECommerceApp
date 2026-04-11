@@ -134,13 +134,6 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         if (invalidQuantitiesIds.Length != 0)
             return new InvalidQuantityError(invalidQuantitiesIds);
         
-        var productsWithoutStock = cart.Items
-            .Where(i => i.Product.Stock < i.Quantity)
-            .Select(i => new ProductsStockErrorItem(i.Product.Id, i.Quantity, i.Product.Stock))
-            .ToList();
-        if (productsWithoutStock.Count != 0)
-            return new ProductsStockError(productsWithoutStock);
-        
         var validation = await validator.ValidateAsync(cart);
         if (!validation.IsValid)
             return new ValidationError(validation.ToDictionary());
