@@ -61,7 +61,7 @@ public static class CheckoutEndpoints
         return payment != null ? TypedResults.Ok(payment) : TypedResults.NotFound();
     }
 
-    private static async Task<Results<Ok<PaymentResultDto>, BadRequest<Error>>> ProcessWebhook(
+    private static async Task<Results<NoContent, BadRequest>> ProcessWebhook(
         HttpContext context,
         IStripeCheckoutService stripeService)
     {
@@ -71,13 +71,13 @@ public static class CheckoutEndpoints
         var signature = context.Request.Headers["Stripe-Signature"].FirstOrDefault() ?? string.Empty;
 
         if (string.IsNullOrEmpty(signature))
-            return TypedResults.BadRequest(new Error("Missing Stripe-Signature header"));
+            return TypedResults.BadRequest();
 
         var result = await stripeService.ProcessWebhookAsync(payload, signature);
 
-        if (result == null)
-            return TypedResults.BadRequest(new Error("Webhook processing failed"));
+        if (!result.IsSuccess)
+            return TypedResults.BadRequest();
 
-        return TypedResults.Ok(result);
+        return TypedResults.NoContent();
     }
 }

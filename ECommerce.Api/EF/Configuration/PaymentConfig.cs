@@ -8,9 +8,6 @@ public class PaymentConfig : IEntityTypeConfiguration<Payment>
 {
     public void Configure(EntityTypeBuilder<Payment> builder)
     {
-        builder.Property(e => e.StripePaymentIntentId)
-            .HasMaxLength(100);
-
         builder.Property(e => e.StripeSessionId)
             .HasMaxLength(100);
 
@@ -22,8 +19,6 @@ public class PaymentConfig : IEntityTypeConfiguration<Payment>
             .IsRequired()
             .HasMoneyPrecision();
 
-        builder.Property(e => e.StatusId)
-            .IsRequired();
 
         builder.HasOne(p => p.Order)
             .WithOne(o => o.Payment)
@@ -31,6 +26,5 @@ public class PaymentConfig : IEntityTypeConfiguration<Payment>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(p => p.StripeSessionId).IsUnique();
-        builder.HasIndex(p => p.StripePaymentIntentId);
     }
 }

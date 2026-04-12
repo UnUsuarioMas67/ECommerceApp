@@ -10,14 +10,14 @@ public class OrderStatus
 public static class OrderStatuses
 {
     public const int Pending = 1;
-    public const int Success = 2;
-    public const int Failed = 3;
+    public const int Paid = 2;
+    public const int Expired = 3;
 
     public static IEnumerable<OrderStatus> GetAll()
         =>
         [
-            new() { Id = Pending, Status = "Pending"},
-            new() { Id = Success, Status = "Success"},
-            new() { Id = Failed, Status = "Failed"},
+            new() { Id = Pending, Status = "PENDING"},
+            new() { Id = Paid, Status = "PAID"},
+            new() { Id = Expired, Status = "EXPIRED"},
         ];
 }

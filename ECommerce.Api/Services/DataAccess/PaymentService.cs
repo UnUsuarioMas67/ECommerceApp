@@ -47,7 +47,6 @@ public class PaymentService(ECommerceContext context) : IPaymentService
             PaymentId = payment.Id,
             OrderId = payment.OrderId,
             SessionId = payment.StripeSessionId,
-            Status = payment.Status,
             Amount = payment.Amount,
             Currency = payment.Currency,
             CreatedAt = payment.CreatedAt

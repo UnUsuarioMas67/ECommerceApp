@@ -63,9 +63,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ICartsService, CartsService>();
         services.AddScoped<IOrderService, OrderService>();
-        services.AddScoped<IOrderBuilderService, OrderBuilderService>();
         services.AddScoped<IPaymentService, PaymentService>();
-        services.AddScoped<IPaymentBuilderService, PaymentBuilderService>();
         services.AddScoped<IStripeCheckoutService, StripeCheckoutService>();
     }
 
