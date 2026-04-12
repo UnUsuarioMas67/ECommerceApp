@@ -1,6 +1,6 @@
 using ECommerce.Api.EF;
 using ECommerce.Api.Extensions;
-
+using ECommerce.Api.Settings;
 using ECommerce.Api.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +15,7 @@ builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<Be
 builder.Services.AddDbContext<ECommerceContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb")));
 
+builder.Services.Configure<OrderSettings>(builder.Configuration.GetSection("OrderSettings"));
 builder.Services.ConfigureAuth(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddStripeSettings(builder.Configuration);
 builder.Services.AddValidators();
