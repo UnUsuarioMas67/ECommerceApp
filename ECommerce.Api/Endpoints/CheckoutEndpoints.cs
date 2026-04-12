@@ -1,7 +1,7 @@
 using ECommerce.Api.Application.DTOs.Checkout;
 using ECommerce.Api.Errors;
+using ECommerce.Api.Services.Checkout;
 using ECommerce.Api.Services.DataAccess;
-using ECommerce.Api.Services.Payment;
 using ECommerce.Api.Shared;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;

@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using ECommerce.Api.Services.Auth;
+using ECommerce.Api.Services.Checkout;
 using ECommerce.Api.Services.DataAccess;
 using ECommerce.Api.Services.Mapping;
-using ECommerce.Api.Services.Payment;
 using ECommerce.Api.Settings;
 using ECommerce.Api.Shared;
 using ECommerce.Api.Validators.Entities;

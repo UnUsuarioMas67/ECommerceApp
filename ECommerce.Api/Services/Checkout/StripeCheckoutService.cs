@@ -10,7 +10,7 @@ using Stripe;
 using Stripe.Checkout;
 using Address = ECommerce.Api.Entities.Address;
 
-namespace ECommerce.Api.Services.Payment;
+namespace ECommerce.Api.Services.Checkout;
 
 public interface IStripeCheckoutService
 {
