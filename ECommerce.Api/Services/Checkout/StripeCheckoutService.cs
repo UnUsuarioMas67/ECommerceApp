@@ -21,15 +21,18 @@ public interface IStripeCheckoutService
 public class StripeCheckoutService : IStripeCheckoutService
 {
     private readonly ECommerceContext _context;
+    private readonly OrderSettings _orderSettings;
     private readonly StripeSettings _stripeSettings;
     private readonly ILogger<StripeCheckoutService> _logger;
 
     public StripeCheckoutService(
         ECommerceContext context,
         IOptions<StripeSettings> stripeSettings,
+        IOptions<OrderSettings> orderSettings,
         ILogger<StripeCheckoutService> logger)
     {
         _context = context;
+        _orderSettings = orderSettings.Value;
         _stripeSettings = stripeSettings.Value;
         _logger = logger;
         StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
@@ -144,6 +147,7 @@ public class StripeCheckoutService : IStripeCheckoutService
             AddressId = address.Id,
             Address = address,
             OrderDate = DateTime.UtcNow,
+            ExpiresAt = DateTime.UtcNow.AddMinutes(_orderSettings.OrderExpireMinutes),
             StatusId = OrderStatuses.Pending,
             Items = cart.Items.Select(item => new OrderLine
             {
