@@ -10,6 +10,7 @@ public interface IPaymentService
     Task<PaymentResultDto?> GetByIdAsync(int paymentId);
     Task<IEnumerable<PaymentResultDto>> GetManyAsync(PaginationQuery pagination);
     Task<PaymentResultDto?> GetByShopOrderAsync(int orderId);
+    Task<PaymentResultDto?> GetPaymentBySessionIdAsync(string sessionId, int? clientId);
 }
 
 public class PaymentService(ECommerceContext context) : IPaymentService
@@ -42,6 +43,29 @@ public class PaymentService(ECommerceContext context) : IPaymentService
 
     private static PaymentResultDto MapToDto(Entities.Payment payment)
     {
+        return new PaymentResultDto
+        {
+            PaymentId = payment.Id,
+            OrderId = payment.OrderId,
+            SessionId = payment.StripeSessionId,
+            Amount = payment.Amount,
+            Currency = payment.Currency,
+            CreatedAt = payment.CreatedAt
+        };
+    }
+
+    public async Task<PaymentResultDto?> GetPaymentBySessionIdAsync(string sessionId, int? clientId = null)
+    {
+        var query = context.Payments
+            .AsNoTracking();
+
+        if (clientId.HasValue)
+            query = query.Where(p => p.Id == clientId.Value);
+
+        var payment = await query.FirstOrDefaultAsync(p => p.StripeSessionId == sessionId);
+
+        if (payment == null) return null;
+
         return new PaymentResultDto
         {
             PaymentId = payment.Id,

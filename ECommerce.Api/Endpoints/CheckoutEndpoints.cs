@@ -1,5 +1,6 @@
 using ECommerce.Api.Application.DTOs.Checkout;
 using ECommerce.Api.Errors;
+using ECommerce.Api.Services.DataAccess;
 using ECommerce.Api.Services.Payment;
 using ECommerce.Api.Shared;
 using FluentValidation;
@@ -21,7 +22,7 @@ public static class CheckoutEndpoints
 
         group.MapGet("/payment/{sessionId}", GetPaymentBySession)
             .WithSummary("Get Payment by Session")
-            .RequireAuthorization();
+            .RequireAuthorization(UserRoles.Client);
 
         group.MapPost("/webhook", ProcessWebhook)
             .WithSummary("Stripe Webhook")
@@ -52,12 +53,17 @@ public static class CheckoutEndpoints
 
         return TypedResults.UnprocessableEntity(result.Error);
     }
-
-    private static async Task<Results<Ok<PaymentResultDto>, NotFound>> GetPaymentBySession(
+    
+    private static async Task<Results<Ok<PaymentResultDto>, NotFound, BadRequest<InvalidAuthenticationError>>> GetPaymentBySession(
+        HttpContext context,
         string sessionId,
-        IStripeCheckoutService stripeService)
+        IPaymentService paymentService)
     {
-        var payment = await stripeService.GetPaymentBySessionIdAsync(sessionId);
+        var clientId = AuthUser.GetAuthUserId(context);
+        if (clientId == null)
+            return TypedResults.BadRequest(new InvalidAuthenticationError());
+        
+        var payment = await paymentService.GetPaymentBySessionIdAsync(sessionId, clientId.Value);
         return payment != null ? TypedResults.Ok(payment) : TypedResults.NotFound();
     }
 

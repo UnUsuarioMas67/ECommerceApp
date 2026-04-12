@@ -16,7 +16,6 @@ public interface IStripeCheckoutService
 {
     Task<Result<CheckoutResponseDto>> CreateCheckoutSessionAsync(CheckoutRequestDto request, int clientId);
     Task<Result> ProcessWebhookAsync(string payload, string signature);
-    Task<PaymentResultDto?> GetPaymentBySessionIdAsync(string sessionId);
 }
 
 public class StripeCheckoutService : IStripeCheckoutService
@@ -347,23 +346,4 @@ public class StripeCheckoutService : IStripeCheckoutService
     }
     
     #endregion
-
-    public async Task<PaymentResultDto?> GetPaymentBySessionIdAsync(string sessionId)
-    {
-        var payment = await _context.Payments
-            .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.StripeSessionId == sessionId);
-
-        if (payment == null) return null;
-
-        return new PaymentResultDto
-        {
-            PaymentId = payment.Id,
-            OrderId = payment.OrderId,
-            SessionId = payment.StripeSessionId,
-            Amount = payment.Amount,
-            Currency = payment.Currency,
-            CreatedAt = payment.CreatedAt
-        };
-    }
 }
