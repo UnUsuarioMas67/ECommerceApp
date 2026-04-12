@@ -54,7 +54,7 @@ public class StripeCheckoutService : IStripeCheckoutService
             return addressResult.Error;
         var address = addressResult.Value;
 
-        var orderResult = CreateOrder(cart, address, clientId);
+        var orderResult = CreateOrder(cart, address);
         if (!orderResult.IsSuccess)
         {
             await transaction.RollbackAsync();
@@ -139,7 +139,7 @@ public class StripeCheckoutService : IStripeCheckoutService
 
     #region Create Order
 
-    private Result<ShopOrder> CreateOrder(Cart cart, Address address, int? clientId = null)
+    private Result<ShopOrder> CreateOrder(Cart cart, Address address)
     {
         var order = new ShopOrder
         {
