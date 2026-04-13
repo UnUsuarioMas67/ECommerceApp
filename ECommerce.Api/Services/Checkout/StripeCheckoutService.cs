@@ -2,6 +2,7 @@ using ECommerce.Api.Application.DTOs.Checkout;
 using ECommerce.Api.EF;
 using ECommerce.Api.Entities;
 using ECommerce.Api.Errors;
+using ECommerce.Api.Services.Mapping;
 using ECommerce.Api.Settings;
 using ECommerce.Api.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -21,20 +22,21 @@ public interface IStripeCheckoutService
 public class StripeCheckoutService : IStripeCheckoutService
 {
     private readonly ECommerceContext _context;
-    private readonly OrderSettings _orderSettings;
+    private readonly OrderMapper _orderMapper;
     private readonly StripeSettings _stripeSettings;
     private readonly ILogger<StripeCheckoutService> _logger;
 
     public StripeCheckoutService(
         ECommerceContext context,
         IOptions<StripeSettings> stripeSettings,
-        IOptions<OrderSettings> orderSettings,
+        OrderMapper orderMapper,
         ILogger<StripeCheckoutService> logger)
     {
         _context = context;
-        _orderSettings = orderSettings.Value;
+        _orderMapper = orderMapper;
         _stripeSettings = stripeSettings.Value;
         _logger = logger;
+        
         StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
     }
 
@@ -86,7 +88,8 @@ public class StripeCheckoutService : IStripeCheckoutService
             SessionId = session.Id,
             Url = session.Url,
             Amount = paidAmount,
-            Currency = "usd"
+            Currency = "usd",
+            Order = _orderMapper.MapToDto(order)
         };
     }
 
@@ -101,7 +104,7 @@ public class StripeCheckoutService : IStripeCheckoutService
                 ProductData = new SessionLineItemPriceDataProductDataOptions
                 {
                     Name = item.Product.Name,
-                    Description = item.Product.Description?.Length > 500
+                    Description = item.Product.Description.Length > 500
                         ? item.Product.Description[..500]
                         : item.Product.Description
                 }
