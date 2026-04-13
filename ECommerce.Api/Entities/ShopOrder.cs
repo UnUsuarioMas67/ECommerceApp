@@ -6,6 +6,7 @@ public class ShopOrder
     public int? ClientId { get; set; }
     public int AddressId { get; set; }
     public int StatusId { get; set; }
+    public string StripeSessionId { get; set; } = string.Empty;
     
     public DateTime OrderDate { get; set; }
     

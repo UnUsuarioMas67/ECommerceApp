@@ -47,7 +47,6 @@ public class PaymentService(ECommerceContext context) : IPaymentService
         {
             PaymentId = payment.Id,
             OrderId = payment.OrderId,
-            SessionId = payment.StripeSessionId,
             Amount = payment.Amount,
             Currency = payment.Currency,
             CreatedAt = payment.CreatedAt
@@ -62,7 +61,9 @@ public class PaymentService(ECommerceContext context) : IPaymentService
         if (clientId.HasValue)
             query = query.Where(p => p.Id == clientId.Value);
 
-        var payment = await query.FirstOrDefaultAsync(p => p.StripeSessionId == sessionId);
+        var payment = await query
+            .Include(p => p.Order)
+            .FirstOrDefaultAsync(p => p.Order.StripeSessionId == sessionId);
 
         if (payment == null) return null;
 
@@ -70,7 +71,6 @@ public class PaymentService(ECommerceContext context) : IPaymentService
         {
             PaymentId = payment.Id,
             OrderId = payment.OrderId,
-            SessionId = payment.StripeSessionId,
             Amount = payment.Amount,
             Currency = payment.Currency,
             CreatedAt = payment.CreatedAt

@@ -3,7 +3,6 @@ namespace ECommerce.Api.Entities;
 public class Payment
 {
     public int Id { get; set; }
-    public string StripeSessionId { get; set; } = string.Empty;
 
     public decimal Amount { get; set; }
     public string Currency { get; set; } = "usd";

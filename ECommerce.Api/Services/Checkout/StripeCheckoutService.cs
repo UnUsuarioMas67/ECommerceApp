@@ -80,11 +80,14 @@ public class StripeCheckoutService : IStripeCheckoutService
         await _context.SaveChangesAsync();
 
         var session = await CreateStripeSessionAsync(request, order);
-
-        _logger.LogInformation("Created Stripe session {SessionId} for order {OrderId}", session.Id, order.Id);
-
+        
+        order.StripeSessionId = session.Id;
+        await _context.SaveChangesAsync();
+        
         await transaction.CommitAsync();
-
+        
+        _logger.LogInformation("Created Stripe session {SessionId} for order {OrderId}", session.Id, order.Id);
+        
         var paidAmount = order.Items.Sum(i => i.UnitPrice * i.Quantity);
         return new CheckoutResponseDto
         {
@@ -299,7 +302,6 @@ public class StripeCheckoutService : IStripeCheckoutService
 
         var payment = new Payment
         {
-            StripeSessionId = session.Id,
             OrderId = order.Id,
             Order = order,
             Amount = (decimal)amount / 100,
