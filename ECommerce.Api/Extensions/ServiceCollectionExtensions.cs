@@ -65,6 +65,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IStripeCheckoutService, StripeCheckoutService>();
+
+        services.AddHostedService<BackgroundOrderExpiryManager>();
     }
 
     public static void AddStripeSettings(this IServiceCollection services, IConfiguration configuration)
