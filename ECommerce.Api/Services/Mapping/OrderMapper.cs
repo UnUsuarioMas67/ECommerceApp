@@ -13,6 +13,7 @@ public class OrderMapper
             ClientId = order.ClientId,
             AddressId = order.AddressId,
             OrderDate = order.OrderDate,
+            Status = order.Status.Status,
             Items = order.Items.Select(MapLineToDto).ToList()
         };
 

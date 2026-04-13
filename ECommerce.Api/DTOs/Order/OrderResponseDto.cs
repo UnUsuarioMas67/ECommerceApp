@@ -7,6 +7,7 @@ public class OrderResponseDto
     public int AddressId { get; set; }
     public DateTime OrderDate { get; set; }
     public ICollection<OrderLineResponseDto> Items { get; set; }
+    public string Status { get; set; }
     public decimal TotalPrice { get; set; }
     public int TotalProducts { get; set; }
 }
