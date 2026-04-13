@@ -147,7 +147,6 @@ public class StripeCheckoutService : IStripeCheckoutService
             AddressId = address.Id,
             Address = address,
             OrderDate = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(_orderSettings.OrderExpireMinutes),
             StatusId = OrderStatuses.Pending,
             Items = cart.Items.Select(item => new OrderLine
             {

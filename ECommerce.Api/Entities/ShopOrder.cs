@@ -8,7 +8,6 @@ public class ShopOrder
     public int StatusId { get; set; }
     
     public DateTime OrderDate { get; set; }
-    public DateTime ExpiresAt { get; set; }
     
     public Client? Client { get; set; }
     public Address Address { get; set; }
