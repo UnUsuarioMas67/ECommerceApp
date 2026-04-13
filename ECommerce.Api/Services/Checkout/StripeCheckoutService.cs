@@ -22,17 +22,20 @@ public interface IStripeCheckoutService
 public class StripeCheckoutService : IStripeCheckoutService
 {
     private readonly ECommerceContext _context;
+    private readonly SessionService _sessionService;
     private readonly OrderMapper _orderMapper;
     private readonly StripeSettings _stripeSettings;
     private readonly ILogger<StripeCheckoutService> _logger;
 
     public StripeCheckoutService(
         ECommerceContext context,
+        SessionService sessionService,
         IOptions<StripeSettings> stripeSettings,
         OrderMapper orderMapper,
         ILogger<StripeCheckoutService> logger)
     {
         _context = context;
+        _sessionService = sessionService;
         _orderMapper = orderMapper;
         _stripeSettings = stripeSettings.Value;
         _logger = logger;
@@ -137,7 +140,7 @@ public class StripeCheckoutService : IStripeCheckoutService
         if (!string.IsNullOrWhiteSpace(request.CancelUrl))
             sessionOptions.CancelUrl = request.CancelUrl;
 
-        return await new SessionService().CreateAsync(sessionOptions);
+        return await _sessionService.CreateAsync(sessionOptions);
     }
 
     #region Create Order

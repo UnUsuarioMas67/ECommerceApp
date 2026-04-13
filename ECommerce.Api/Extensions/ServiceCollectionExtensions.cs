@@ -9,6 +9,7 @@ using ECommerce.Api.Validators.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Stripe.Checkout;
 
 namespace ECommerce.Api.Extensions;
 
@@ -66,6 +67,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IStripeCheckoutService, StripeCheckoutService>();
 
+        services.AddScoped<SessionService>();
         services.AddHostedService<BackgroundOrderExpiryManager>();
     }
 
