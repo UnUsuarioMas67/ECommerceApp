@@ -294,7 +294,7 @@ public class StripeCheckoutService : IStripeCheckoutService
 
         var amount = session.AmountTotal ?? 0;
 
-        var payment = new Entities.Payment
+        var payment = new Payment
         {
             StripeSessionId = session.Id,
             OrderId = order.Id,
@@ -308,7 +308,7 @@ public class StripeCheckoutService : IStripeCheckoutService
         order.StatusId = OrderStatuses.Paid;
 
         foreach (var item in order.Items)
-            item.Product.Stock -= item.Quantity;
+            item.Product.Stock = Math.Max(item.Product.Stock - item.Quantity, 0);
 
         await _context.SaveChangesAsync();
 
