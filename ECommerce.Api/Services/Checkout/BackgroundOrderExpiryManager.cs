@@ -29,15 +29,16 @@ public class BackgroundOrderExpiryManager : BackgroundService
             .ToListAsync();
 
         var ordersToExpire = pendingOrders.Where(o =>
-            DateTime.UtcNow - o.OrderDate >= TimeSpan.FromMinutes(_orderSettings.OrderExpireMinutes));
+                DateTime.UtcNow - o.OrderDate >= TimeSpan.FromMinutes(_orderSettings.OrderExpireMinutes))
+            .ToList();
 
         foreach (var order in ordersToExpire)
-        {
             order.StatusId = OrderStatuses.Expired;
-            _logger.LogInformation("Order {orderId} has expired at {timestamp}", order.Id, DateTime.UtcNow);
-        }
 
         await context.SaveChangesAsync();
+
+        foreach (var order in ordersToExpire)
+            _logger.LogInformation("Order {orderId} has expired at {timestamp}", order.Id, DateTime.UtcNow);
     }
 
     private async Task DeleteExpiredOrdersAsync(ECommerceContext context)
@@ -51,10 +52,11 @@ public class BackgroundOrderExpiryManager : BackgroundService
             .ToList();
 
         context.ShopOrders.RemoveRange(ordersToDelete);
+        
+        await context.SaveChangesAsync();
+        
         foreach (var order in ordersToDelete)
             _logger.LogInformation("Deleted expired order {orderId} at {timestamp}", order.Id, DateTime.UtcNow);
-
-        await context.SaveChangesAsync();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
