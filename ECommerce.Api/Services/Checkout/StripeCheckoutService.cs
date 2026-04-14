@@ -33,7 +33,7 @@ public class StripeCheckoutService : IStripeCheckoutService
         SessionService sessionService,
         IOptions<StripeSettings> stripeSettings,
         OrderMapper orderMapper,
-        ILogger<StripeCheckoutService> logger, 
+        ILogger<StripeCheckoutService> logger,
         IOptions<OrderExpirySettings> orderSettings)
     {
         _context = context;
@@ -52,17 +52,27 @@ public class StripeCheckoutService : IStripeCheckoutService
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
 
-        var cartResult = await GetAndValidateCartAsync(request.CartId, clientId);
-        if (!cartResult.IsSuccess)
-            return cartResult.Error;
-        var cart = cartResult.Value;
+        var client = await _context.Clients
+            .Include(cl => cl.Addresses)
+            .Include(cl => cl.Carts)
+            .ThenInclude(c => c.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(cl => cl.Id == clientId);
 
-        var addressResult = await GetAndValidateAddressAsync(request.AddressId, clientId);
-        if (!addressResult.IsSuccess)
-            return addressResult.Error;
-        var address = addressResult.Value;
+        if (client == null)
+            return new ClientNotExistsError(clientId, null);
 
-        var orderResult = CreateOrder(cart, address);
+        var cart = client.Carts.FirstOrDefault(c => c.Id == request.CartId);
+        if (cart == null)
+            return new CartNotFoundError(request.CartId);
+        if (cart.Items.Count == 0)
+            return new CartIsEmptyError(request.CartId);
+        
+        var address = client.Addresses.FirstOrDefault(a => a.Id == request.AddressId);
+        if (address == null)
+            return new AddressNotFoundError(request.AddressId);
+
+        var orderResult = CreateOrder(cart, address, client);
         if (!orderResult.IsSuccess)
         {
             await transaction.RollbackAsync();
@@ -83,16 +93,16 @@ public class StripeCheckoutService : IStripeCheckoutService
         await _context.SaveChangesAsync();
 
         var session = await CreateStripeSessionAsync(request, order);
-        
+
         order.StripeSessionId = session.Id;
         await _context.SaveChangesAsync();
-        
+
         await transaction.CommitAsync();
-        
+
         _logger.LogInformation("Created Stripe session {SessionId} for order {OrderId}", session.Id, order.Id);
-        
+
         var paidAmount = order.Items.Sum(i => i.UnitPrice * i.Quantity);
-        
+
         return new CheckoutResponseDto
         {
             SessionId = session.Id,
@@ -153,30 +163,33 @@ public class StripeCheckoutService : IStripeCheckoutService
 
     #region Create Order
 
-    private Result<ShopOrder> CreateOrder(Cart cart, Address address)
+    private Result<ShopOrder> CreateOrder(Cart cart, Address address, Client client)
     {
         var orderDate = DateTime.UtcNow;
         var expiresAt = orderDate.AddMinutes(_orderExpirySettings.ExpireMinutes);
         var deleteIfExpiredAt = expiresAt.AddHours(_orderExpirySettings.DeleteExpiredAfterHours);
-        
+
         var order = new ShopOrder
         {
             ClientId = cart.ClientId,
+            Client = client,
+            
             AddressId = address.Id,
             Address = address,
-            
+
             OrderDate = orderDate,
             ExpiresAt = expiresAt,
             DeleteIfExpiredAt = deleteIfExpiredAt,
-            
-            StatusId = OrderStatuses.Pending,
+
             Items = cart.Items.Select(item => new OrderLine
             {
                 ProductId = item.ProductId,
                 Product = item.Product,
                 Quantity = item.Quantity,
                 UnitPrice = item.Product.Price
-            }).ToList()
+            }).ToList(),
+            
+            StatusId = OrderStatuses.Pending,
         };
 
         return order;
@@ -201,43 +214,6 @@ public class StripeCheckoutService : IStripeCheckoutService
         }
 
         return result;
-    }
-
-    private async Task<Result<Cart>> GetAndValidateCartAsync(int cartId, int? clientId = null)
-    {
-        var query = _context.Carts
-            .Include(c => c.Items)
-            .ThenInclude(i => i.Product)
-            .Where(c => c.Id == cartId);
-
-        if (clientId.HasValue)
-            query = query.Where(c => c.ClientId == clientId.Value);
-
-        var cart = await query.FirstOrDefaultAsync();
-
-        if (cart == null)
-            return new CartNotFoundError(cartId);
-
-        if (cart.Items.Count == 0)
-            return new CartIsEmptyError(cartId);
-
-        return cart;
-    }
-
-    private async Task<Result<Address>> GetAndValidateAddressAsync(int addressId, int? clientId = null)
-    {
-        var query = _context.Addresses
-            .Where(a => a.Id == addressId);
-
-        if (clientId.HasValue)
-            query = query.Where(a => a.ClientId == clientId.Value);
-
-        var address = await query.FirstOrDefaultAsync();
-
-        if (address == null)
-            return new AddressNotFoundError(addressId);
-
-        return address;
     }
 
     #endregion
@@ -358,7 +334,7 @@ public class StripeCheckoutService : IStripeCheckoutService
 
         if (order.StatusId != OrderStatuses.Pending)
             return Result.Success();
-        
+
         order.StatusId = OrderStatuses.Expired;
 
         await _context.SaveChangesAsync();
@@ -368,6 +344,6 @@ public class StripeCheckoutService : IStripeCheckoutService
 
         return Result.Success();
     }
-    
+
     #endregion
 }
