@@ -9,16 +9,16 @@ namespace ECommerce.Api.Services.Checkout;
 
 public class BackgroundOrderExpiryManager : BackgroundService
 {
-    private readonly int _expiryCheckMinutes;
+    private readonly int _checkExpiryMinutes;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<BackgroundOrderExpiryManager> _logger;
 
     public BackgroundOrderExpiryManager(
         IServiceProvider serviceProvider,
-        IOptions<OrderSettings> orderSettings,
+        IOptions<OrderExpirySettings> orderSettings,
         ILogger<BackgroundOrderExpiryManager> logger)
     {
-        _expiryCheckMinutes = orderSettings.Value.ExpiryCheckMinutes;
+        _checkExpiryMinutes = orderSettings.Value.CheckExpiryMinutes;
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
@@ -57,7 +57,7 @@ public class BackgroundOrderExpiryManager : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(_expiryCheckMinutes));
+        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(_checkExpiryMinutes));
 
         while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
         {

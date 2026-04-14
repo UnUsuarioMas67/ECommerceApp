@@ -15,7 +15,7 @@ builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<Be
 builder.Services.AddDbContext<ECommerceContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb")));
 
-builder.Services.Configure<OrderSettings>(builder.Configuration.GetSection("OrderSettings"));
+builder.Services.Configure<OrderExpirySettings>(builder.Configuration.GetSection("OrderExpirySettings"));
 builder.Services.ConfigureAuth(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddStripeSettings(builder.Configuration);
 builder.Services.AddValidators();

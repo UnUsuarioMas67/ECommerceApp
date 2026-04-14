@@ -25,7 +25,7 @@ public class StripeCheckoutService : IStripeCheckoutService
     private readonly SessionService _sessionService;
     private readonly OrderMapper _orderMapper;
     private readonly StripeSettings _stripeSettings;
-    private readonly OrderSettings _orderSettings;
+    private readonly OrderExpirySettings _orderExpirySettings;
     private readonly ILogger<StripeCheckoutService> _logger;
 
     public StripeCheckoutService(
@@ -34,14 +34,14 @@ public class StripeCheckoutService : IStripeCheckoutService
         IOptions<StripeSettings> stripeSettings,
         OrderMapper orderMapper,
         ILogger<StripeCheckoutService> logger, 
-        IOptions<OrderSettings> orderSettings)
+        IOptions<OrderExpirySettings> orderSettings)
     {
         _context = context;
         _sessionService = sessionService;
         _orderMapper = orderMapper;
         _stripeSettings = stripeSettings.Value;
         _logger = logger;
-        _orderSettings = orderSettings.Value;
+        _orderExpirySettings = orderSettings.Value;
 
         StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
     }
@@ -156,8 +156,8 @@ public class StripeCheckoutService : IStripeCheckoutService
     private Result<ShopOrder> CreateOrder(Cart cart, Address address)
     {
         var orderDate = DateTime.UtcNow;
-        var expiresAt = orderDate.AddMinutes(_orderSettings.OrderExpireMinutes);
-        var deleteIfExpiredAt = expiresAt.AddHours(_orderSettings.ExpiredOrderDeleteHours);
+        var expiresAt = orderDate.AddMinutes(_orderExpirySettings.ExpireMinutes);
+        var deleteIfExpiredAt = expiresAt.AddHours(_orderExpirySettings.DeleteExpiredAfterHours);
         
         var order = new ShopOrder
         {
