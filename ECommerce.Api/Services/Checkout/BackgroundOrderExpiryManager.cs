@@ -9,7 +9,7 @@ namespace ECommerce.Api.Services.Checkout;
 
 public class BackgroundOrderExpiryManager : BackgroundService
 {
-    private readonly OrderSettings _orderSettings;
+    private readonly int _expiryCheckMinutes;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<BackgroundOrderExpiryManager> _logger;
 
@@ -18,21 +18,18 @@ public class BackgroundOrderExpiryManager : BackgroundService
         IOptions<OrderSettings> orderSettings,
         ILogger<BackgroundOrderExpiryManager> logger)
     {
-        _orderSettings = orderSettings.Value;
+        _expiryCheckMinutes = orderSettings.Value.ExpiryCheckMinutes;
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
     private async Task ExpireOrdersAsync(ECommerceContext context, SessionService sessionService)
     {
-        var pendingOrders = await context.ShopOrders
+        var ordersToExpire = await context.ShopOrders
             .Where(o => o.StatusId == OrderStatuses.Pending)
+            .Where(o => o.ExpiresAt <= DateTime.UtcNow)
             .ToListAsync();
-
-        var ordersToExpire = pendingOrders.Where(o =>
-                DateTime.UtcNow - o.OrderDate >= TimeSpan.FromMinutes(_orderSettings.OrderExpireMinutes))
-            .ToList();
-
+        
         foreach (var order in ordersToExpire)
         {
             order.StatusId = OrderStatuses.Expired;
@@ -46,14 +43,11 @@ public class BackgroundOrderExpiryManager : BackgroundService
 
     private async Task DeleteExpiredOrdersAsync(ECommerceContext context)
     {
-        var expiredOrders = await context.ShopOrders
+        var ordersToDelete = await context.ShopOrders
             .Where(o => o.StatusId == OrderStatuses.Expired)
+            .Where(o => o.DeleteIfExpiredAt <= DateTime.UtcNow)
             .ToListAsync();
-
-        var ordersToDelete = expiredOrders.Where(o =>
-                DateTime.UtcNow - o.OrderDate >= TimeSpan.FromHours(_orderSettings.ExpiredOrderDeleteHours))
-            .ToList();
-
+        
         context.ShopOrders.RemoveRange(ordersToDelete);
         foreach (var order in ordersToDelete)
             _logger.LogInformation("Deleted expired order {orderId} at {timestamp}", order.Id, DateTime.UtcNow);
@@ -63,7 +57,7 @@ public class BackgroundOrderExpiryManager : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(_orderSettings.ExpiryCheckMinutes));
+        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(_expiryCheckMinutes));
 
         while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
         {

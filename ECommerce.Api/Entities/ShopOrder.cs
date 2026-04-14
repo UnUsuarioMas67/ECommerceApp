@@ -9,6 +9,8 @@ public class ShopOrder
     public string StripeSessionId { get; set; } = string.Empty;
     
     public DateTime OrderDate { get; set; }
+    public DateTime ExpiresAt { get; set; }
+    public DateTime DeleteIfExpiredAt { get; set; }
     
     public Client? Client { get; set; }
     public Address Address { get; set; }

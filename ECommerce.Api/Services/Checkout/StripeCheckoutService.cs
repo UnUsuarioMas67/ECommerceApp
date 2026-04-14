@@ -25,6 +25,7 @@ public class StripeCheckoutService : IStripeCheckoutService
     private readonly SessionService _sessionService;
     private readonly OrderMapper _orderMapper;
     private readonly StripeSettings _stripeSettings;
+    private readonly OrderSettings _orderSettings;
     private readonly ILogger<StripeCheckoutService> _logger;
 
     public StripeCheckoutService(
@@ -32,14 +33,16 @@ public class StripeCheckoutService : IStripeCheckoutService
         SessionService sessionService,
         IOptions<StripeSettings> stripeSettings,
         OrderMapper orderMapper,
-        ILogger<StripeCheckoutService> logger)
+        ILogger<StripeCheckoutService> logger, 
+        IOptions<OrderSettings> orderSettings)
     {
         _context = context;
         _sessionService = sessionService;
         _orderMapper = orderMapper;
         _stripeSettings = stripeSettings.Value;
         _logger = logger;
-        
+        _orderSettings = orderSettings.Value;
+
         StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
     }
 
@@ -89,12 +92,14 @@ public class StripeCheckoutService : IStripeCheckoutService
         _logger.LogInformation("Created Stripe session {SessionId} for order {OrderId}", session.Id, order.Id);
         
         var paidAmount = order.Items.Sum(i => i.UnitPrice * i.Quantity);
+        
         return new CheckoutResponseDto
         {
             SessionId = session.Id,
             Url = session.Url,
             Amount = paidAmount,
             Currency = "usd",
+            ExpiresAt = order.ExpiresAt,
             Order = _orderMapper.MapToDto(order)
         };
     }
@@ -150,12 +155,20 @@ public class StripeCheckoutService : IStripeCheckoutService
 
     private Result<ShopOrder> CreateOrder(Cart cart, Address address)
     {
+        var orderDate = DateTime.UtcNow;
+        var expiresAt = orderDate.AddMinutes(_orderSettings.OrderExpireMinutes);
+        var deleteIfExpiredAt = expiresAt.AddHours(_orderSettings.ExpiredOrderDeleteHours);
+        
         var order = new ShopOrder
         {
             ClientId = cart.ClientId,
             AddressId = address.Id,
             Address = address,
-            OrderDate = DateTime.UtcNow,
+            
+            OrderDate = orderDate,
+            ExpiresAt = expiresAt,
+            DeleteIfExpiredAt = deleteIfExpiredAt,
+            
             StatusId = OrderStatuses.Pending,
             Items = cart.Items.Select(item => new OrderLine
             {
