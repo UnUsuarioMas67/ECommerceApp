@@ -27,7 +27,6 @@ public class OrderMapper
     {
         return new OrderLineResponseDto
         {
-            Id = line.Id,
             ProductId = line.ProductId,
             ProductName = line.Product.Name,
             ProductSku = line.Product.Sku,

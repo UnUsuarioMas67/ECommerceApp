@@ -2,7 +2,6 @@ namespace ECommerce.Api.DTOs.Order;
 
 public class OrderLineResponseDto
 {
-    public int Id { get; set; }
     public int ProductId { get; set; }
     public string ProductName { get; set; }
     public string ProductSku { get; set; }
