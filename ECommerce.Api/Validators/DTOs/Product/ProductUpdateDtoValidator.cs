@@ -1,4 +1,4 @@
-﻿using ECommerce.Api.Application.DTOs.Product;
+﻿using ECommerce.Api.DTOs.Product;
 using ECommerce.Api.Shared;
 using FluentValidation;
 

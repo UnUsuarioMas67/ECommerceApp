@@ -1,6 +1,6 @@
-﻿using ECommerce.Api.Application.DTOs.User;
+﻿using ECommerce.Api.DTOs.User;
 
-namespace ECommerce.Api.Application.DTOs.Auth;
+namespace ECommerce.Api.DTOs.Auth;
 
 public class AuthenticationDto
 {

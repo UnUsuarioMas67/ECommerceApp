@@ -1,4 +1,4 @@
-﻿using ECommerce.Api.Application.DTOs.Address;
+﻿using ECommerce.Api.DTOs.Address;
 using ECommerce.Api.Shared;
 using FluentValidation;
 

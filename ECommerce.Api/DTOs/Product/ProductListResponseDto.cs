@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using ECommerce.Api.Application.DTOs.Shared;
+using ECommerce.Api.DTOs.Shared;
 
-namespace ECommerce.Api.Application.DTOs.Product;
+namespace ECommerce.Api.DTOs.Product;
 
 public class ProductListResponseDto
 {

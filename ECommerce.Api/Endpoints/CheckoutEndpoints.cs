@@ -1,4 +1,4 @@
-using ECommerce.Api.Application.DTOs.Checkout;
+using ECommerce.Api.DTOs.Checkout;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.Checkout;
 using ECommerce.Api.Services.DataAccess;

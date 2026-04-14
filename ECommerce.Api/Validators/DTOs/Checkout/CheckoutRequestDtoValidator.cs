@@ -1,4 +1,4 @@
-﻿using ECommerce.Api.Application.DTOs.Checkout;
+﻿using ECommerce.Api.DTOs.Checkout;
 using FluentValidation;
 
 namespace ECommerce.Api.Validators.DTOs.Checkout;

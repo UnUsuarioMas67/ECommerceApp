@@ -1,4 +1,4 @@
-﻿using ECommerce.Api.Application.DTOs.Category;
+﻿using ECommerce.Api.DTOs.Category;
 using ECommerce.Api.Entities;
 
 namespace ECommerce.Api.Services.Mapping;

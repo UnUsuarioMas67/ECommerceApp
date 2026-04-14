@@ -1,6 +1,6 @@
-﻿using ECommerce.Api.Application.DTOs.Product;
+﻿using ECommerce.Api.DTOs.Product;
 
-namespace ECommerce.Api.Application.DTOs.Cart;
+namespace ECommerce.Api.DTOs.Cart;
 
 public class CartItemResponse
 {

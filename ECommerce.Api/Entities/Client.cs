@@ -2,6 +2,8 @@
 
 public class Client : IUser
 {
+    // TODO - Add StripeCustomerId to Client
+    
     public int Id { get; set; }
 
     public string FirstName { get; set; }

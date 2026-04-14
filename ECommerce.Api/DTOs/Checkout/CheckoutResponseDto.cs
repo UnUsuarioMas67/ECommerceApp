@@ -1,6 +1,6 @@
-using ECommerce.Api.Application.DTOs.Order;
+using ECommerce.Api.DTOs.Order;
 
-namespace ECommerce.Api.Application.DTOs.Checkout;
+namespace ECommerce.Api.DTOs.Checkout;
 
 public class CheckoutResponseDto
 {

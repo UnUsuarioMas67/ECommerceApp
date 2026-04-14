@@ -1,4 +1,4 @@
-﻿using ECommerce.Api.Application.DTOs.Cart;
+﻿using ECommerce.Api.DTOs.Cart;
 using FluentValidation;
 
 namespace ECommerce.Api.Validators.DTOs.Cart;

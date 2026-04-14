@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Application.DTOs.Product;
+﻿namespace ECommerce.Api.DTOs.Product;
 
 public class ProductCreateDto
 {

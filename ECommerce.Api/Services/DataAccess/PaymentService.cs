@@ -1,5 +1,5 @@
-using ECommerce.Api.Application.DTOs.Checkout;
-using ECommerce.Api.Application.DTOs.Shared;
+using ECommerce.Api.DTOs.Checkout;
+using ECommerce.Api.DTOs.Shared;
 using ECommerce.Api.EF;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,4 +1,4 @@
-﻿using ECommerce.Api.Application.DTOs.Cart;
+﻿using ECommerce.Api.DTOs.Cart;
 using ECommerce.Api.EF;
 using ECommerce.Api.Entities;
 using Microsoft.EntityFrameworkCore;

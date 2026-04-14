@@ -1,5 +1,5 @@
-﻿using ECommerce.Api.Application.DTOs.Address;
-using ECommerce.Api.Application.DTOs.Shared;
+﻿using ECommerce.Api.DTOs.Address;
+using ECommerce.Api.DTOs.Shared;
 using ECommerce.Api.EF;
 using ECommerce.Api.Entities;
 using ECommerce.Api.Errors;

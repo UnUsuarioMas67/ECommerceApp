@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
-using ECommerce.Api.Application.DTOs.Shared;
-using ECommerce.Api.Application.DTOs.User;
+using ECommerce.Api.DTOs.Shared;
+using ECommerce.Api.DTOs.User;
 
-namespace ECommerce.Api.Application.DTOs.Cart;
+namespace ECommerce.Api.DTOs.Cart;
 
 public class CartListResponseDto
 {

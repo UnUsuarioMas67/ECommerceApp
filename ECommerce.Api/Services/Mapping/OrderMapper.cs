@@ -1,4 +1,4 @@
-using ECommerce.Api.Application.DTOs.Order;
+using ECommerce.Api.DTOs.Order;
 using ECommerce.Api.Entities;
 
 namespace ECommerce.Api.Services.Mapping;

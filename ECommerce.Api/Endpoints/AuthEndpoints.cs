@@ -1,5 +1,5 @@
-﻿using ECommerce.Api.Application.DTOs.Auth;
-using ECommerce.Api.Application.DTOs.User;
+﻿using ECommerce.Api.DTOs.Auth;
+using ECommerce.Api.DTOs.User;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.Auth;
 using ECommerce.Api.Services.DataAccess;

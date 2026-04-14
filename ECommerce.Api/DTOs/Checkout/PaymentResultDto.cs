@@ -1,6 +1,4 @@
-using ECommerce.Api.Entities;
-
-namespace ECommerce.Api.Application.DTOs.Checkout;
+namespace ECommerce.Api.DTOs.Checkout;
 
 public class PaymentResultDto
 {

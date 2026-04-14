@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ECommerce.Api.Application.DTOs.Shared;
+namespace ECommerce.Api.DTOs.Shared;
 
 public class PaginationQuery
 {

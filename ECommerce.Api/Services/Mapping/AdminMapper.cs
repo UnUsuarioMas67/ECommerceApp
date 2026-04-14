@@ -1,4 +1,4 @@
-using ECommerce.Api.Application.DTOs.User;
+using ECommerce.Api.DTOs.User;
 using ECommerce.Api.Entities;
 
 namespace ECommerce.Api.Services.Mapping;

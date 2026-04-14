@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Application.DTOs.Cart;
+﻿namespace ECommerce.Api.DTOs.Cart;
 
 public class CartResponseDto
 {

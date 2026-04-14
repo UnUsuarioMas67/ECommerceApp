@@ -1,5 +1,5 @@
-using ECommerce.Api.Application.DTOs.Order;
-using ECommerce.Api.Application.DTOs.Shared;
+using ECommerce.Api.DTOs.Order;
+using ECommerce.Api.DTOs.Shared;
 using ECommerce.Api.EF;
 using ECommerce.Api.Services.Mapping;
 using Microsoft.EntityFrameworkCore;

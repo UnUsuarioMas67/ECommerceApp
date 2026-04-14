@@ -1,4 +1,4 @@
-namespace ECommerce.Api.Application.DTOs.Checkout;
+namespace ECommerce.Api.DTOs.Checkout;
 
 public class CheckoutRequestDto
 {

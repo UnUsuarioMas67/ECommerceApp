@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Application.DTOs.Auth;
+﻿namespace ECommerce.Api.DTOs.Auth;
 
 public class LoginRequestDto
 {

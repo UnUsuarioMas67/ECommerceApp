@@ -1,4 +1,4 @@
-﻿using ECommerce.Api.Application.DTOs.Auth;
+﻿using ECommerce.Api.DTOs.Auth;
 using ECommerce.Api.EF;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.Mapping;

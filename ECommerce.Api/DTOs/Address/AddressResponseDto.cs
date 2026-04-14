@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Api.Application.DTOs.Address;
+﻿namespace ECommerce.Api.DTOs.Address;
 
 public class AddressResponseDto
 {

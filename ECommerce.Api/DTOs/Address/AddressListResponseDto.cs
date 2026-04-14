@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
-using ECommerce.Api.Application.DTOs.Shared;
-using ECommerce.Api.Application.DTOs.User;
+using ECommerce.Api.DTOs.Shared;
+using ECommerce.Api.DTOs.User;
 
-namespace ECommerce.Api.Application.DTOs.Address;
+namespace ECommerce.Api.DTOs.Address;
 
 public class AddressListResponseDto
 {
