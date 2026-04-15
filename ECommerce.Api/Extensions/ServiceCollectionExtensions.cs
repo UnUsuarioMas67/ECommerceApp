@@ -9,7 +9,9 @@ using ECommerce.Api.Validators.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 using Stripe.Checkout;
+using ProductService = ECommerce.Api.Services.DataAccess.ProductService;
 
 namespace ECommerce.Api.Extensions;
 
@@ -71,9 +73,11 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<BackgroundOrderExpiryManager>();
     }
 
-    public static void AddStripeSettings(this IServiceCollection services, IConfiguration configuration)
+    public static void AddStripeSettings(this IServiceCollection services, IConfiguration stripeConfiguration)
     {
-        services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
+        services.Configure<StripeSettings>(stripeConfiguration);
+        StripeConfiguration.ApiKey = stripeConfiguration.Get<StripeSettings>()?.SecretKey 
+                                     ?? throw new ArgumentNullException(nameof(stripeConfiguration));
     }
 
     public static void AddObjectMappers(this IServiceCollection services)

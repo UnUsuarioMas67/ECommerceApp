@@ -17,7 +17,7 @@ builder.Services.AddDbContext<ECommerceContext>(o =>
 
 builder.Services.Configure<OrderExpirySettings>(builder.Configuration.GetSection("OrderExpirySettings"));
 builder.Services.ConfigureAuth(builder.Configuration.GetSection("JwtSettings"));
-builder.Services.AddStripeSettings(builder.Configuration);
+builder.Services.AddStripeSettings(builder.Configuration.GetSection("Stripe"));
 builder.Services.AddValidators();
 builder.Services.AddObjectMappers();
 builder.Services.AddApiServices();

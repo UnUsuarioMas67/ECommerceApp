@@ -42,8 +42,6 @@ public class StripeCheckoutService : IStripeCheckoutService
         _stripeSettings = stripeSettings.Value;
         _logger = logger;
         _orderExpirySettings = orderSettings.Value;
-
-        StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
     }
 
     #region Checkout Session
