@@ -72,7 +72,10 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
 
     public async Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartRequestDto dto, int? clientId = null)
     {
-        var query = context.Carts.Where(c => c.Id == cartId);
+        var query = context.Carts
+            .Include(c => c.Items)
+            .ThenInclude(i => i.Product)
+            .Where(c => c.Id == cartId);
 
         if (clientId.HasValue)
             query = query.Where(c => c.ClientId == clientId.Value);
@@ -102,7 +105,10 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
 
     public async Task<CartResponseDto?> DeleteAsync(int cartId, int? clientId = null)
     {
-        var query = context.Carts.Where(c => c.Id == cartId);
+        var query = context.Carts
+            .Include(c => c.Items)
+            .ThenInclude(i => i.Product)
+            .Where(c => c.Id == cartId);
 
         if (clientId.HasValue)
             query = query.Where(c => c.ClientId == clientId.Value);
@@ -133,7 +139,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         var invalidQuantitiesIds = GetProductIdsWithInvalidQuantities(cart.Items);
         if (invalidQuantitiesIds.Length != 0)
             return new InvalidQuantityError(invalidQuantitiesIds);
-        
+
         var validation = await validator.ValidateAsync(cart);
         if (!validation.IsValid)
             return new ValidationError(validation.ToDictionary());
