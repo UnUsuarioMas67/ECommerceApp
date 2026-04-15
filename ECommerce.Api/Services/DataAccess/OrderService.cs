@@ -91,9 +91,14 @@ public class OrderService(
         foreach (var order in ordersToExpire)
         {
             order.StatusId = OrderStatuses.Expired;
-            await sessionService.ExpireAsync(order.StripeSessionId);
             logger.LogInformation("Order {orderId} has expired at {timestamp}", order.Id, DateTime.UtcNow);
-            logger.LogInformation("Expired checkout session {sessionId}", order.StripeSessionId);
+
+            var session = await sessionService.GetAsync(order.StripeSessionId);
+            if (session.Status == "open") 
+            {
+                await sessionService.ExpireAsync(order.StripeSessionId);
+                logger.LogInformation("Expired checkout session {sessionId}", order.StripeSessionId);
+            }
         }
 
         await context.SaveChangesAsync();
