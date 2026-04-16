@@ -11,4 +11,6 @@ public class UserResponseDto
     public DateOnly BirthDate { get; set; }
     
     public DateTime CreatedAt { get; set; }
+
+    public string Role { get; set; }
 }

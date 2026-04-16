@@ -1,5 +1,6 @@
 using ECommerce.Api.DTOs.User;
 using ECommerce.Api.Entities;
+using ECommerce.Api.Shared;
 
 namespace ECommerce.Api.Services.Mapping;
 
@@ -16,6 +17,7 @@ public class AdminMapper
             PhoneNumber = admin.PhoneNumber,
             BirthDate = admin.BirthDate,
             CreatedAt = admin.CreatedAt,
+            Role = UserRoles.Admin,
         };
     }
 
