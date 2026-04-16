@@ -13,7 +13,7 @@ public interface IAuthenticationService
     Task<Result<AuthenticationDto>> LoginAdmin(string email, string password);
 }
 
-public class AuthenticationService(IJwtService jwtService, ECommerceContext context, ClientMapper clientMapper, AdminMapper adminMapper)
+public class AuthenticationService(JwtService jwtService, ECommerceContext context, ClientMapper clientMapper, AdminMapper adminMapper)
     : IAuthenticationService
 {
     public async Task<Result<AuthenticationDto>> LoginClient(string email, string password)

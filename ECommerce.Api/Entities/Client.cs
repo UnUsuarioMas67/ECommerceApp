@@ -1,9 +1,7 @@
 ﻿namespace ECommerce.Api.Entities;
 
-public class Client : IUser
+public class Client
 {
-    // TODO - Add StripeCustomerId to Client
-    
     public int Id { get; set; }
 
     public string FirstName { get; set; }

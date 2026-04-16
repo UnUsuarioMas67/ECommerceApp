@@ -9,33 +9,60 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace ECommerce.Api.Services.Auth;
 
-public interface IJwtService
-{
-    string GenerateAccessToken(IUser user);
-}
-
-public class JwtService(IOptions<JwtSettings> settings) : IJwtService
+public class JwtService(IOptions<JwtSettings> settings)
 {
     private readonly JwtSettings _settings = settings.Value;
+
+    public string GenerateAccessToken(Client client)
+    {
+        var credentials = CreateSigningCredentials();
+        var claimsIdentity = CreateClaimsIdentity(client);
+        return CreateAccessToken(credentials, claimsIdentity);
+    }
     
-    public string GenerateAccessToken(IUser user)
+    public string GenerateAccessToken(Admin admin)
+    {
+        var credentials = CreateSigningCredentials();
+        var claimsIdentity = CreateClaimsIdentity(admin);
+        return CreateAccessToken(credentials, claimsIdentity);
+    }
+
+    private SigningCredentials CreateSigningCredentials()
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-        
-        var role = user is Admin? UserRoles.Admin : UserRoles.Client;
+        return new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+    }
 
-        var claimsIdentity = new ClaimsIdentity([
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.FirstName + " " + user.LastName ),
-            new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.Role, role),
+    private ClaimsIdentity CreateClaimsIdentity(Client client)
+    {
+        return new ClaimsIdentity([
+            new(ClaimTypes.NameIdentifier, client.Id.ToString()),
+            new(ClaimTypes.Name, client.FirstName + " " + client.LastName ),
+            new(ClaimTypes.Email, client.Email),
+            new(ClaimTypes.Role, UserRoles.Client),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Iat, 
                 new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(), 
                 ClaimValueTypes.Integer64)
         ]);
+    }
+    
+    private ClaimsIdentity CreateClaimsIdentity(Admin admin)
+    {
+        return new ClaimsIdentity([
+            new(ClaimTypes.NameIdentifier, admin.Id.ToString()),
+            new(ClaimTypes.Name, admin.FirstName + " " + admin.LastName ),
+            new(ClaimTypes.Email, admin.Email),
+            new(ClaimTypes.Role, UserRoles.Admin),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Iat, 
+                new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(), 
+                ClaimValueTypes.Integer64)
+        ]);
+    }
 
+    private string CreateAccessToken(SigningCredentials credentials, ClaimsIdentity claimsIdentity)
+    {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = claimsIdentity,

@@ -41,7 +41,7 @@ public static class ServiceCollectionExtensions
                     ValidateIssuerSigningKey = true,
                 };
             });
-        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<JwtService>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
 
         services.AddAuthorization(o =>
