@@ -25,6 +25,9 @@ public class ECommerceContext : DbContext
 
     public DbSet<Payment> Payments { get; set; }
 
+    public DbSet<ClientRefreshToken> ClientRefreshTokens { get; set; }
+    public DbSet<AdminRefreshToken> AdminRefreshTokens { get; set; }
+
     public ECommerceContext()
     {
     }
