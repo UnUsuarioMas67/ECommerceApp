@@ -2,7 +2,7 @@
 
 public class OrderExpirySettings
 {
-    public int ExpireMinutes { get; set; }
-    public int DeleteExpiredAfterHours { get; set; }
-    public int CheckExpiryMinutes { get; set; }
+    public int ExpireMinutes { get; set; } = 15;
+    public int DeleteExpiredAfterHours { get; set; } = 24;
+    public int CheckExpiryMinutes { get; set; } = 5;
 }
