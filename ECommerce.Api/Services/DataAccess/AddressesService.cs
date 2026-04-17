@@ -27,6 +27,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
     public async Task<AddressResponseDto?> GetByIdAsync(int addressId)
     {
         var address = await context.Addresses
+            .AsNoTracking()
             .Include(a => a.Country)
             .FirstOrDefaultAsync(a => a.Id == addressId);
         return address != null ? mapper.MapToDto(address) : null;
@@ -34,6 +35,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
 
     public async Task<IEnumerable<AddressResponseDto>> GetByClientAsync(int clientId)
         => await context.Addresses
+            .AsNoTracking()
             .Include(a => a.Country)
             .Where(a => a.ClientId == clientId)
             .Select(a => mapper.MapToDto(a))
@@ -42,6 +44,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
     public async Task<IEnumerable<AddressResponseDto>> GetByCountryAsync(string cca2, PaginationQuery pagination)
     {
         return await context.Addresses
+            .AsNoTracking()
             .Include(a => a.Country)
             .Where(a => a.Country!.Cca2 == cca2)
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
@@ -56,7 +59,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         var verification = await VerifyAddress(address);
         if (!verification.IsSuccess)
             return verification.Error;
-        
+
         await context.Addresses.AddAsync(address);
         await context.SaveChangesAsync();
 
@@ -78,7 +81,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
             return new NotFoundError();
 
         await mapper.ApplyUpdateAsync(updated, dto);
-        
+
         var verification = await VerifyAddress(updated);
         if (!verification.IsSuccess)
         {
@@ -119,14 +122,14 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
             return new InvalidCountryError(address.CountryCca2, address.Id > 0 ? address.Id : null);
         if (!await ClientIsValid(address))
             return new ClientNotExistsError(address.ClientId ?? 0, address.Id > 0 ? address.Id : null);
-        
+
         var validation = await validator.ValidateAsync(address);
         if (!validation.IsValid)
             return new ValidationError(validation.ToDictionary());
-        
+
         return Result.Success();
     }
-    
+
     private async Task<bool> CountryIsValid(Address address)
         => await context.Countries.AnyAsync(c => c.Cca2 == address.CountryCca2 || c == address.Country);
 
@@ -134,7 +137,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
     {
         if (address.Client == null && address.ClientId == null)
             return true;
-        
+
         return await context.Clients.AnyAsync(c => c.Id == address.ClientId || c == address.Client);
     }
 }

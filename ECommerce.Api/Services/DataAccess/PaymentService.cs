@@ -17,8 +17,7 @@ public class PaymentService(ECommerceContext context) : IPaymentService
 {
     public async Task<PaymentResultDto?> GetByIdAsync(int paymentId)
     {
-        var payment = await context.Payments
-            .FirstOrDefaultAsync(p => p.Id == paymentId);
+        var payment = await context.Payments.FindAsync(paymentId);
 
         return payment != null ? MapToDto(payment) : null;
     }
@@ -26,6 +25,7 @@ public class PaymentService(ECommerceContext context) : IPaymentService
     public async Task<IEnumerable<PaymentResultDto>> GetManyAsync(PaginationQuery pagination)
     {
         var payments = await context.Payments
+            .AsNoTracking()
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
             .Take(pagination.LimitOrDefault)
             .ToListAsync();
@@ -36,6 +36,7 @@ public class PaymentService(ECommerceContext context) : IPaymentService
     public async Task<PaymentResultDto?> GetByShopOrderAsync(int orderId)
     {
         var payment = await context.Payments
+            .AsNoTracking()
             .FirstOrDefaultAsync(p => p.OrderId == orderId);
 
         return payment != null ? MapToDto(payment) : null;

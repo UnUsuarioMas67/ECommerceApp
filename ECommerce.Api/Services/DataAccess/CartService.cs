@@ -26,6 +26,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
     public async Task<CartResponseDto?> GetByIdAsync(int cartId)
     {
         var cart = await context.Carts
+            .AsNoTracking()
             .Include(cart => cart.Items)
             .ThenInclude(item => item.Product)
             .ThenInclude(product => product.Category)
@@ -36,6 +37,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
     public async Task<IEnumerable<CartResponseDto>> GetManyAsync(PaginationQuery pagination)
     {
         return await context.Carts
+            .AsNoTracking()
             .Include(cart => cart.Items)
             .ThenInclude(item => item.Product)
             .ThenInclude(product => product.Category)
@@ -47,6 +49,7 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
     public async Task<IEnumerable<CartResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination)
     {
         return await context.Carts
+            .AsNoTracking()
             .Include(cart => cart.Items)
             .ThenInclude(item => item.Product)
             .ThenInclude(product => product.Category)

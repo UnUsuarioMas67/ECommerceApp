@@ -24,13 +24,14 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
 {
     public async Task<UserResponseDto?> GetByIdAsync(int clientId)
     {
-        var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
+        var client = await context.Clients.FindAsync(clientId);
         return client != null ? mapper.MapToDto(client) : null;
     }
 
     public async Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
     {
         return await context.Clients
+            .AsNoTracking()
             .Where(c => (c.FirstName + " " + c.LastName).Contains(search ?? ""))
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(c => mapper.MapToDto(c)!)

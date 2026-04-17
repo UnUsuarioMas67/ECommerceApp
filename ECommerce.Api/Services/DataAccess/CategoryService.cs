@@ -36,13 +36,15 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
 
     public async Task<CategoryResponseDto?> GetBySlugAsync(string categorySlug)
     {
-        var category = await context.Categories.FirstOrDefaultAsync(c => c.Slug == categorySlug);
+        var category = await context.Categories
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Slug == categorySlug);
         return category != null ? mapper.MapToDto(category) : null;
     }
 
     public async Task<IEnumerable<CategoryResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
     {
-        var categories = await context.Categories.ToListAsync();
+        var categories = await context.Categories.AsNoTracking().ToListAsync();
 
         return categories
             .Where(c => c.Name.Contains(search ?? "", StringComparison.InvariantCultureIgnoreCase))
@@ -124,11 +126,11 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
     {
         if (!await SlugIsUnique(category))
             return new DuplicateCategorySlugError(category.Slug, category.Id > 0 ? category.Id : null);
-        
+
         var validation = await validator.ValidateAsync(category);
         if (!validation.IsValid)
             return new ValidationError(validation.ToDictionary());
-        
+
         return Result.Success();
     }
 

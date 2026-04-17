@@ -38,7 +38,7 @@ public class AdminsService(ECommerceContext context, IValidator<Admin> validator
 
     public async Task<UserResponseDto?> GetByIdAsync(int adminId)
     {
-        var admin = await context.Admins.FirstOrDefaultAsync(a => a.Id == adminId);
+        var admin = await context.Admins.FindAsync(adminId);
         return admin != null ? mapper.MapToDto(admin) : null;
     }
 

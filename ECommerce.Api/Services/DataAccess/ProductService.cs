@@ -18,20 +18,23 @@ public interface IProductService
     Task<ProductResponseDto?> DeleteAsync(int productId);
 
     Task<IEnumerable<ProductResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
+
     Task<IEnumerable<ProductResponseDto>> GetByCategoryId(int categoryId, PaginationQuery pagination,
         string? search = null);
+
     Task<IEnumerable<ProductResponseDto>> GetByCategorySlug(string categorySlug, PaginationQuery pagination,
         string? search = null);
-    
+
     Task<Result<ProductResponseDto>> Restock(int productId, int newStock);
 }
 
-public class ProductService(ECommerceContext context, IValidator<Product> validator, ProductMapper mapper) 
+public class ProductService(ECommerceContext context, IValidator<Product> validator, ProductMapper mapper)
     : IProductService
 {
     public async Task<ProductResponseDto?> GetByIdAsync(int productId)
     {
         var product = await context.Products
+            .AsNoTracking()
             .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == productId);
         return product != null ? mapper.MapToDto(product) : null;
@@ -92,6 +95,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
     public async Task<IEnumerable<ProductResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
     {
         var products = await context.Products
+            .AsNoTracking()
             .Include(p => p.Category)
             .Where(p => p.Name.Contains(search ?? ""))
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
@@ -105,6 +109,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         string? search = null)
     {
         return await context.Products
+            .AsNoTracking()
             .Include(p => p.Category)
             .Where(p => p.Name.Contains(search ?? "") && p.Category != null && p.Category.Id == categoryId)
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
@@ -112,15 +117,16 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<ProductResponseDto>> GetByCategorySlug(string categorySlug, 
+    public async Task<IEnumerable<ProductResponseDto>> GetByCategorySlug(string categorySlug,
         PaginationQuery pagination, string? search = null)
     {
         return await context.Products
+            .AsNoTracking()
             .Include(p => p.Category)
             .Where(p => p.Name.Contains(search ?? "") && p.Category != null && p.Category.Slug == categorySlug)
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(product => mapper.MapToDto(product))
-            .ToListAsync(); 
+            .ToListAsync();
     }
 
     public async Task<Result<ProductResponseDto>> Restock(int productId, int newStock)
@@ -128,28 +134,28 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         var product = await context.Products
             .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == productId);
-        
+
         if (product == null)
             return new NotFoundError();
 
         if (product.Stock != newStock)
             product.Stock = newStock;
-        
+
         if (product.Stock < 0)
         {
             await context.DisposeAsync();
             return new InvalidProductStockError();
         }
-        
+
         var validation = await validator.ValidateAsync(product);
         if (!validation.IsValid)
         {
             await context.DisposeAsync();
             return new ValidationError(validation.ToDictionary());
         }
-        
+
         await context.SaveChangesAsync();
-        
+
         return mapper.MapToDto(product);
     }
 
@@ -157,31 +163,31 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
     {
         if (!await CategoryIsValid(product))
             return new CategoryNotExistsError(categorySlug, product.Id > 0 ? product.Id : 0);
-        
+
         if (!await SkuIsUnique(product))
             return new DuplicateProductSkuError(product.Sku, product.Id > 0 ? product.Id : 0);
-        
+
         if (product.Price < 0)
             return new InvalidProductPriceError();
-        
+
         if (product.Stock < 0)
             return new InvalidProductStockError();
-        
+
         var validation = await validator.ValidateAsync(product);
         if (!validation.IsValid)
             return new ValidationError(validation.ToDictionary());
-        
+
         return Result.Success();
     }
-    
+
     private async Task<bool> SkuIsUnique(Product product)
-     => !await context.Products.AnyAsync(p => p.Sku == product.Sku && p != product);
+        => !await context.Products.AnyAsync(p => p.Sku == product.Sku && p != product);
 
     private async Task<bool> CategoryIsValid(Product product)
     {
         if (product.Category == null && product.CategoryId == null)
             return true;
-        
+
         return await context.Categories.AnyAsync(c => c.Id == product.CategoryId || c == product.Category);
     }
 }
