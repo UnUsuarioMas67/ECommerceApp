@@ -86,7 +86,7 @@ public class StripeCheckoutService : IStripeCheckoutService
             return new ProductsStockError(insufficientStockItems.ToList());
         }
 
-        _context.ShopOrders.Add(order);
+        await _context.ShopOrders.AddAsync(order);
         _context.Carts.Remove(cart);
         await _context.SaveChangesAsync();
 
@@ -296,7 +296,7 @@ public class StripeCheckoutService : IStripeCheckoutService
             CreatedAt = DateTime.UtcNow,
         };
 
-        _context.Payments.Add(payment);
+        await _context.Payments.AddAsync(payment);
         order.StatusId = OrderStatuses.Paid;
 
         foreach (var item in order.Items)
