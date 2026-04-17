@@ -34,7 +34,7 @@ public static class AuthEndpoints
     }
     
     private static async Task<Results<Ok<AuthenticationDto>, Ok<Error>, ValidationProblem>> LoginClient(
-        IAuthenticationService authenticationService,
+        AuthenticationService authenticationService,
         LoginRequestDto requestDto,
         IValidator<LoginRequestDto> validator)
     {
@@ -48,7 +48,7 @@ public static class AuthEndpoints
     }
     
     private static async Task<Results<Ok<AuthenticationDto>, Ok<string>, ValidationProblem>> LoginAdmin(
-        IAuthenticationService authenticationService,
+        AuthenticationService authenticationService,
         LoginRequestDto requestDto,
         IValidator<LoginRequestDto> validator)
     {

@@ -7,19 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Services.Auth;
 
-public interface IAuthenticationService
-{
-    Task<Result<AuthenticationDto>> LoginClient(string email, string password);
-    Task<Result<AuthenticationDto>> LoginAdmin(string email, string password);
-}
-
 public class AuthenticationService(
     JwtService jwtService,
     RefreshTokenService refreshTokenService,
     ECommerceContext context,
     ClientMapper clientMapper,
     AdminMapper adminMapper)
-    : IAuthenticationService
 {
     public async Task<Result<AuthenticationDto>> LoginClient(string email, string password)
     {
@@ -72,10 +65,10 @@ public class AuthenticationService(
         var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == refreshTokenEntry.ClientId);
         if (client == null)
             return new RefreshTokenError();
-        
+
         var accessToken = jwtService.GenerateAccessToken(client);
         var newRefreshToken = await refreshTokenService.GenerateRefreshTokenAsync(client);
-        
+
         await refreshTokenService.DeleteTokenAsync(refreshTokenEntry);
 
         return new AuthenticationDto
@@ -85,7 +78,7 @@ public class AuthenticationService(
             User = clientMapper.MapToDto(client)
         };
     }
-    
+
     public async Task<Result<AuthenticationDto>> RefreshAdminToken(string refreshToken)
     {
         var refreshTokenEntry = await refreshTokenService.GetAdminRefreshTokenAsync(refreshToken);
@@ -95,10 +88,10 @@ public class AuthenticationService(
         var admin = await context.Admins.FirstOrDefaultAsync(a => a.Id == refreshTokenEntry.AdminId);
         if (admin == null)
             return new RefreshTokenError();
-        
+
         var accessToken = jwtService.GenerateAccessToken(admin);
         var newRefreshToken = await refreshTokenService.GenerateRefreshTokenAsync(admin);
-        
+
         await refreshTokenService.DeleteTokenAsync(refreshTokenEntry);
 
         return new AuthenticationDto
@@ -113,7 +106,7 @@ public class AuthenticationService(
     {
         await refreshTokenService.DeleteByClientIdAsync(clientId);
     }
-    
+
     public async Task LogoutAdmin(int adminId)
     {
         await refreshTokenService.DeleteByAdminIdAsync(adminId);
