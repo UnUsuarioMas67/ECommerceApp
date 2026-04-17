@@ -132,7 +132,7 @@ public static class AddressEndpoints
         if (clientId == null)
             return TypedResults.BadRequest(new InvalidAuthenticationError());
 
-        var addresses = await addressesService.GetByClient(clientId.Value);
+        var addresses = await addressesService.GetByClientAsync(clientId.Value);
         return TypedResults.Ok(addresses);
     }
 
@@ -142,7 +142,7 @@ public static class AddressEndpoints
         [AsParameters] PaginationQuery pagination
     )
     {
-        var addresses = await addressesService.GetByCountry(countryCode, pagination);
+        var addresses = await addressesService.GetByCountryAsync(countryCode, pagination);
         return TypedResults.Ok(addresses);
     }
 }

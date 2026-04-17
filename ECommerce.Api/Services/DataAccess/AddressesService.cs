@@ -13,8 +13,8 @@ namespace ECommerce.Api.Services.DataAccess;
 public interface IAddressesService
 {
     Task<AddressResponseDto?> GetByIdAsync(int addressId);
-    Task<IEnumerable<AddressResponseDto>> GetByClient(int clientId);
-    Task<IEnumerable<AddressResponseDto>> GetByCountry(string cca2, PaginationQuery pagination);
+    Task<IEnumerable<AddressResponseDto>> GetByClientAsync(int clientId);
+    Task<IEnumerable<AddressResponseDto>> GetByCountryAsync(string cca2, PaginationQuery pagination);
     Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto, int clientId);
     Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto, int? clientId = null);
     Task<AddressResponseDto?> DeleteAsync(int addressId, int? clientId = null);
@@ -32,14 +32,14 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         return address != null ? mapper.MapToDto(address) : null;
     }
 
-    public async Task<IEnumerable<AddressResponseDto>> GetByClient(int clientId)
+    public async Task<IEnumerable<AddressResponseDto>> GetByClientAsync(int clientId)
         => await context.Addresses
             .Include(a => a.Country)
             .Where(a => a.ClientId == clientId)
             .Select(a => mapper.MapToDto(a))
             .ToListAsync();
 
-    public async Task<IEnumerable<AddressResponseDto>> GetByCountry(string cca2, PaginationQuery pagination)
+    public async Task<IEnumerable<AddressResponseDto>> GetByCountryAsync(string cca2, PaginationQuery pagination)
     {
         return await context.Addresses
             .Include(a => a.Country)
