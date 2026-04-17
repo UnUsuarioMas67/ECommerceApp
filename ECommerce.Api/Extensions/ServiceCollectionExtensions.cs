@@ -42,6 +42,7 @@ public static class ServiceCollectionExtensions
                 };
             });
         services.AddScoped<JwtService>();
+        services.AddScoped<RefreshTokenService>();
         services.AddScoped<AuthenticationService>();
 
         services.AddAuthorization(o =>
