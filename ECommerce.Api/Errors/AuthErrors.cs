@@ -2,6 +2,8 @@
 
 public record InvalidLoginError() : Error("Invalid login credentials");
 
+public record RefreshTokenError() : Error("Invalid or expired refresh token");
+
 public record InvalidAuthenticationError : Error
 {
     public int? UserId { get; set; }
