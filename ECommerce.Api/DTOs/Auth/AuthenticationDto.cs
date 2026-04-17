@@ -4,7 +4,7 @@ namespace ECommerce.Api.DTOs.Auth;
 
 public class AuthenticationDto
 {
-    public UserResponseDto? User { get; set; }
-    
-    public string? Token { get; set; }
+    public required UserResponseDto? User { get; set; }
+    public required string? AccessToken { get; set; }
+    public required string? RefreshToken { get; set; }
 }
