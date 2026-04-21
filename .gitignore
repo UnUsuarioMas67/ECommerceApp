@@ -4,4 +4,4 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
-/ECommerce.Api/appsettings.Development.json
+/*/appsettings.Development.json
