@@ -59,7 +59,7 @@ public static class AuthEndpoints
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Ok(result.Error);
     }
 
-    private static async Task<Results<Ok<AuthenticationDto>, Ok<string>, ValidationProblem>> LoginAdmin(
+    private static async Task<Results<Ok<AuthenticationDto>, Ok<Error>, ValidationProblem>> LoginAdmin(
         AuthenticationService authenticationService,
         LoginRequestDto requestDto,
         IValidator<LoginRequestDto> validator)
@@ -70,7 +70,7 @@ public static class AuthEndpoints
 
         var result = await authenticationService.LoginAdmin(requestDto.Email, requestDto.Password);
 
-        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Ok("Invalid credentials");
+        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Ok(result.Error);
     }
 
     private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<Error>>>
