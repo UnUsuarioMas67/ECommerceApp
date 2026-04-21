@@ -4,7 +4,8 @@ namespace ECommerce.Dashboard.Models.Auth;
 
 public class UserLoginRequest
 {
-    [EmailAddress] 
+    [EmailAddress]
+    [DataType(DataType.EmailAddress)]
     [Required]
     public string Email { get; set; } = string.Empty;
 
