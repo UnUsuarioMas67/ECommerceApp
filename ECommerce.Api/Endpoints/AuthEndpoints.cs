@@ -6,6 +6,7 @@ using ECommerce.Api.Services.DataAccess;
 using ECommerce.Api.Shared;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Api.Endpoints;
 
@@ -45,7 +46,7 @@ public static class AuthEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Ok<AuthenticationDto>, Ok<Error>, ValidationProblem>> LoginClient(
+    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, ValidationProblem>> LoginClient(
         AuthenticationService authenticationService,
         LoginRequestDto requestDto,
         IValidator<LoginRequestDto> validator)
@@ -56,10 +57,10 @@ public static class AuthEndpoints
 
         var result = await authenticationService.LoginClient(requestDto.Email, requestDto.Password);
 
-        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Ok(result.Error);
+        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Unauthorized();
     }
 
-    private static async Task<Results<Ok<AuthenticationDto>, Ok<Error>, ValidationProblem>> LoginAdmin(
+    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, ValidationProblem>> LoginAdmin(
         AuthenticationService authenticationService,
         LoginRequestDto requestDto,
         IValidator<LoginRequestDto> validator)
@@ -70,7 +71,7 @@ public static class AuthEndpoints
 
         var result = await authenticationService.LoginAdmin(requestDto.Email, requestDto.Password);
 
-        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Ok(result.Error);
+        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Unauthorized();
     }
 
     private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<Error>>>
