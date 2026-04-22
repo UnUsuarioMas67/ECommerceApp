@@ -148,27 +148,27 @@ public static class AuthEndpoints
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Unauthorized();
     }
 
-    private static async Task<Results<NoContent, BadRequest<InvalidAuthenticationError>>> LogoutClient(
+    private static async Task<Results<NoContent, UnauthorizedHttpResult>> LogoutClient(
         HttpContext httpContext,
         AuthenticationService authenticationService
     )
     {
         var clientId = AuthUser.GetAuthUserId(httpContext);
         if (!clientId.HasValue)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         await authenticationService.LogoutClient(clientId.Value);
         return TypedResults.NoContent();
     }
     
-    private static async Task<Results<NoContent, BadRequest<InvalidAuthenticationError>>> LogoutAdmin(
+    private static async Task<Results<NoContent, UnauthorizedHttpResult>> LogoutAdmin(
         HttpContext httpContext,
         AuthenticationService authenticationService
     )
     {
         var adminId = AuthUser.GetAuthUserId(httpContext);
         if (!adminId.HasValue)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         await authenticationService.LogoutAdmin(adminId.Value);
         return TypedResults.NoContent();
