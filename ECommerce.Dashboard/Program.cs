@@ -1,7 +1,19 @@
+using ECommerce.Dashboard.Services;
+using ECommerce.Dashboard.Settings;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("AuthSettings"));
+builder.Services.AddHttpClient("ApiClient", client =>
+{
+    var apiSettings = builder.Configuration.GetSection("ApiSettings").Get<ApiSettings>();
+    client.BaseAddress = new Uri(apiSettings?.ApiUrl ?? throw new InvalidOperationException("Missing ApiUrl setting"));
+});
+
+builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 
@@ -24,6 +36,5 @@ app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();
