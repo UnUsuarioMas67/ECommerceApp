@@ -122,7 +122,7 @@ public static class AuthEndpoints
         return TypedResults.UnprocessableEntity(result.Error);
     }
 
-    private static async Task<Results<Ok<AuthenticationDto>, Ok<Error>, ValidationProblem>> RefreshClient(
+    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, ValidationProblem>> RefreshClient(
         AuthenticationService authenticationService,
         RefreshRequestDto dto,
         IValidator<RefreshRequestDto> validator)
@@ -132,10 +132,10 @@ public static class AuthEndpoints
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
         var result = await authenticationService.RefreshClientToken(dto.RefreshToken);
-        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Ok(result.Error);
+        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Unauthorized();
     }
     
-    private static async Task<Results<Ok<AuthenticationDto>, Ok<Error>, ValidationProblem>> RefreshAdmin(
+    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, ValidationProblem>> RefreshAdmin(
         AuthenticationService authenticationService,
         RefreshRequestDto dto,
         IValidator<RefreshRequestDto> validator)
@@ -145,7 +145,7 @@ public static class AuthEndpoints
             return TypedResults.ValidationProblem(validation.ToDictionary());
 
         var result = await authenticationService.RefreshAdminToken(dto.RefreshToken);
-        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Ok(result.Error);
+        return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Unauthorized();
     }
 
     private static async Task<Results<NoContent, BadRequest<InvalidAuthenticationError>>> LogoutClient(
