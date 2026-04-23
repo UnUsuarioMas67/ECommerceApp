@@ -54,7 +54,6 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
 
     public async Task<Result<UserResponseDto>> UpdateAsync(int clientId, UserUpdateDto dto)
     {
-        // TODO Rewrite UpdateAsync methods in all services
         var updated = await context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
         if (updated == null)
             return new NotFoundError();

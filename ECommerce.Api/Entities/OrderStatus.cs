@@ -2,7 +2,6 @@
 
 public class OrderStatus
 {
-    // TODO - Add predefined statuses
     public int Id { get; set; }
     public string Status { get; set; }
 }
