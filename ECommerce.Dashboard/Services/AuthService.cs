@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
 using ECommerce.Dashboard.Exceptions;
 using ECommerce.Dashboard.Models.Auth;
 using ECommerce.Dashboard.Results;
@@ -10,6 +11,7 @@ public class AuthService(IHttpClientFactory clientFactory, ILogger<AuthService> 
     private const string LoginPath = "api/admins/login";
     private const string LogoutPath = "api/admins/logout";
     private const string RefreshPath = "api/admins/refresh";
+    private const string GetUserPath = "api/admins/me";
 
     private readonly HttpClient _httpClient = clientFactory.CreateClient("ApiClient");
 
@@ -35,13 +37,15 @@ public class AuthService(IHttpClientFactory clientFactory, ILogger<AuthService> 
         if ((int)response.StatusCode >= 500)
             throw new ApiServerException(response.StatusCode);
 
-        var errorBody = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+        var errorBody = response.Content.Headers.ContentLength > 0
+            ? await response.Content.ReadFromJsonAsync<Dictionary<string, object>>()
+            : new Dictionary<string, object>();
         throw new UnexpectedApiResponseException(response.StatusCode, errorBody);
     }
     
-    public async Task<Result<UserLoginResponse>> RefreshAsync(string token)
+    public async Task<Result<UserLoginResponse>> RefreshAsync(string refreshToken)
     {
-        var response = await _httpClient.PostAsJsonAsync(RefreshPath, new {RefreshToken = token});
+        var response = await _httpClient.PostAsJsonAsync(RefreshPath, new {RefreshToken = refreshToken});
         if (response.IsSuccessStatusCode)
         {
             var userLogin = await response.Content.ReadFromJsonAsync<UserLoginResponse>()
@@ -59,7 +63,36 @@ public class AuthService(IHttpClientFactory clientFactory, ILogger<AuthService> 
         if ((int)response.StatusCode >= 500)
             throw new ApiServerException(response.StatusCode);
 
-        var errorBody = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+        var errorBody = response.Content.Headers.ContentLength > 0
+            ? await response.Content.ReadFromJsonAsync<Dictionary<string, object>>()
+            : new Dictionary<string, object>();
+        throw new UnexpectedApiResponseException(response.StatusCode, errorBody);
+    }
+
+    public async Task<Result<AdminUser>> GetAuthenticatedUserAsync(string jwt)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+        
+        var response = await _httpClient.GetAsync(GetUserPath);
+        if (response.IsSuccessStatusCode)
+        {
+            var user = await response.Content.ReadFromJsonAsync<AdminUser>()
+                            ?? throw new InvalidOperationException("Could not deserialize the response");
+            return user;
+        }
+        
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            return new LoginCredentialsError();
+        }
+        
+        if ((int)response.StatusCode >= 500)
+            throw new ApiServerException(response.StatusCode);
+
+        
+        var errorBody = response.Content.Headers.ContentLength > 0
+            ? await response.Content.ReadFromJsonAsync<Dictionary<string, object>>()
+            : new Dictionary<string, object>();
         throw new UnexpectedApiResponseException(response.StatusCode, errorBody);
     }
     
