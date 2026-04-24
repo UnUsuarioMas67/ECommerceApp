@@ -12,6 +12,8 @@ public class RefreshTokenService(ECommerceContext context, IOptions<JwtSettings>
 
     public async Task<ClientRefreshToken> GenerateRefreshTokenAsync(Client client)
     {
+        await DeleteByClientIdAsync(client.Id);
+        
         var token = new ClientRefreshToken
         {
             Token = Guid.NewGuid().ToString(),
@@ -29,6 +31,8 @@ public class RefreshTokenService(ECommerceContext context, IOptions<JwtSettings>
 
     public async Task<AdminRefreshToken> GenerateRefreshTokenAsync(Admin admin)
     {
+        await DeleteByAdminIdAsync(admin.Id);
+        
         var token = new AdminRefreshToken
         {
             Token = Guid.NewGuid().ToString(),
