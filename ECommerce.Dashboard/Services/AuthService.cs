@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using System.Text.Json;
+using ECommerce.Dashboard.Exceptions;
 using ECommerce.Dashboard.Models.Auth;
 using ECommerce.Dashboard.Results;
 
@@ -16,7 +16,7 @@ public class AuthService(IHttpClientFactory clientFactory, ILogger<AuthService> 
     public async Task<Result<UserLoginResponse>> LoginAsync(UserLoginRequest request)
     {
         logger.LogInformation("Requesting login: {email}", request.Email);
-
+        
         var response = await _httpClient.PostAsJsonAsync(LoginPath, request);
         if (response.IsSuccessStatusCode)
         {
@@ -33,19 +33,10 @@ public class AuthService(IHttpClientFactory clientFactory, ILogger<AuthService> 
         }
 
         if ((int)response.StatusCode >= 500)
-        {
-            var error = new ApiServerError((int)response.StatusCode);
-            logger.LogWarning("{error}", error.Message);
-            return error;
-        }
+            throw new ApiServerException(response.StatusCode);
 
         var errorBody = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-        var responseError = new UnexpectedApiResponseError((int)response.StatusCode, errorBody);
-        
-        var json = JsonSerializer.Serialize(responseError, new JsonSerializerOptions { WriteIndented = true });
-        logger.LogWarning("Unexpected response: {error}", json);
-        
-        return responseError;
+        throw new UnexpectedApiResponseException(response.StatusCode, errorBody);
     }
     
     public async Task<Result<UserLoginResponse>> RefreshAsync(string token)
@@ -66,19 +57,10 @@ public class AuthService(IHttpClientFactory clientFactory, ILogger<AuthService> 
         }
         
         if ((int)response.StatusCode >= 500)
-        {
-            var error = new ApiServerError((int)response.StatusCode);
-            logger.LogWarning("{error}", error.Message);
-            return error;
-        }
+            throw new ApiServerException(response.StatusCode);
 
         var errorBody = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-        var responseError = new UnexpectedApiResponseError((int)response.StatusCode, errorBody);
-        
-        var json = JsonSerializer.Serialize(responseError, new JsonSerializerOptions { WriteIndented = true });
-        logger.LogWarning("Unexpected response: {error}", json);
-        
-        return responseError;
+        throw new UnexpectedApiResponseException(response.StatusCode, errorBody);
     }
     
     public async Task<Result> LogoutAsync()
