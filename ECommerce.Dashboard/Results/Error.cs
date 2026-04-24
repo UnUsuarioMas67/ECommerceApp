@@ -7,6 +7,8 @@ public record Error(string Type, string Message)
 
 public record LoginCredentialsError() : Error("login_credentials", "Invalid email or password");
 
+public record RefreshTokenError() : Error("refresh_token", "Invalid or expired refresh token");
+
 public record UnexpectedApiResponseError(int StatusCode, Dictionary<string, object>? ResponseBody = null)
     : Error("api_unexpected_response", "Unexpected API response");
 
