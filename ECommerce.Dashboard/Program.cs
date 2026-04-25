@@ -1,4 +1,5 @@
 using ECommerce.Dashboard.Services;
+using ECommerce.Dashboard.Services.Api;
 using ECommerce.Dashboard.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,9 @@ builder.Services.AddHttpClient("ApiClient", client =>
     client.BaseAddress = new Uri(apiSettings?.ApiUrl ?? throw new InvalidOperationException("Missing ApiUrl setting"));
 });
 
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<ApiRequestService>();
 builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
