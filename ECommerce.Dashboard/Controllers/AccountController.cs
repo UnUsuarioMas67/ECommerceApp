@@ -23,7 +23,7 @@ public class AccountController(AuthService authService) : Controller
         if (!loginResult.IsSuccess)
             return View();
         
-        return RedirectToAction(nameof(Success));
+        return RedirectToAction("Index", "Home");
     }
     
     [HttpGet]
@@ -31,15 +31,5 @@ public class AccountController(AuthService authService) : Controller
     {
         await authService.LogoutAsync();
         return RedirectToAction(nameof(Login));
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> Success()
-    {
-        var result = await authService.GetAuthenticatedUserAsync();
-        if (!result.IsSuccess)
-            return RedirectToAction(nameof(Login));
-        
-        return View(result.Value);
     }
 }

@@ -1,16 +1,21 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ECommerce.Dashboard.Models;
+using ECommerce.Dashboard.Services;
 
 namespace ECommerce.Dashboard.Controllers;
 
-public class HomeController(ILogger<HomeController> logger) : Controller
+public class HomeController(ILogger<HomeController> logger, AuthService authService) : Controller
 {
     private readonly ILogger<HomeController> _logger = logger;
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var result = await authService.GetAuthenticatedUserAsync();
+        if (!result.IsSuccess)
+            return RedirectToAction("Login", "Account");
+        
+        return View(result.Value);
     }
 
     public IActionResult Privacy()
