@@ -69,7 +69,6 @@ public class AuthService(
         {
             Method = HttpMethod.Get,
             Path = GetUserPath,
-            SendToken = true
         });
 
         if (!result.IsSuccess)
@@ -85,32 +84,12 @@ public class AuthService(
 
     public async Task<Result> LogoutAsync()
     {
-        throw new NotImplementedException();
-
-        // var response = await _httpClient.PostAsync(LogoutPath, null);
-        // if (response.IsSuccessStatusCode)
-        // {
-        //     return Result.Success();
-        // }
-        //
-        // if (response.StatusCode == HttpStatusCode.Unauthorized)
-        // {
-        //     return new RefreshTokenError();
-        // }
-        //
-        // if ((int)response.StatusCode >= 500)
-        // {
-        //     var error = new ApiServerError((int)response.StatusCode);
-        //     logger.LogWarning("{error}", error.Message);
-        //     return error;
-        // }
-        //
-        // var errorBody = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-        // var responseError = new UnexpectedApiResponseError((int)response.StatusCode, errorBody);
-        //
-        // var json = JsonSerializer.Serialize(responseError, new JsonSerializerOptions { WriteIndented = true });
-        // logger.LogWarning("Unexpected response: {error}", json);
-        //
-        // return responseError;
+        var result = await apiRequestService.SendAsync(new ApiRequestOptions
+        {
+            Method = HttpMethod.Post,
+            Path = LogoutPath,
+        });
+        
+        return result;
     }
 }
