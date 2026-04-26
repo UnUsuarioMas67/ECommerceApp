@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ECommerce.Dashboard.Models;
 using ECommerce.Dashboard.Services;
+using ECommerce.Dashboard.Services.Api;
 
 namespace ECommerce.Dashboard.Controllers;
 

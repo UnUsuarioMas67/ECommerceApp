@@ -1,5 +1,6 @@
 ﻿using ECommerce.Dashboard.Models.Auth;
 using ECommerce.Dashboard.Services;
+using ECommerce.Dashboard.Services.Api;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Dashboard.Controllers;

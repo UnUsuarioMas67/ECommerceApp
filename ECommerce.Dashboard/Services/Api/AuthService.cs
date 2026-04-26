@@ -1,11 +1,10 @@
 ﻿using System.Net;
 using ECommerce.Dashboard.Models.Auth;
 using ECommerce.Dashboard.Results;
-using ECommerce.Dashboard.Services.Api;
 using ECommerce.Dashboard.Settings;
 using Microsoft.Extensions.Options;
 
-namespace ECommerce.Dashboard.Services;
+namespace ECommerce.Dashboard.Services.Api;
 
 public class AuthService(
     ApiRequestService apiRequestService,
@@ -51,6 +50,8 @@ public class AuthService(
         {
             HttpOnly = true,
             Expires = DateTime.Now.AddDays(5),
+            Secure = true,
+            SameSite = SameSiteMode.Lax
         };
 
         var httpContext = httpContextAccessor.HttpContext;
