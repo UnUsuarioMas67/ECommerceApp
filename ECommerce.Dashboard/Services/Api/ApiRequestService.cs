@@ -28,7 +28,7 @@ public class ApiRequestService(
     {
         var httpContext = httpContextAccessor.HttpContext;
         if (httpContext == null)
-            throw new InvalidOperationException("HttpContext is null");
+            throw new InvalidOperationException("No active HttpContext was found");
         
         var hasAccessToken = httpContext.Request.Cookies.TryGetValue(_authSettings.JwtCookieKey, out var accessToken);
         var hasRefreshToken = httpContext.Request.Cookies.TryGetValue(_authSettings.RefreshCookieKey, out var refreshToken);
@@ -106,17 +106,6 @@ public class ApiRequestService(
             return new RefreshTokenError();
         }
 
-        throw new UnexpectedApiResponseException(response.StatusCode);
-    }
-
-    private void ThrowExceptions(HttpResponseMessage response)
-    {
-        // if ((int)response.StatusCode >= 500)
-        //     throw new ApiServerException(response.StatusCode);
-        //
-        // var errorBody = response.Content.Headers.ContentLength > 0
-        //     ? await response.Content.ReadFromJsonAsync<Dictionary<string, object>>()
-        //     : new Dictionary<string, object>();
         throw new UnexpectedApiResponseException(response.StatusCode);
     }
 }
