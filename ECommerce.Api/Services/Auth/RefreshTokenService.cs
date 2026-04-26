@@ -77,16 +77,4 @@ public class RefreshTokenService(ECommerceContext context, IOptions<JwtSettings>
         context.AdminRefreshTokens.RemoveRange(refreshTokens);
         await context.SaveChangesAsync();
     }
-
-    public async Task DeleteTokenAsync(ClientRefreshToken token)
-    {
-        context.ClientRefreshTokens.Remove(token);
-        await context.SaveChangesAsync();
-    }
-    
-    public async Task DeleteTokenAsync(AdminRefreshToken token)
-    {
-        context.AdminRefreshTokens.Remove(token);
-        await context.SaveChangesAsync();
-    }
 }
