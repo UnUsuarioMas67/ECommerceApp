@@ -1,0 +1,17 @@
+﻿@model ECommerce.Dashboard.Models.Auth.UserLoginRequest
+
+<form asp-action="Login" method="post">
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email address</label>
+        <input type="email" class="form-control" asp-for="Email">
+        <span class="small text-danger" asp-validation-for="Email"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">Password</label>
+        <input type="password" class="form-control" asp-for="Password">
+        <span class="small text-danger" asp-validation-for="Password"></span>
+    </div>
+   
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
