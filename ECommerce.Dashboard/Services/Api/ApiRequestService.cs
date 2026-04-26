@@ -5,7 +5,6 @@ using System.Text.Json;
 using ECommerce.Dashboard.Exceptions;
 using ECommerce.Dashboard.Models.Auth;
 using ECommerce.Dashboard.Results;
-using ECommerce.Dashboard.Settings;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 
@@ -13,30 +12,23 @@ namespace ECommerce.Dashboard.Services.Api;
 
 public class ApiRequestService(
     IHttpClientFactory clientFactory,
-    IHttpContextAccessor httpContextAccessor,
     ILogger<ApiRequestService> logger,
-    IOptions<AuthSettings> authOptions,
+    CookieService cookieService,
     IOptions<JsonOptions> jsonOptions)
 {
     private const string RefreshPath = "api/admins/refresh";
 
     private readonly HttpClient _httpClient = clientFactory.CreateClient("ApiClient");
-    private readonly AuthSettings _authSettings = authOptions.Value;
     private readonly JsonSerializerOptions _jsonSerializerOptions = jsonOptions.Value.SerializerOptions;
 
     public async Task<Result<HttpResponseMessage>> SendAsync(ApiRequestOptions options)
     {
-        var httpContext = httpContextAccessor.HttpContext;
-        if (httpContext == null)
-            throw new InvalidOperationException("No active HttpContext was found");
+        var tokens = cookieService.GetApiTokensFromCookies();
         
-        var hasAccessToken = httpContext.Request.Cookies.TryGetValue(_authSettings.JwtCookieKey, out var accessToken);
-        var hasRefreshToken = httpContext.Request.Cookies.TryGetValue(_authSettings.RefreshCookieKey, out var refreshToken);
-
-        if ((!hasAccessToken || !hasRefreshToken) && options.SendToken)
+        if (tokens == null && options.SendToken)
             return new MissingTokenCookiesError();
 
-        return await SendAsyncInner(options, accessToken, refreshToken);
+        return await SendAsyncInner(options, tokens?.AccessToken, tokens?.RefreshToken);
     }
 
     private async Task<Result<HttpResponseMessage>> SendAsyncInner(
@@ -84,18 +76,7 @@ public class ApiRequestService(
                         ?? throw new InvalidOperationException("Could not deserialize the response");
             logger.LogDebug("Refresh request successful. User: {admin}", login.User.Email);
 
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.Now.AddDays(5),
-            };
-
-            var httpContext = httpContextAccessor.HttpContext;
-            if (httpContext == null)
-                throw new InvalidOperationException("HttpContext is null");
-
-            httpContext.Response.Cookies.Append(_authSettings.JwtCookieKey, login.AccessToken, cookieOptions);
-            httpContext.Response.Cookies.Append(_authSettings.RefreshCookieKey, login.RefreshToken, cookieOptions);
+            cookieService.SetApiTokenCookies(login.AccessToken, login.RefreshToken);
 
             return login;
         }

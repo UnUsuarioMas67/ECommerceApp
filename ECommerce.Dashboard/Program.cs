@@ -16,6 +16,7 @@ builder.Services.AddHttpClient("ApiClient", client =>
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddScoped<CookieService>();
 builder.Services.AddScoped<ApiRequestService>();
 builder.Services.AddScoped<AuthService>();
 

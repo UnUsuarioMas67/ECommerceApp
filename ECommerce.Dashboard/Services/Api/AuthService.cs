@@ -1,22 +1,17 @@
 ﻿using System.Net;
 using ECommerce.Dashboard.Models.Auth;
 using ECommerce.Dashboard.Results;
-using ECommerce.Dashboard.Settings;
-using Microsoft.Extensions.Options;
 
 namespace ECommerce.Dashboard.Services.Api;
 
 public class AuthService(
     ApiRequestService apiRequestService,
-    IOptions<AuthSettings> authSettings,
-    IHttpContextAccessor httpContextAccessor,
+    CookieService cookieService,
     ILogger<AuthService> logger)
 {
     private const string LoginPath = "api/admins/login";
     private const string GetUserPath = "api/admins/me";
     private const string LogoutPath = "api/admins/logout";
-
-    private readonly AuthSettings _authSettings = authSettings.Value;
 
     public async Task<Result<AdminUser>> LoginAsync(UserLoginRequest request)
     {
@@ -46,20 +41,7 @@ public class AuthService(
                     ?? throw new InvalidOperationException("Could not deserialize the response");
         logger.LogInformation("Login request successful. User: {admin}", login.User.Email);
 
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTime.Now.AddDays(5),
-            Secure = true,
-            SameSite = SameSiteMode.Lax
-        };
-
-        var httpContext = httpContextAccessor.HttpContext;
-        if (httpContext != null)
-        {
-            httpContext.Response.Cookies.Append(_authSettings.JwtCookieKey, login.AccessToken, cookieOptions);
-            httpContext.Response.Cookies.Append(_authSettings.RefreshCookieKey, login.RefreshToken, cookieOptions);
-        }
+        cookieService.SetApiTokenCookies(login.AccessToken, login.RefreshToken);
 
         return login.User;
     }
@@ -90,7 +72,7 @@ public class AuthService(
             Method = HttpMethod.Post,
             Path = LogoutPath,
         });
-        
+
         return result;
     }
 }
