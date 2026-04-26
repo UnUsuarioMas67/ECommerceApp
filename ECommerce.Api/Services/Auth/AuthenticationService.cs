@@ -65,12 +65,12 @@ public class AuthenticationService(
         var client = await context.Clients.FirstOrDefaultAsync(c => c.Id == refreshTokenEntry.ClientId);
         if (client == null)
             return new RefreshTokenError();
-
+        
+        await refreshTokenService.DeleteByClientIdAsync(client.Id);
+        
         var accessToken = jwtService.GenerateAccessToken(client);
         var newRefreshToken = await refreshTokenService.GenerateRefreshTokenAsync(client);
-
-        await refreshTokenService.DeleteTokenAsync(refreshTokenEntry);
-
+        
         return new AuthenticationDto
         {
             AccessToken = accessToken,
@@ -88,12 +88,12 @@ public class AuthenticationService(
         var admin = await context.Admins.FirstOrDefaultAsync(a => a.Id == refreshTokenEntry.AdminId);
         if (admin == null)
             return new RefreshTokenError();
+        
+        await refreshTokenService.DeleteByAdminIdAsync(admin.Id);
 
         var accessToken = jwtService.GenerateAccessToken(admin);
         var newRefreshToken = await refreshTokenService.GenerateRefreshTokenAsync(admin);
-
-        await refreshTokenService.DeleteTokenAsync(refreshTokenEntry);
-
+        
         return new AuthenticationDto
         {
             AccessToken = accessToken,
