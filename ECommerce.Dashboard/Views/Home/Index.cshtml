@@ -1,8 +1,9 @@
-﻿@model ECommerce.Dashboard.Models.Auth.AdminUser
+﻿@using System.Security.Claims
 @{
-    ViewData["Title"] = Model.FullName;
+    var userName = Context.User.FindFirstValue(ClaimTypes.Name);
+    ViewData["Title"] = userName;
 }
 
 <h1>
-    Welcome @Model.FullName!
+    Welcome @userName!
 </h1>

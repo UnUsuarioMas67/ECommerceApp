@@ -4,16 +4,15 @@ using ECommerce.Dashboard.Results;
 
 namespace ECommerce.Dashboard.Services.Api;
 
-public class AuthService(
+public class ApiAuthService(
     ApiRequestService apiRequestService,
-    CookieService cookieService,
-    ILogger<AuthService> logger)
+    ILogger<ApiAuthService> logger)
 {
     private const string LoginPath = "api/admins/login";
     private const string GetUserPath = "api/admins/me";
     private const string LogoutPath = "api/admins/logout";
 
-    public async Task<Result<AdminUser>> LoginAsync(UserLoginRequest request)
+    public async Task<Result<UserLoginResponse>> LoginAsync(UserLoginRequest request)
     {
         logger.LogInformation("Requesting login: {email}", request.Email);
 
@@ -40,10 +39,8 @@ public class AuthService(
         var login = await response.Content.ReadFromJsonAsync<UserLoginResponse>()
                     ?? throw new InvalidOperationException("Could not deserialize the response");
         logger.LogInformation("Login request successful. User: {admin}", login.User.Email);
-
-        cookieService.SetApiTokenCookies(login.AccessToken, login.RefreshToken);
-
-        return login.User;
+        
+        return login;
     }
 
     public async Task<Result<AdminUser>> GetAuthenticatedUserAsync()

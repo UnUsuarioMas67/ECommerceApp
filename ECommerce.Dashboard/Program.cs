@@ -14,11 +14,22 @@ builder.Services.AddHttpClient("ApiClient", client =>
     client.BaseAddress = new Uri(apiSettings?.ApiUrl ?? throw new InvalidOperationException("Missing ApiUrl setting"));
 });
 
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", o =>
+    {
+        o.Cookie.HttpOnly = true;
+        o.Cookie.SameSite = SameSiteMode.Lax;
+        o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        
+        o.LoginPath = "/Account/Login";
+        o.LogoutPath = "/Account/Logout";
+    });
+builder.Services.AddAuthorization();
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<CookieService>();
+builder.Services.AddScoped<SiteAuthService>();
 builder.Services.AddScoped<ApiRequestService>();
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ApiAuthService>();
 
 var app = builder.Build();
 
@@ -33,6 +44,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

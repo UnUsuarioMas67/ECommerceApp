@@ -6,17 +6,13 @@ using ECommerce.Dashboard.Services.Api;
 
 namespace ECommerce.Dashboard.Controllers;
 
-public class HomeController(ILogger<HomeController> logger, AuthService authService) : Controller
+public class HomeController(ILogger<HomeController> logger, ApiAuthService apiAuthService) : Controller
 {
     private readonly ILogger<HomeController> _logger = logger;
 
     public async Task<IActionResult> Index()
     {
-        var result = await authService.GetAuthenticatedUserAsync();
-        if (!result.IsSuccess)
-            return RedirectToAction("Login", "Account");
-        
-        return View(result.Value);
+        return View();
     }
 
     public IActionResult Privacy()

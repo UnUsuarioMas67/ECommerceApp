@@ -13,7 +13,7 @@ namespace ECommerce.Dashboard.Services.Api;
 public class ApiRequestService(
     IHttpClientFactory clientFactory,
     ILogger<ApiRequestService> logger,
-    CookieService cookieService,
+    SiteAuthService siteAuthService,
     IOptions<JsonOptions> jsonOptions)
 {
     private const string RefreshPath = "api/admins/refresh";
@@ -23,7 +23,7 @@ public class ApiRequestService(
 
     public async Task<Result<HttpResponseMessage>> SendAsync(ApiRequestOptions options)
     {
-        var tokens = cookieService.GetApiTokensFromCookies();
+        var tokens = siteAuthService.GetApiTokensFromCookies();
         
         if (tokens == null && options.SendToken)
             return new MissingTokenCookiesError();
@@ -76,7 +76,7 @@ public class ApiRequestService(
                         ?? throw new InvalidOperationException("Could not deserialize the response");
             logger.LogDebug("Refresh request successful. User: {admin}", login.User.Email);
 
-            cookieService.SetApiTokenCookies(login.AccessToken, login.RefreshToken);
+            await siteAuthService.SignInAsync(login.User, login.AccessToken, login.RefreshToken);
 
             return login;
         }
@@ -84,6 +84,7 @@ public class ApiRequestService(
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
             logger.LogInformation("Refresh request failed. Invalid or expired refresh token");
+            await siteAuthService.SignOutAsync();
             return new RefreshTokenError();
         }
 
