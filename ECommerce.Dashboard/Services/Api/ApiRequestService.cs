@@ -2,8 +2,8 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using ECommerce.Dashboard.DTOs.Auth;
 using ECommerce.Dashboard.Exceptions;
-using ECommerce.Dashboard.Models.Auth;
 using ECommerce.Dashboard.Results;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;

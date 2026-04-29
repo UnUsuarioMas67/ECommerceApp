@@ -1,4 +1,6 @@
-﻿namespace ECommerce.Dashboard.Models.Auth;
+﻿using ECommerce.Dashboard.Models;
+
+namespace ECommerce.Dashboard.DTOs.Auth;
 
 public class UserLoginResponse
 {

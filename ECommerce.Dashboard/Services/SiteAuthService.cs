@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using ECommerce.Dashboard.Models.Auth;
+using ECommerce.Dashboard.Models;
 using ECommerce.Dashboard.Settings;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
