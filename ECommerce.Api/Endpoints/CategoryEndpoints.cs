@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.DTOs.Category;
+using ECommerce.Api.DTOs.Error;
 using ECommerce.Api.DTOs.Shared;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.DataAccess;
@@ -32,7 +33,7 @@ public static class CategoryEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Created<CategoryResponseDto>, ValidationProblem, UnprocessableEntity<Error>>>
+    private static async Task<Results<Created<CategoryResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>>>
         AddCategory(HttpContext httpContext, ICategoryService categoryService, CategoryCreateDto dto)
     {
         var result = await categoryService.CreateAsync(dto);
@@ -45,10 +46,10 @@ public static class CategoryEndpoints
         if (result.Error is ValidationError error)
             return TypedResults.ValidationProblem(error.Details);
 
-        return TypedResults.UnprocessableEntity(result.Error);
+        return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
-    private static async Task<Results<Ok<CategoryResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<Error>>>
+    private static async Task<Results<Ok<CategoryResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<ErrorDto>>>
         UpdateCategory(ICategoryService categoryService, string category, CategoryUpdateDto dto)
     {
         Result<CategoryResponseDto> result;
@@ -65,7 +66,7 @@ public static class CategoryEndpoints
         {
             NotFoundError => TypedResults.NotFound(),
             ValidationError error => TypedResults.ValidationProblem(error.Details),
-            _ => TypedResults.UnprocessableEntity(result.Error)
+            _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }
 

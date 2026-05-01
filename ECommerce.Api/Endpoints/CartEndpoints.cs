@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.DTOs.Cart;
+using ECommerce.Api.DTOs.Error;
 using ECommerce.Api.DTOs.Shared;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.DataAccess;
@@ -72,7 +73,7 @@ public static class CartEndpoints
         return TypedResults.Ok(carts);
     }
 
-    private static async Task<Results<Created<CartResponseDto>, ValidationProblem, UnprocessableEntity<Error>,
+    private static async Task<Results<Created<CartResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>,
             BadRequest<InvalidAuthenticationError>>>
         AddCart(
             HttpContext httpContext,
@@ -98,11 +99,11 @@ public static class CartEndpoints
         if (result.Error is ValidationError error)
             return TypedResults.ValidationProblem(error.Details);
 
-        return TypedResults.UnprocessableEntity(result.Error);
+        return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
     private static async Task<Results<Ok<CartResponseDto>, ValidationProblem, NotFound,
-        BadRequest<InvalidAuthenticationError>, UnprocessableEntity<Error>>> UpdateCart(
+        BadRequest<InvalidAuthenticationError>, UnprocessableEntity<ErrorDto>>> UpdateCart(
         HttpContext httpContext,
         ICartsService cartsService,
         int id,
@@ -125,7 +126,7 @@ public static class CartEndpoints
         {
             NotFoundError => TypedResults.NotFound(),
             ValidationError error => TypedResults.ValidationProblem(error.Details),
-            _ => TypedResults.UnprocessableEntity(result.Error)
+            _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }
 

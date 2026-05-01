@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.DTOs.Auth;
+using ECommerce.Api.DTOs.Error;
 using ECommerce.Api.DTOs.User;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.Auth;
@@ -74,7 +75,7 @@ public static class AuthEndpoints
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Unauthorized();
     }
 
-    private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<Error>>>
+    private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>>>
         RegisterAdmin(
             HttpContext httpContext,
             IAdminsService adminsService,
@@ -89,16 +90,16 @@ public static class AuthEndpoints
         if (result.IsSuccess)
         {
             var path = httpContext.Request.Path;
-            return TypedResults.Created($"{path}/{result.Value!.Id}", result.Value);
+            return TypedResults.Created($"{path}/{result.Value.Id}", result.Value);
         }
 
         if (result.Error is ValidationError error)
             return TypedResults.ValidationProblem(error.Details);
 
-        return TypedResults.UnprocessableEntity(result.Error);
+        return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
-    private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<Error>>>
+    private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>>>
         RegisterClient(
             HttpContext httpContext,
             IClientsService clientsService,
@@ -113,13 +114,13 @@ public static class AuthEndpoints
         if (result.IsSuccess)
         {
             var path = httpContext.Request.Path;
-            return TypedResults.Created($"{path}/{result.Value!.Id}", result.Value);
+            return TypedResults.Created($"{path}/{result.Value.Id}", result.Value);
         }
 
         if (result.Error is ValidationError error)
             return TypedResults.ValidationProblem(error.Details);
 
-        return TypedResults.UnprocessableEntity(result.Error);
+        return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
     private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, ValidationProblem>> RefreshClient(

@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using ECommerce.Api.DTOs.Shared;
+using ECommerce.Api.DTOs.Error;
 using ECommerce.Api.DTOs.User;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.DataAccess;
@@ -69,7 +70,7 @@ public static class ClientsEndpoints
 
 
     private static async Task<Results<Ok<UserResponseDto>, ValidationProblem, BadRequest<InvalidAuthenticationError>,
-            UnprocessableEntity<Error>>>
+            UnprocessableEntity<ErrorDto>>>
         UpdateClient(
             HttpContext context,
             IClientsService clientsService,
@@ -92,7 +93,7 @@ public static class ClientsEndpoints
         {
             NotFoundError => TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value, UserRoles.Client)),
             ValidationError error => TypedResults.ValidationProblem(error.Details),
-            _ => TypedResults.UnprocessableEntity(result.Error)
+            _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }
 

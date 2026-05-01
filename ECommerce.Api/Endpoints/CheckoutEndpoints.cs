@@ -1,4 +1,5 @@
 using ECommerce.Api.DTOs.Checkout;
+using ECommerce.Api.DTOs.Error;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.Checkout;
 using ECommerce.Api.Services.DataAccess;
@@ -31,7 +32,7 @@ public static class CheckoutEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Ok<CheckoutResponseDto>, ValidationProblem, UnprocessableEntity<Error>,
+    private static async Task<Results<Ok<CheckoutResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>,
             BadRequest<InvalidAuthenticationError>>> 
         CreateCheckoutSession(
             HttpContext context,
@@ -51,7 +52,7 @@ public static class CheckoutEndpoints
         if (result.IsSuccess)
             return TypedResults.Ok(result.Value);
 
-        return TypedResults.UnprocessableEntity(result.Error);
+        return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
     
     private static async Task<Results<Ok<PaymentResultDto>, NotFound, BadRequest<InvalidAuthenticationError>>> GetPaymentBySession(

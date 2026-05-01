@@ -1,4 +1,5 @@
 ﻿using ECommerce.Api.DTOs.Address;
+using ECommerce.Api.DTOs.Error;
 using ECommerce.Api.DTOs.Shared;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.DataAccess;
@@ -35,7 +36,7 @@ public static class AddressEndpoints
 
 
     private static async Task<Results<Created<AddressResponseDto>, ValidationProblem,
-            BadRequest<InvalidAuthenticationError>, UnprocessableEntity<Error>>>
+            BadRequest<InvalidAuthenticationError>, UnprocessableEntity<ErrorDto>>>
         AddAddress(
             HttpContext httpContext,
             AddressCreateDto dto,
@@ -60,12 +61,12 @@ public static class AddressEndpoints
         if (result.Error is ValidationError error)
             return TypedResults.ValidationProblem(error.Details);
 
-        return TypedResults.UnprocessableEntity(result.Error);
+        return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
 
     private static async Task<Results<Ok<AddressResponseDto>, ValidationProblem, NotFound,
-            BadRequest<InvalidAuthenticationError>, UnprocessableEntity<Error>>>
+            BadRequest<InvalidAuthenticationError>, UnprocessableEntity<ErrorDto>>>
         UpdateAddress(
             HttpContext httpContext,
             int id,
@@ -89,7 +90,7 @@ public static class AddressEndpoints
         {
             NotFoundError => TypedResults.NotFound(),
             ValidationError error => TypedResults.ValidationProblem(error.Details),
-            _ => TypedResults.UnprocessableEntity(result.Error)
+            _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }
 

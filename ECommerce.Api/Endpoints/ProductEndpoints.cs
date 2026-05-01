@@ -1,4 +1,5 @@
-﻿using ECommerce.Api.DTOs.Product;
+﻿using ECommerce.Api.DTOs.Error;
+using ECommerce.Api.DTOs.Product;
 using ECommerce.Api.DTOs.Shared;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.DataAccess;
@@ -83,7 +84,7 @@ public static class ProductEndpoints
         return product != null ? TypedResults.Ok(product) : TypedResults.NotFound();
     }
 
-    private static async Task<Results<Created<ProductResponseDto>, ValidationProblem, UnprocessableEntity<Error>>> CreateProduct(
+    private static async Task<Results<Created<ProductResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>>> CreateProduct(
         HttpContext httpContext,
         IProductService productService,
         ProductCreateDto dto,
@@ -97,16 +98,16 @@ public static class ProductEndpoints
         if (result.IsSuccess)
         {
             var path = httpContext.Request.Path;
-            return TypedResults.Created($"{path}/{result.Value!.Id}", result.Value);
+            return TypedResults.Created($"{path}/{result.Value.Id}", result.Value);
         }
 
         if (result.Error is ValidationError error)
             return TypedResults.ValidationProblem(error.Details);
 
-        return TypedResults.UnprocessableEntity(result.Error);
+        return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
-    private static async Task<Results<Ok<ProductResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<Error>>> UpdateProduct(
+    private static async Task<Results<Ok<ProductResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<ErrorDto>>> UpdateProduct(
         IProductService productService, 
         int id, 
         ProductUpdateDto dto,
@@ -124,7 +125,7 @@ public static class ProductEndpoints
         {
             NotFoundError => TypedResults.NotFound(),
             ValidationError error => TypedResults.ValidationProblem(error.Details),
-            _ => TypedResults.UnprocessableEntity(result.Error)
+            _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }
 
@@ -135,7 +136,7 @@ public static class ProductEndpoints
         return deleted != null ? TypedResults.Ok(deleted) : TypedResults.NotFound();
     }
 
-    private static async Task<Results<Ok<ProductResponseDto>, NotFound, ValidationProblem, UnprocessableEntity<Error>>> RestockProduct(
+    private static async Task<Results<Ok<ProductResponseDto>, NotFound, ValidationProblem, UnprocessableEntity<ErrorDto>>> RestockProduct(
         IProductService productService, int id, [FromQuery] int amount)
     {
         var result = await productService.Restock(id, amount);
@@ -146,7 +147,7 @@ public static class ProductEndpoints
         {
             NotFoundError => TypedResults.NotFound(),
             ValidationError error => TypedResults.ValidationProblem(error.Details),
-            _ => TypedResults.UnprocessableEntity(result.Error)
+            _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }
 }
