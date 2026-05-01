@@ -69,7 +69,7 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Results<Ok<UserResponseDto>, ValidationProblem, BadRequest<InvalidAuthenticationError>,
+    private static async Task<Results<Ok<UserResponseDto>, BadRequest<ErrorDto>, BadRequest<InvalidAuthenticationError>,
             UnprocessableEntity<ErrorDto>>>
         UpdateClient(
             HttpContext context,
@@ -83,7 +83,7 @@ public static class ClientsEndpoints
 
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await clientsService.UpdateAsync(clientId.Value, dto);
         if (result.IsSuccess)
@@ -92,7 +92,7 @@ public static class ClientsEndpoints
         return result.Error switch
         {
             NotFoundError => TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value, UserRoles.Client)),
-            ValidationError error => TypedResults.ValidationProblem(error.Details),
+            ValidationError error => TypedResults.BadRequest(error.ToDto()),
             _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }

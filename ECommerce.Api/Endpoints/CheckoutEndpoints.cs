@@ -32,7 +32,7 @@ public static class CheckoutEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Ok<CheckoutResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>,
+    private static async Task<Results<Ok<CheckoutResponseDto>, BadRequest<ErrorDto>, UnprocessableEntity<ErrorDto>,
             BadRequest<InvalidAuthenticationError>>> 
         CreateCheckoutSession(
             HttpContext context,
@@ -46,7 +46,7 @@ public static class CheckoutEndpoints
 
         var validation = await validator.ValidateAsync(request);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await stripeService.CreateCheckoutSessionAsync(request, clientId.Value);
         if (result.IsSuccess)

@@ -73,7 +73,7 @@ public static class CartEndpoints
         return TypedResults.Ok(carts);
     }
 
-    private static async Task<Results<Created<CartResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>,
+    private static async Task<Results<Created<CartResponseDto>, BadRequest<ErrorDto>, UnprocessableEntity<ErrorDto>,
             BadRequest<InvalidAuthenticationError>>>
         AddCart(
             HttpContext httpContext,
@@ -87,7 +87,7 @@ public static class CartEndpoints
 
         var validationResult = await cartValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validationResult.ToDictionary()).ToDto());
 
         var result = await cartsService.CreateAsync(dto, clientId.Value);
         if (result.IsSuccess)
@@ -97,12 +97,12 @@ public static class CartEndpoints
         }
 
         if (result.Error is ValidationError error)
-            return TypedResults.ValidationProblem(error.Details);
+            return TypedResults.BadRequest(error.ToDto());
 
         return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
-    private static async Task<Results<Ok<CartResponseDto>, ValidationProblem, NotFound,
+    private static async Task<Results<Ok<CartResponseDto>, BadRequest<ErrorDto>, NotFound,
         BadRequest<InvalidAuthenticationError>, UnprocessableEntity<ErrorDto>>> UpdateCart(
         HttpContext httpContext,
         ICartsService cartsService,
@@ -116,7 +116,7 @@ public static class CartEndpoints
 
         var validationResult = await cartValidator.ValidateAsync(dto);
         if (!validationResult.IsValid)
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validationResult.ToDictionary()).ToDto());
 
         var result = await cartsService.UpdateAsync(id, dto, clientId);
         if (result.IsSuccess)
@@ -125,7 +125,7 @@ public static class CartEndpoints
         return result.Error switch
         {
             NotFoundError => TypedResults.NotFound(),
-            ValidationError error => TypedResults.ValidationProblem(error.Details),
+            ValidationError error => TypedResults.BadRequest(error.ToDto()),
             _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }

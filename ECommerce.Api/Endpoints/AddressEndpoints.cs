@@ -35,7 +35,7 @@ public static class AddressEndpoints
     }
 
 
-    private static async Task<Results<Created<AddressResponseDto>, ValidationProblem,
+    private static async Task<Results<Created<AddressResponseDto>, BadRequest<ErrorDto>,
             BadRequest<InvalidAuthenticationError>, UnprocessableEntity<ErrorDto>>>
         AddAddress(
             HttpContext httpContext,
@@ -49,7 +49,7 @@ public static class AddressEndpoints
 
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await addressesService.CreateAsync(dto, clientId.Value);
         if (result.IsSuccess)
@@ -59,13 +59,13 @@ public static class AddressEndpoints
         }
 
         if (result.Error is ValidationError error)
-            return TypedResults.ValidationProblem(error.Details);
+            return TypedResults.BadRequest(error.ToDto());
 
         return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
 
-    private static async Task<Results<Ok<AddressResponseDto>, ValidationProblem, NotFound,
+    private static async Task<Results<Ok<AddressResponseDto>, BadRequest<ErrorDto>, NotFound,
             BadRequest<InvalidAuthenticationError>, UnprocessableEntity<ErrorDto>>>
         UpdateAddress(
             HttpContext httpContext,
@@ -80,7 +80,7 @@ public static class AddressEndpoints
 
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await addressesService.UpdateAsync(id, dto, clientId);
         if (result.IsSuccess)
@@ -89,7 +89,7 @@ public static class AddressEndpoints
         return result.Error switch
         {
             NotFoundError => TypedResults.NotFound(),
-            ValidationError error => TypedResults.ValidationProblem(error.Details),
+            ValidationError error => TypedResults.BadRequest(error.ToDto()),
             _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }

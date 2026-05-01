@@ -33,7 +33,7 @@ public static class CategoryEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Created<CategoryResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>>>
+    private static async Task<Results<Created<CategoryResponseDto>, BadRequest<ErrorDto>, UnprocessableEntity<ErrorDto>>>
         AddCategory(HttpContext httpContext, ICategoryService categoryService, CategoryCreateDto dto)
     {
         var result = await categoryService.CreateAsync(dto);
@@ -44,12 +44,12 @@ public static class CategoryEndpoints
         }
 
         if (result.Error is ValidationError error)
-            return TypedResults.ValidationProblem(error.Details);
+            return TypedResults.BadRequest(error.ToDto());
 
         return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
-    private static async Task<Results<Ok<CategoryResponseDto>, ValidationProblem, NotFound, UnprocessableEntity<ErrorDto>>>
+    private static async Task<Results<Ok<CategoryResponseDto>, BadRequest<ErrorDto>, NotFound, UnprocessableEntity<ErrorDto>>>
         UpdateCategory(ICategoryService categoryService, string category, CategoryUpdateDto dto)
     {
         Result<CategoryResponseDto> result;
@@ -65,7 +65,7 @@ public static class CategoryEndpoints
         return result.Error switch
         {
             NotFoundError => TypedResults.NotFound(),
-            ValidationError error => TypedResults.ValidationProblem(error.Details),
+            ValidationError error => TypedResults.BadRequest(error.ToDto()),
             _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }

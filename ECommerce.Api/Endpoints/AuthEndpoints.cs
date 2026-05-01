@@ -47,35 +47,35 @@ public static class AuthEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, ValidationProblem>> LoginClient(
+    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, BadRequest<ErrorDto>>> LoginClient(
         AuthenticationService authenticationService,
         LoginRequestDto requestDto,
         IValidator<LoginRequestDto> validator)
     {
         var validation = await validator.ValidateAsync(requestDto);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await authenticationService.LoginClient(requestDto.Email, requestDto.Password);
 
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Unauthorized();
     }
 
-    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, ValidationProblem>> LoginAdmin(
+    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, BadRequest<ErrorDto>>> LoginAdmin(
         AuthenticationService authenticationService,
         LoginRequestDto requestDto,
         IValidator<LoginRequestDto> validator)
     {
         var validation = await validator.ValidateAsync(requestDto);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await authenticationService.LoginAdmin(requestDto.Email, requestDto.Password);
 
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Unauthorized();
     }
 
-    private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>>>
+    private static async Task<Results<Created<UserResponseDto>, BadRequest<ErrorDto>, UnprocessableEntity<ErrorDto>>>
         RegisterAdmin(
             HttpContext httpContext,
             IAdminsService adminsService,
@@ -84,7 +84,7 @@ public static class AuthEndpoints
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await adminsService.CreateAsync(dto);
         if (result.IsSuccess)
@@ -94,12 +94,12 @@ public static class AuthEndpoints
         }
 
         if (result.Error is ValidationError error)
-            return TypedResults.ValidationProblem(error.Details);
+            return TypedResults.BadRequest(error.ToDto());
 
         return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
-    private static async Task<Results<Created<UserResponseDto>, ValidationProblem, UnprocessableEntity<ErrorDto>>>
+    private static async Task<Results<Created<UserResponseDto>, BadRequest<ErrorDto>, UnprocessableEntity<ErrorDto>>>
         RegisterClient(
             HttpContext httpContext,
             IClientsService clientsService,
@@ -108,7 +108,7 @@ public static class AuthEndpoints
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await clientsService.CreateAsync(dto);
         if (result.IsSuccess)
@@ -118,32 +118,32 @@ public static class AuthEndpoints
         }
 
         if (result.Error is ValidationError error)
-            return TypedResults.ValidationProblem(error.Details);
+            return TypedResults.BadRequest(error.ToDto());
 
         return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
 
-    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, ValidationProblem>> RefreshClient(
+    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, BadRequest<ErrorDto>>> RefreshClient(
         AuthenticationService authenticationService,
         RefreshRequestDto dto,
         IValidator<RefreshRequestDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await authenticationService.RefreshClientToken(dto.RefreshToken);
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Unauthorized();
     }
     
-    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, ValidationProblem>> RefreshAdmin(
+    private static async Task<Results<Ok<AuthenticationDto>, UnauthorizedHttpResult, BadRequest<ErrorDto>>> RefreshAdmin(
         AuthenticationService authenticationService,
         RefreshRequestDto dto,
         IValidator<RefreshRequestDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await authenticationService.RefreshAdminToken(dto.RefreshToken);
         return result.IsSuccess ? TypedResults.Ok(result.Value) : TypedResults.Unauthorized();

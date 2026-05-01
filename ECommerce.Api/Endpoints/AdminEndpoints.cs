@@ -63,7 +63,7 @@ public static class AdminEndpoints
         return admin != null ? TypedResults.Ok(admin) : TypedResults.NotFound();
     }
 
-    private static async Task<Results<Ok<UserResponseDto>, ValidationProblem, NotFound,
+    private static async Task<Results<Ok<UserResponseDto>, BadRequest<ErrorDto>, NotFound,
             BadRequest<InvalidAuthenticationError>, UnprocessableEntity<ErrorDto>>>
         UpdateAdmin(
             HttpContext context,
@@ -78,7 +78,7 @@ public static class AdminEndpoints
 
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
-            return TypedResults.ValidationProblem(validation.ToDictionary());
+            return TypedResults.BadRequest(new ValidationError(validation.ToDictionary()).ToDto());
 
         var result = await adminsService.UpdateAsync(adminId.Value, dto);
         if (result.IsSuccess)
@@ -87,7 +87,7 @@ public static class AdminEndpoints
         return result.Error switch
         {
             NotFoundError => TypedResults.BadRequest(new InvalidAuthenticationError(adminId.Value, UserRoles.Admin)),
-            ValidationError error => TypedResults.ValidationProblem(error.Details),
+            ValidationError error => TypedResults.BadRequest(error.ToDto()),
             _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }
