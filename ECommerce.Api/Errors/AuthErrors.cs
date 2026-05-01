@@ -23,7 +23,7 @@ public record InvalidAuthenticationError : Error
     {
     }
 
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,

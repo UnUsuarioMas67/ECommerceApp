@@ -5,7 +5,7 @@ namespace ECommerce.Api.Errors;
 public record DuplicateCategorySlugError(string Slug, int? CategoryId) 
     : Error("A category with this slug already exists", "category_slug_exists")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,

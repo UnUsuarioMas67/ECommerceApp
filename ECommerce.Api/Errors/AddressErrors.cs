@@ -4,7 +4,7 @@ namespace ECommerce.Api.Errors;
 
 public record InvalidCountryError(string CountryCode, int? AddressId) : Error("Invalid country CCA2 code", "invalid_country_code")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,

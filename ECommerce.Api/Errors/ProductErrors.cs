@@ -5,7 +5,7 @@ namespace ECommerce.Api.Errors;
 public record DuplicateProductSkuError(string Sku, int? ProductId)
     : Error("A product with the specified SKU already exists", "product_sku_exists")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,
@@ -20,7 +20,7 @@ public record DuplicateProductSkuError(string Sku, int? ProductId)
 public record CategoryNotExistsError(string Category, int? ProductId)
     : Error("The specified category doesn't seem to exist", "category_not_found")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,

@@ -4,7 +4,7 @@ namespace ECommerce.Api.Errors;
 
 public record OrderNotExistsError(int OrderId) : Error($"ShopOrder with id {OrderId} not found", "order_not_found")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,
@@ -17,7 +17,7 @@ public record OrderNotExistsError(int OrderId) : Error($"ShopOrder with id {Orde
 public record OrderPaymentAlreadyExistsError(int OrderId) 
     : Error($"ShopOrder with id {OrderId} already has a payment attached", "order_already_paid")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,

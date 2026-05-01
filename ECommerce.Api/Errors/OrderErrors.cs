@@ -6,7 +6,7 @@ namespace ECommerce.Api.Errors;
 public record CartNotFoundError(int CartId)
     : Error("Could not find cart", "cart_not_found")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,
@@ -20,7 +20,7 @@ public record CartNotFoundError(int CartId)
 public record CartIsEmptyError(int CartId)
     : Error("Cart cannot be empty", "cart_empty")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,
@@ -34,7 +34,7 @@ public record CartIsEmptyError(int CartId)
 public record AddressNotFoundError(int AddressId)
     : Error("Could not find address", "address_not_found")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,
@@ -48,7 +48,7 @@ public record AddressNotFoundError(int AddressId)
 public record ProductsStockError(ICollection<ProductsStockErrorItem> Products)
     : Error("One or more products have insufficient stock", "insufficient_stock")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,

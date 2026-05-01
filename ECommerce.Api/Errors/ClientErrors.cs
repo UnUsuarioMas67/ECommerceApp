@@ -5,7 +5,7 @@ namespace ECommerce.Api.Errors;
 public record DuplicateEmailError(string Email, int? ClientId) 
     : Error("This email address is already in use", "email_already_used")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,
@@ -19,7 +19,7 @@ public record DuplicateEmailError(string Email, int? ClientId)
 public record DuplicatePhoneNumberError(string PhoneNumber, int? ClientId) 
     : Error("This phone number is already in use", "phone_already_used")
 {
-    public new ErrorDto ToDto() => new()
+    public override ErrorDto ToDto() => new()
     {
         ErrorType = ErrorType,
         Message = Message,
