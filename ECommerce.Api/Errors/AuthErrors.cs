@@ -1,8 +1,8 @@
 ﻿namespace ECommerce.Api.Errors;
 
-public record InvalidLoginError() : Error("Invalid login credentials");
+public record InvalidLoginError() : Error("Invalid login credentials", "invalid_credentials");
 
-public record RefreshTokenError() : Error("Invalid or expired refresh token");
+public record RefreshTokenError() : Error("Invalid or expired refresh token", "refresh_token_invalid");
 
 public record InvalidAuthenticationError : Error
 {
@@ -10,14 +10,14 @@ public record InvalidAuthenticationError : Error
     public string? UserRole { get; set; }
 
     public InvalidAuthenticationError(int userId, string userRole)
-        : base("User does not have permission to access this resource")
+        : base("User does not have permission to access this resource", "forbidden")
     {
         UserId = userId;
         UserRole = userRole;
     }
 
     public InvalidAuthenticationError()
-        : base("Missing user identifier")
+        : base("Missing user identifier", "user_not_found")
     {
     }
 }
