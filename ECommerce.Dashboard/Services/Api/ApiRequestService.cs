@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using ECommerce.Dashboard.DTOs.Auth;
+using ECommerce.Dashboard.DTOs.Error;
 using ECommerce.Dashboard.Exceptions;
 using ECommerce.Dashboard.Results;
 using Microsoft.AspNetCore.Http.Json;
@@ -21,17 +22,67 @@ public class ApiRequestService(
     private readonly HttpClient _httpClient = clientFactory.CreateClient("ApiClient");
     private readonly JsonSerializerOptions _jsonSerializerOptions = jsonOptions.Value.SerializerOptions;
 
-    public async Task<Result<HttpResponseMessage>> SendAsync(ApiRequestOptions options)
+    public async Task<Result> SendAsync(ApiRequestOptions options)
     {
         var tokens = siteAuthService.GetApiTokensFromCookies();
         
         if (tokens == null && options.SendToken)
-            return new MissingTokenCookiesError();
+            return ApiTokensError.MissingCookies;
 
-        return await SendAsyncInner(options, tokens?.AccessToken, tokens?.RefreshToken);
+        var response = await SendAsyncInner(options, tokens?.AccessToken, tokens?.RefreshToken);
+        if (response == null)
+            return ApiTokensError.RefreshToken;
+
+        return await ProcessResponse(response);
+    }
+    
+    private async Task<Result> ProcessResponse(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode)
+        {
+            return Result.Success();
+        }
+
+        ApiErrorResponse? errorBody = null;
+        if (response.Content.Headers.ContentLength > 0)
+            errorBody = await response.Content.ReadFromJsonAsync<ApiErrorResponse>()
+                        ?? throw new InvalidOperationException("Could not deserialize the response");
+
+        return new ApiResponseError(response.StatusCode, response.ReasonPhrase, errorBody);
+    }
+    
+    public async Task<Result<T>> SendAsync<T>(ApiRequestOptions options)
+    {
+        var tokens = siteAuthService.GetApiTokensFromCookies();
+        
+        if (tokens == null && options.SendToken)
+            return ApiTokensError.MissingCookies;
+
+        var response = await SendAsyncInner(options, tokens?.AccessToken, tokens?.RefreshToken);
+        if (response == null)
+            return ApiTokensError.RefreshToken;
+
+        return await ProcessResponse<T>(response);
     }
 
-    private async Task<Result<HttpResponseMessage>> SendAsyncInner(
+    private async Task<Result<T>> ProcessResponse<T>(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadFromJsonAsync<T>()
+                          ?? throw new InvalidOperationException("Could not deserialize the response");
+            return body;
+        }
+
+        ApiErrorResponse? errorBody = null;
+        if (response.Content.Headers.ContentLength > 0)
+            errorBody = await response.Content.ReadFromJsonAsync<ApiErrorResponse>()
+                       ?? throw new InvalidOperationException("Could not deserialize the response");
+
+        return new ApiResponseError(response.StatusCode, response.ReasonPhrase, errorBody);
+    }
+
+    private async Task<HttpResponseMessage?> SendAsyncInner(
         ApiRequestOptions options,
         string? accessToken = null,
         string? refreshToken = null,
@@ -56,18 +107,17 @@ public class ApiRequestService(
 
         if (response.StatusCode == HttpStatusCode.Unauthorized && options.SendToken && refreshIfExpired)
         {
-            var refreshResult = await RefreshAsync(refreshToken ?? "");
-            if (!refreshResult.IsSuccess)
-                return refreshResult.Error;
+            var login = await RefreshAsync(refreshToken ?? "");
+            if (login == null)
+                return null;
 
-            var login = refreshResult.Value;
             return await SendAsyncInner(options, login.AccessToken, login.RefreshToken, false);
         }
 
         throw new UnexpectedApiResponseException(response.StatusCode);
     }
 
-    private async Task<Result<UserLoginResponse>> RefreshAsync(string refreshToken)
+    private async Task<UserLoginResponse?> RefreshAsync(string refreshToken)
     {
         var response = await _httpClient.PostAsJsonAsync(RefreshPath, new { RefreshToken = refreshToken });
         if (response.IsSuccessStatusCode)
@@ -85,7 +135,7 @@ public class ApiRequestService(
         {
             logger.LogInformation("Refresh request failed. Invalid or expired refresh token");
             await siteAuthService.SignOutAsync();
-            return new RefreshTokenError();
+            return null;
         }
 
         throw new UnexpectedApiResponseException(response.StatusCode);

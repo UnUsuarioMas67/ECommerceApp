@@ -17,7 +17,7 @@ public class ApiAuthService(
     {
         logger.LogInformation("Requesting login: {email}", request.Email);
 
-        var result = await apiRequestService.SendAsync(new ApiRequestOptions
+        var result = await apiRequestService.SendAsync<UserLoginResponse>(new ApiRequestOptions
         {
             Method = HttpMethod.Post,
             Path = LoginPath,
@@ -27,50 +27,26 @@ public class ApiAuthService(
         });
 
         if (!result.IsSuccess)
-            return result.Error;
-
-        var response = result.Value;
-
-        if (!response.IsSuccessStatusCode)
-        {
-            logger.LogInformation("Login request failed. Invalid login credentials");
             return new LoginCredentialsError();
-        }
 
-        var login = await response.Content.ReadFromJsonAsync<UserLoginResponse>()
-                    ?? throw new InvalidOperationException("Could not deserialize the response");
-        logger.LogInformation("Login request successful. User: {admin}", login.User.Email);
-        
-        return login;
+        return result.Value;
     }
 
     public async Task<Result<AdminUser>> GetAuthenticatedUserAsync()
     {
-        var result = await apiRequestService.SendAsync(new ApiRequestOptions
+        return await apiRequestService.SendAsync<AdminUser>(new ApiRequestOptions
         {
             Method = HttpMethod.Get,
             Path = GetUserPath,
         });
-
-        if (!result.IsSuccess)
-            return result.Error;
-
-        var response = result.Value;
-
-        var user = await response.Content.ReadFromJsonAsync<AdminUser>()
-                   ?? throw new InvalidOperationException("Could not deserialize the response");
-
-        return user;
     }
 
     public async Task<Result> LogoutAsync()
     {
-        var result = await apiRequestService.SendAsync(new ApiRequestOptions
+        return await apiRequestService.SendAsync(new ApiRequestOptions
         {
             Method = HttpMethod.Post,
             Path = LogoutPath,
         });
-
-        return result;
     }
 }
