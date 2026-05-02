@@ -1,0 +1,79 @@
+﻿@model ECommerce.Dashboard.Models.ProductListViewModel
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="mb-3 row">
+    <div class="col">
+        <h1 class="m-0">Products</h1>
+    </div>
+    <div class="col text-end">
+        <a asp-action="Create" class="btn btn-outline-primary"> New</a>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form class="mb-5" asp-action="Index" method="get">
+    <div class="mb-3 input-group">
+        <input asp-for="SearchTerm" class="form-control">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+    
+    <div class="mb-3">
+        <select class="form-select" asp-items="Model.CategorySelect" asp-for="Category">
+            <option selected value="">- All -</option>
+        </select>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Sku</th>
+            <th scope="col">Name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Description</th>
+            <th scope="col">Price</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var product in Model.Products)
+        {
+            <tr>
+                <td><img src="https://placehold.co/64" alt="some image"></td>
+                <th scope="row">@product.Sku</th>
+                <td>
+                    <a asp-action="Details" asp-route-id="@product.Id">@product.Name</a>
+                </td>
+                <td>@product.Category</td>
+                <td>@product.Description</td>
+                <td>$ @product.Price</td>
+
+                @if (product.Stock == 0)
+                {
+                    <td class="text-danger">@product.Stock</td>
+                }
+                else
+                {
+                    <td>@product.Stock</td>
+                }
+                <td>
+                    <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
