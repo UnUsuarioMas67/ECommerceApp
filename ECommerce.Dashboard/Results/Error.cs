@@ -23,8 +23,3 @@ public record ApiTokensError : Error
 
 public record ApiResponseError(HttpStatusCode StatusCode, string? Message, ApiErrorResponse? ErrorBody = null)
     : Error("api_response", Message ?? "API returned failure response");
-
-public record UnexpectedApiResponseError(int StatusCode, Dictionary<string, object>? ResponseBody = null)
-    : Error("api_unexpected_response", "Unexpected API response");
-
-public record ApiServerError(int StatusCode = 500) : Error("api_server_error", "Request failed due to API server error");
