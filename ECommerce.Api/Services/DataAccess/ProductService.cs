@@ -162,10 +162,10 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
     private async Task<Result> VerifyProduct(Product product, string categorySlug)
     {
         if (!await CategoryIsValid(product))
-            return new CategoryNotExistsError(categorySlug, product.Id > 0 ? product.Id : 0);
+            return new CategoryNotExistsError(categorySlug);
 
         if (!await SkuIsUnique(product))
-            return new DuplicateProductSkuError(product.Sku, product.Id > 0 ? product.Id : 0);
+            return new DuplicateProductSkuError(product.Sku);
 
         if (product.Price < 0)
             return new InvalidProductPriceError();

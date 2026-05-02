@@ -2,7 +2,7 @@
 
 namespace ECommerce.Api.Errors;
 
-public record DuplicateProductSkuError(string Sku, int? ProductId)
+public record DuplicateProductSkuError(string Sku)
     : Error("A product with the specified SKU already exists", "product_sku_exists")
 {
     public override ErrorDto ToDto() => new()
@@ -12,12 +12,11 @@ public record DuplicateProductSkuError(string Sku, int? ProductId)
         Details = new Dictionary<string, object?>
         {
             ["sku"] = Sku,
-            ["productId"] = ProductId
         }
     };
 }
 
-public record CategoryNotExistsError(string Category, int? ProductId)
+public record CategoryNotExistsError(string Category)
     : Error("The specified category doesn't seem to exist", "category_not_found")
 {
     public override ErrorDto ToDto() => new()
@@ -27,7 +26,6 @@ public record CategoryNotExistsError(string Category, int? ProductId)
         Details = new Dictionary<string, object?>
         {
             ["category"] = Category,
-            ["productId"] = ProductId
         }
     };
 }
