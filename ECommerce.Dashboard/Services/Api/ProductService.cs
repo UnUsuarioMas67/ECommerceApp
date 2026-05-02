@@ -1,0 +1,100 @@
+﻿using System.Net;
+using ECommerce.Dashboard.DTOs.Product;
+using ECommerce.Dashboard.DTOs.Shared;
+using ECommerce.Dashboard.Results;
+
+namespace ECommerce.Dashboard.Services.Api;
+
+public class ProductService(ApiRequestService apiRequestService)
+{
+    private const string ProductsPath = "api/products";
+
+    public async Task<Result<IEnumerable<ProductResponse>>> GetProducts(
+        string? search = null,
+        PaginationQuery? paginationQuery = null,
+        string? category = null)
+    {
+        var route = category != null ? ProductsPath + "/categories/" + category : ProductsPath;
+        var query = $"?search={search ?? ""}&limit={paginationQuery?.Limit ?? 20}&page={paginationQuery?.Page ?? 1}";
+
+        var options = new ApiRequestOptions
+        {
+            Path = route + query,
+            Method = HttpMethod.Get,
+        };
+
+        return await apiRequestService.SendAsync<IEnumerable<ProductResponse>>(options);
+    }
+
+    public async Task<Result<ProductResponse>> GetProductById(int id)
+    {
+        var options = new ApiRequestOptions
+        {
+            Path = ProductsPath + "/" + id,
+            Method = HttpMethod.Get,
+            ExpectedFailCodes = [HttpStatusCode.NotFound]
+        };
+
+        return await apiRequestService.SendAsync<ProductResponse>(options);
+    }
+
+    public async Task<Result<ProductResponse>> CreateProduct(ProductCreate dto)
+    {
+        var options = new ApiRequestOptions
+        {
+            Path = ProductsPath,
+            Method = HttpMethod.Post,
+            ExpectedFailCodes = [HttpStatusCode.BadRequest, HttpStatusCode.UnprocessableEntity],
+            Body = dto
+        };
+
+        return await apiRequestService.SendAsync<ProductResponse>(options);
+    }
+
+    public async Task<Result<ProductResponse>> UpdateProduct(int id, ProductUpdate dto)
+    {
+        var options = new ApiRequestOptions
+        {
+            Path = ProductsPath + "/" + id,
+            Method = HttpMethod.Put,
+            ExpectedFailCodes =
+            [
+                HttpStatusCode.BadRequest,
+                HttpStatusCode.UnprocessableEntity,
+                HttpStatusCode.NotFound
+            ],
+            Body = dto
+        };
+
+        return await apiRequestService.SendAsync<ProductResponse>(options);
+    }
+
+    public async Task<Result> DeleteProduct(int id)
+    {
+        var options = new ApiRequestOptions
+        {
+            Path = ProductsPath + "/" + id,
+            Method = HttpMethod.Delete,
+            ExpectedFailCodes = [HttpStatusCode.NotFound]
+        };
+
+        return await apiRequestService.SendAsync(options);
+    }
+
+    public async Task<Result> RestockProduct(int id, int amount)
+    {
+        var options = new ApiRequestOptions
+        {
+            Path = ProductsPath + "/" + id + "/restock?amount=" + amount,
+            Method = HttpMethod.Put,
+            ExpectedFailCodes =
+            [
+                HttpStatusCode.BadRequest,
+                HttpStatusCode.UnprocessableEntity,
+                HttpStatusCode.NotFound
+            ],
+        };
+
+        return await apiRequestService.SendAsync<ProductResponse>(options);
+    }
+}
