@@ -2,8 +2,6 @@
 
 namespace ECommerce.Api.Errors;
 
-// TODO - Add the ErrorId Property to Error record
-
 public record Error(string Message, string ErrorType)
 {
     public static Error None() => new Error("None", "none");
@@ -15,7 +13,7 @@ public record Error(string Message, string ErrorType)
         Details = new Dictionary<string, object?>()
     };
 }
-public record ValidationError(IDictionary<string, string[]> Details) : Error("One or more validation errors occurred", "validation_error")
+public record ValidationError(IDictionary<string, string[]> Details) : Error("One or more validation errors occurred", "validation")
 {
     public override ErrorDto ToDto() => new()
     {
@@ -23,7 +21,7 @@ public record ValidationError(IDictionary<string, string[]> Details) : Error("On
         Message = Message,
         Details = new Dictionary<string, object?>
         {
-            ["details"] = Details
+            ["errors"] = Details
         }
     };
 }
