@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text;
 using ECommerce.Dashboard.DTOs.Product;
 using ECommerce.Dashboard.DTOs.Shared;
 using ECommerce.Dashboard.Results;
@@ -15,8 +16,11 @@ public class ProductService(ApiRequestService apiRequestService)
         string? category = null)
     {
         var route = category != null ? ProductsPath + "/categories/" + category : ProductsPath;
-        var query = $"?search={search ?? ""}&limit={paginationQuery?.Limit ?? 20}&page={paginationQuery?.Page ?? 1}";
-
+        
+        var query = new StringBuilder($"?search={search ?? ""}");
+        if (paginationQuery != null)
+            query.Append($"&limit={paginationQuery.Limit}&page={paginationQuery.Page}");
+        
         var options = new ApiRequestOptions
         {
             Path = route + query,
