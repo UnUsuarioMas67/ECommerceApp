@@ -1,6 +1,9 @@
-﻿namespace ECommerce.Dashboard.Results;
+﻿using System.Net;
+using ECommerce.Dashboard.DTOs.Error;
 
-public record Error(string Type, string Message)
+namespace ECommerce.Dashboard.Results;
+
+public record Error(string ErrorType, string Message)
 {
     public static Error None() => new Error("none", "No error has occurred");
 }
@@ -17,6 +20,9 @@ public record ApiTokensError : Error
     public static ApiTokensError MissingCookies => new("Missing API token cookies");
     public static ApiTokensError RefreshToken => new("Invalid or expired refresh token");
 }
+
+public record ApiResponseError(HttpStatusCode StatusCode, string? Message, ApiErrorResponse? ErrorBody = null)
+    : Error("api_response", Message ?? "API returned failure response");
 
 public record UnexpectedApiResponseError(int StatusCode, Dictionary<string, object>? ResponseBody = null)
     : Error("api_unexpected_response", "Unexpected API response");
