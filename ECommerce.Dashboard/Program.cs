@@ -30,6 +30,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<SiteAuthService>();
 builder.Services.AddScoped<ApiRequestService>();
 builder.Services.AddScoped<ApiAuthService>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<CategoryService>();
 
 var app = builder.Build();
 
