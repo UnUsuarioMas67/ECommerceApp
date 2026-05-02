@@ -7,9 +7,16 @@ public record Error(string Type, string Message)
 
 public record LoginCredentialsError() : Error("login_credentials", "Invalid email or password");
 
-public record MissingTokenCookiesError() : Error("missing_tokens", "Missing tokens cookies");
+public record ApiTokensError : Error
+{
+    private ApiTokensError(string message)
+        : base("api_tokens", message)
+    {
+    }
 
-public record RefreshTokenError() : Error("refresh_token", "Invalid or expired refresh token");
+    public static ApiTokensError MissingCookies => new("Missing API token cookies");
+    public static ApiTokensError RefreshToken => new("Invalid or expired refresh token");
+}
 
 public record UnexpectedApiResponseError(int StatusCode, Dictionary<string, object>? ResponseBody = null)
     : Error("api_unexpected_response", "Unexpected API response");
