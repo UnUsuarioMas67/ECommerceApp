@@ -1,6 +1,6 @@
 ﻿namespace ECommerce.Dashboard.DTOs.Error;
 
-public class ApiError
+public class ApiErrorResponse
 {
     public string ErrorType { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
