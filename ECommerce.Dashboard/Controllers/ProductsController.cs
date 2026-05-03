@@ -85,7 +85,7 @@ public class ProductsController(ProductService productService, CategoryService c
         var product = result.Value;
         var model = new ProductUpdate
         {
-            Category = product.Category ?? string.Empty,
+            Category = product.Category?.Slug ?? string.Empty,
             Name = product.Name,
             Description = product.Description,
             Price = product.Price,

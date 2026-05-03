@@ -57,7 +57,7 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@product.Id">@product.Name</a>
                 </td>
-                <td>@product.Category</td>
+                <td>@product.Category?.Name</td>
                 <td>@product.Description</td>
                 <td>$ @product.Price</td>
 
