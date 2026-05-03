@@ -1,10 +1,12 @@
-﻿namespace ECommerce.Api.DTOs.Product;
+﻿using ECommerce.Api.DTOs.Category;
+
+namespace ECommerce.Api.DTOs.Product;
 
 public class ProductResponseDto
 {
     public int Id { get; set; }
     
-    public string? Category { get; set; }
+    public CategoryResponseDto? Category { get; set; }
     
     public string Sku { get; set; }
     public string Name { get; set; }

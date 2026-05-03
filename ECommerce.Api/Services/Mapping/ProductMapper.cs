@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Api.Services.Mapping;
 
-public class ProductMapper(ECommerceContext context)
+public class ProductMapper(ECommerceContext context, CategoryMapper categoryMapper)
 {
     public ProductResponseDto MapToDto(Product product)
     {
@@ -19,7 +19,7 @@ public class ProductMapper(ECommerceContext context)
             Description = product.Description,
             Price = product.Price,
             Sku = product.Sku,
-            Category = product.Category?.Slug,
+            Category = product.Category != null ? categoryMapper.MapToDto(product.Category) : null,
             ImageUrl = product.ImageUrl,
             Stock = product.Stock,
         };
