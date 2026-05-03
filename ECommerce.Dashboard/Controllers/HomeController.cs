@@ -1,12 +1,12 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ECommerce.Dashboard.Models;
-using ECommerce.Dashboard.Services;
-using ECommerce.Dashboard.Services.Api;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerce.Dashboard.Controllers;
 
-public class HomeController(ILogger<HomeController> logger, ApiAuthService apiAuthService) : Controller
+[Authorize]
+public class HomeController(ILogger<HomeController> logger) : Controller
 {
     private readonly ILogger<HomeController> _logger = logger;
 
