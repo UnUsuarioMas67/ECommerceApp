@@ -50,27 +50,49 @@ public class ProductsController(ProductService productService, CategoryService c
         return RedirectToAction(nameof(NotFound));
     }
 
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        return View(new ProductCreate());
+        var categoryListResult = await GetCategoriesSelectList();
+        if (!categoryListResult.IsSuccess)
+            return RedirectToAction("Login", "Account");
+
+        var viewModel = new ProductCreateViewModel
+        {
+            CreateRequest = new ProductCreate(),
+            CategoriesSelect = categoryListResult.Value
+        };
+        
+        return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(ProductCreate model)
+    public async Task<IActionResult> Create(ProductCreateViewModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
 
-        var result = await productService.CreateProduct(model);
-        if (!result.IsSuccess)
+        var result = await productService.CreateProduct(model.CreateRequest);
+        if (result.IsSuccess)
         {
-            TempData["Error"] = "Failed to create product";
-            return View(model);
+            TempData["Success"] = "Product created successfully";
+            return RedirectToAction(nameof(Index));
         }
+        
+        if (result.Error is ApiTokensError)
+            return RedirectToAction("Login", "Account");
 
-        TempData["Success"] = "Product created successfully";
-        return RedirectToAction(nameof(Index));
+        var responseError = result.Error as ApiResponseError;
+        var errorMessage = responseError?.ErrorBody?.Message ?? throw new InvalidOperationException();
+        TempData["Error"] = errorMessage;
+        
+        var categoryListResult = await GetCategoriesSelectList();
+        if (!categoryListResult.IsSuccess)
+            return RedirectToAction("Login", "Account");
+        
+        model.CategoriesSelect = categoryListResult.Value;
+        
+        return View(model);
     }
 
     public async Task<IActionResult> Edit(int id)
@@ -158,5 +180,15 @@ public class ProductsController(ProductService productService, CategoryService c
     public IActionResult ProductNotFound()
     {
         return View();
+    }
+
+    private async Task<Result<SelectList>> GetCategoriesSelectList()
+    {
+        var categoriesResult = await categoryService.GetCategories();
+        if (!categoriesResult.IsSuccess)
+            return categoriesResult.Error;
+        
+        var categories = categoriesResult.Value;
+        return new SelectList(categories, "Slug", "Name");
     }
 }
