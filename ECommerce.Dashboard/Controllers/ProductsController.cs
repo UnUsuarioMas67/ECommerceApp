@@ -53,13 +53,13 @@ public class ProductsController(ProductService productService, CategoryService c
 
     public async Task<IActionResult> Create()
     {
-        var categoryListResult = await GetCategoriesSelectList();
+        var categoryListResult = await categoryService.GetCategories();
         if (!categoryListResult.IsSuccess)
             return RedirectToAction("Login", "Account");
 
         var viewModel = new ProductCreateViewModel
         {
-            CategoriesSelect = categoryListResult.Value
+            CategoriesSelect = new SelectList(categoryListResult.Value, "Slug", "Name")
         };
 
         return View(viewModel);
@@ -69,6 +69,12 @@ public class ProductsController(ProductService productService, CategoryService c
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(ProductCreateViewModel model)
     {
+        var categoryListResult = await categoryService.GetCategories();
+        if (!categoryListResult.IsSuccess)
+            return RedirectToAction("Login", "Account");
+
+        model.CategoriesSelect = new SelectList(categoryListResult.Value, "Slug", "Name");
+        
         if (!ModelState.IsValid)
             return View(model);
 
@@ -97,18 +103,12 @@ public class ProductsController(ProductService productService, CategoryService c
         var errorMessage = responseError?.ErrorBody?.Message ?? throw new InvalidOperationException();
         TempData["Error"] = errorMessage;
 
-        var categoryListResult = await GetCategoriesSelectList();
-        if (!categoryListResult.IsSuccess)
-            return RedirectToAction("Login", "Account");
-
-        model.CategoriesSelect = categoryListResult.Value;
-
         return View(model);
     }
 
     public async Task<IActionResult> Edit(int id)
     {
-        var categoryListTask = GetCategoriesSelectList();
+        var categoryListTask = categoryService.GetCategories();
         var productTask = productService.GetProductById(id);
 
         await Task.WhenAll(categoryListTask, productTask);
@@ -132,7 +132,7 @@ public class ProductsController(ProductService productService, CategoryService c
             Description = product.Description,
             Price = product.Price,
             ImageUrl = product.ImageUrl,
-            CategoriesSelect = categoryListResult.Value
+            CategoriesSelect = new SelectList(categoryListResult.Value, "Slug", "Name", product.Category?.Slug)
         };
 
         return View(model);
@@ -142,6 +142,12 @@ public class ProductsController(ProductService productService, CategoryService c
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, ProductUpdateViewModel model)
     {
+        var categoryListResult = await categoryService.GetCategories();
+        if (!categoryListResult.IsSuccess)
+            return RedirectToAction("Login", "Account");
+
+        model.CategoriesSelect = new SelectList(categoryListResult.Value, "Slug", "Name", model.Category);
+
         if (!ModelState.IsValid)
             return View(model);
 
@@ -170,12 +176,6 @@ public class ProductsController(ProductService productService, CategoryService c
 
         var errorMessage = responseError?.ErrorBody?.Message ?? throw new InvalidOperationException();
         TempData["Error"] = errorMessage;
-
-        var categoryListResult = await GetCategoriesSelectList();
-        if (!categoryListResult.IsSuccess)
-            return RedirectToAction("Login", "Account");
-
-        model.CategoriesSelect = categoryListResult.Value;
 
         return View(model);
     }
@@ -224,15 +224,5 @@ public class ProductsController(ProductService productService, CategoryService c
     public IActionResult ProductNotFound()
     {
         return View();
-    }
-
-    private async Task<Result<SelectList>> GetCategoriesSelectList()
-    {
-        var categoriesResult = await categoryService.GetCategories();
-        if (!categoriesResult.IsSuccess)
-            return categoriesResult.Error;
-
-        var categories = categoriesResult.Value;
-        return new SelectList(categories, "Slug", "Name");
     }
 }
