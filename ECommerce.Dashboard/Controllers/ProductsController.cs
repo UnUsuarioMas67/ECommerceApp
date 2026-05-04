@@ -113,24 +113,19 @@ public class ProductsController(ProductService productService, CategoryService c
 
         var product = productResult.Value;
 
-        var updateRequest = new ProductUpdate
+        var model = new ProductUpdateViewModel
         {
+            Id = id,
+            Sku = product.Sku,
             Name = product.Name,
-            Category = product.Category?.Name ?? string.Empty,
+            Category = product.Category?.Slug ?? string.Empty,
             Description = product.Description,
             Price = product.Price,
             ImageUrl = product.ImageUrl,
-        };
-
-        var viewModel = new ProductUpdateViewModel
-        {
-            ProductSku = product.Sku,
-            UpdateRequest = updateRequest,
             CategoriesSelect = categoryListResult.Value
         };
 
-        ViewData["ProductId"] = id;
-        return View(viewModel);
+        return View(model);
     }
 
     [HttpPost]
@@ -140,7 +135,16 @@ public class ProductsController(ProductService productService, CategoryService c
         if (!ModelState.IsValid)
             return View(model);
 
-        var result = await productService.UpdateProduct(id, model.UpdateRequest);
+        var request = new ProductUpdate
+        {
+            Name = model.Name,
+            Category = model.Category,
+            Description = model.Description,
+            Price = model.Price,
+            ImageUrl = model.ImageUrl
+        };
+
+        var result = await productService.UpdateProduct(id, request);
         if (result.IsSuccess)
         {
             TempData["Success"] = "Product updated successfully";
@@ -153,7 +157,7 @@ public class ProductsController(ProductService productService, CategoryService c
         var responseError = result.Error as ApiResponseError;
         if (responseError?.StatusCode == HttpStatusCode.NotFound)
             return RedirectToAction(nameof(NotFound));
-        
+
         var errorMessage = responseError?.ErrorBody?.Message ?? throw new InvalidOperationException();
         TempData["Error"] = errorMessage;
 
