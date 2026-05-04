@@ -59,7 +59,6 @@ public class ProductsController(ProductService productService, CategoryService c
 
         var viewModel = new ProductCreateViewModel
         {
-            CreateRequest = new ProductCreate(),
             CategoriesSelect = categoryListResult.Value
         };
 
@@ -73,7 +72,18 @@ public class ProductsController(ProductService productService, CategoryService c
         if (!ModelState.IsValid)
             return View(model);
 
-        var result = await productService.CreateProduct(model.CreateRequest);
+        var request = new ProductCreate
+        {
+            Sku = model.Sku,
+            Name = model.Name,
+            Category = model.Category,
+            Description = model.Description,
+            Price = model.Price,
+            ImageUrl = model.ImageUrl,
+            InitialStock = model.InitialStock
+        };
+
+        var result = await productService.CreateProduct(request);
         if (result.IsSuccess)
         {
             TempData["Success"] = "Product created successfully";
