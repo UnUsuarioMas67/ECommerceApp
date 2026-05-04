@@ -1,4 +1,4 @@
-﻿@model ECommerce.Dashboard.Models.ProductListViewModel
+﻿@model ECommerce.Dashboard.Models.Products.ProductListViewModel
 @{
     ViewData["Title"] = "Products";
 }
@@ -21,18 +21,24 @@
     <div class="alert alert-success">@TempData["Success"]</div>
 }
 
-<form class="mb-5" asp-action="Index" method="get">
-    <div class="mb-3 input-group">
-        <input asp-for="SearchTerm" class="form-control">
-        <button type="submit" class="btn btn-primary">Search</button>
-    </div>
+<div class="mb-5">
+    <form asp-action="Index" method="get">
+        <div class="mb-3 input-group">
+            <input asp-for="SearchTerm" class="form-control">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+
+        <div class="mb-3">
+            <select class="form-select" asp-items="Model.CategorySelect" asp-for="Category">
+                <option selected value="">- All -</option>
+            </select>
+        </div>
+    </form>
     
     <div class="mb-3">
-        <select class="form-select" asp-items="Model.CategorySelect" asp-for="Category">
-            <option selected value="">- All -</option>
-        </select>
+        <a asp-controller="Categories" asp-action="Index">Manage Categories</a>
     </div>
-</form>
+</div>
 
 <div class="table-responsive">
     <table class="table table-striped align-middle">

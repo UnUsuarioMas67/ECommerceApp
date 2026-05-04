@@ -3,7 +3,7 @@ using ECommerce.Dashboard.DTOs.Product;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace ECommerce.Dashboard.Models;
+namespace ECommerce.Dashboard.Models.Products;
 
 public class ProductListViewModel
 {

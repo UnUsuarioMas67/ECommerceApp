@@ -1,6 +1,6 @@
 ﻿using ECommerce.Dashboard.DTOs.Auth;
 
-namespace ECommerce.Dashboard.Models;
+namespace ECommerce.Dashboard.Models.Auth;
 
 public class LoginViewModel
 {

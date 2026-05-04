@@ -2,6 +2,7 @@
 using ECommerce.Dashboard.DTOs.Product;
 using ECommerce.Dashboard.DTOs.Shared;
 using ECommerce.Dashboard.Models;
+using ECommerce.Dashboard.Models.Products;
 using ECommerce.Dashboard.Results;
 using ECommerce.Dashboard.Services.Api;
 using Microsoft.AspNetCore.Authorization;

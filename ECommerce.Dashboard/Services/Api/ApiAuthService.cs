@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using ECommerce.Dashboard.DTOs.Auth;
 using ECommerce.Dashboard.Models;
+using ECommerce.Dashboard.Models.Auth;
 using ECommerce.Dashboard.Results;
 
 namespace ECommerce.Dashboard.Services.Api;

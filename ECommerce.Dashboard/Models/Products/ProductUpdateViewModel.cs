@@ -2,7 +2,7 @@
 using ECommerce.Dashboard.DTOs.Category;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace ECommerce.Dashboard.Models;
+namespace ECommerce.Dashboard.Models.Products;
 
 public class ProductUpdateViewModel
 {

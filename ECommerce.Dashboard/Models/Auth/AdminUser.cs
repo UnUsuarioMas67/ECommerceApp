@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Dashboard.Models;
+﻿namespace ECommerce.Dashboard.Models.Auth;
 
 public class AdminUser
 {
