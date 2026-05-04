@@ -1,4 +1,4 @@
-﻿@model ECommerce.Dashboard.DTOs.Product.ProductUpdate
+﻿@model ProductUpdateViewModel
 @{
     ViewData["Title"] = "Edit Product";
     var productId = ViewData["ProductId"];
@@ -10,33 +10,38 @@
     @Html.AntiForgeryToken()
     
     <div class="mb-3">
-        <label asp-for="Category" class="form-label"></label>
-        <input asp-for="Category" class="form-control">
-        <span asp-validation-for="Category" class="text-danger"></span>
+        <label asp-for="ProductSku" class="form-label"></label>
+        <input readonly asp-for="ProductSku" class="form-control-plaintext fw-bold">
+    </div>
+    
+    <div class="mb-3">
+        <label asp-for="UpdateRequest.Name" class="form-label"></label>
+        <input asp-for="UpdateRequest.Name" class="form-control">
+        <span asp-validation-for="UpdateRequest.Name" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label asp-for="UpdateRequest.Category" class="form-label"></label>
+        <select asp-items="Model.CategoriesSelect" asp-for="UpdateRequest.Category" class="form-select"></select>
+        <span asp-validation-for="UpdateRequest.Category" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label asp-for="UpdateRequest.Description" class="form-label"></label>
+        <textarea asp-for="UpdateRequest.Description" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="UpdateRequest.Description" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control">
-        <span asp-validation-for="Name" class="text-danger"></span>
+        <label asp-for="UpdateRequest.Price" class="form-label"></label>
+        <input asp-for="UpdateRequest.Price" class="form-control" type="number" step="0.01">
+        <span asp-validation-for="UpdateRequest.Price" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Price" class="form-label"></label>
-        <input asp-for="Price" class="form-control" type="number" step="0.01">
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="ImageUrl" class="form-label"></label>
-        <input asp-for="ImageUrl" class="form-control" type="url">
-        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+        <label asp-for="UpdateRequest.ImageUrl" class="form-label"></label>
+        <input asp-for="UpdateRequest.ImageUrl" class="form-control" type="url">
+        <span asp-validation-for="UpdateRequest.ImageUrl" class="text-danger"></span>
     </div>
 
     <div class="mt-3">

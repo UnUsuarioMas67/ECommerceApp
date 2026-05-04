@@ -1,4 +1,5 @@
-﻿using ECommerce.Dashboard.DTOs.Product;
+﻿using System.Net;
+using ECommerce.Dashboard.DTOs.Product;
 using ECommerce.Dashboard.DTOs.Shared;
 using ECommerce.Dashboard.Models;
 using ECommerce.Dashboard.Results;
@@ -18,10 +19,10 @@ public class ProductsController(ProductService productService, CategoryService c
         var categoryTask = categoryService.GetCategories();
 
         await Task.WhenAll(categoryTask, productTask);
-        
+
         var productResult = await productTask;
         var categoryResult = await categoryTask;
-        
+
         if (!categoryResult.IsSuccess || !productResult.IsSuccess)
             return RedirectToAction("Login", "Account");
 
@@ -46,7 +47,7 @@ public class ProductsController(ProductService productService, CategoryService c
 
         if (result.Error is ApiTokensError)
             return RedirectToAction("Login", "Account");
-        
+
         return RedirectToAction(nameof(NotFound));
     }
 
@@ -61,7 +62,7 @@ public class ProductsController(ProductService productService, CategoryService c
             CreateRequest = new ProductCreate(),
             CategoriesSelect = categoryListResult.Value
         };
-        
+
         return View(viewModel);
     }
 
@@ -78,62 +79,91 @@ public class ProductsController(ProductService productService, CategoryService c
             TempData["Success"] = "Product created successfully";
             return RedirectToAction(nameof(Index));
         }
-        
+
         if (result.Error is ApiTokensError)
             return RedirectToAction("Login", "Account");
 
         var responseError = result.Error as ApiResponseError;
         var errorMessage = responseError?.ErrorBody?.Message ?? throw new InvalidOperationException();
         TempData["Error"] = errorMessage;
-        
+
         var categoryListResult = await GetCategoriesSelectList();
         if (!categoryListResult.IsSuccess)
             return RedirectToAction("Login", "Account");
-        
+
         model.CategoriesSelect = categoryListResult.Value;
-        
+
         return View(model);
     }
 
     public async Task<IActionResult> Edit(int id)
     {
-        var result = await productService.GetProductById(id);
-        if (!result.IsSuccess)
-        {
-            TempData["Error"] = "Product not found";
-            return RedirectToAction(nameof(Index));
-        }
+        var categoryListTask = GetCategoriesSelectList();
+        var productTask = productService.GetProductById(id);
 
-        var product = result.Value;
-        var model = new ProductUpdate
+        await Task.WhenAll(categoryListTask, productTask);
+
+        var categoryListResult = await categoryListTask;
+        var productResult = await productTask;
+
+        if (!categoryListResult.IsSuccess || (!productResult.IsSuccess && productResult.Error is ApiTokensError))
+            return RedirectToAction("Login", "Account");
+        if (!productResult.IsSuccess)
+            return RedirectToAction(nameof(NotFound));
+
+        var product = productResult.Value;
+
+        var updateRequest = new ProductUpdate
         {
-            Category = product.Category?.Slug ?? string.Empty,
             Name = product.Name,
+            Category = product.Category?.Name ?? string.Empty,
             Description = product.Description,
             Price = product.Price,
-            ImageUrl = product.ImageUrl
+            ImageUrl = product.ImageUrl,
+        };
+
+        var viewModel = new ProductUpdateViewModel
+        {
+            ProductSku = product.Sku,
+            UpdateRequest = updateRequest,
+            CategoriesSelect = categoryListResult.Value
         };
 
         ViewData["ProductId"] = id;
-        return View(model);
+        return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, ProductUpdate model)
+    public async Task<IActionResult> Edit(int id, ProductUpdateViewModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
 
-        var result = await productService.UpdateProduct(id, model);
-        if (!result.IsSuccess)
+        var result = await productService.UpdateProduct(id, model.UpdateRequest);
+        if (result.IsSuccess)
         {
-            TempData["Error"] = "Failed to update product";
-            return View(model);
+            TempData["Success"] = "Product updated successfully";
+            return RedirectToAction(nameof(Index));
         }
 
-        TempData["Success"] = "Product updated successfully";
-        return RedirectToAction(nameof(Index));
+        if (result.Error is ApiTokensError)
+            return RedirectToAction("Login", "Account");
+
+        var responseError = result.Error as ApiResponseError;
+        if (responseError?.StatusCode == HttpStatusCode.NotFound)
+            return RedirectToAction(nameof(NotFound));
+        
+        var errorMessage = responseError?.ErrorBody?.Message ?? throw new InvalidOperationException();
+        TempData["Error"] = errorMessage;
+
+        var categoryListResult = await GetCategoriesSelectList();
+        if (!categoryListResult.IsSuccess)
+            return RedirectToAction("Login", "Account");
+
+        model.CategoriesSelect = categoryListResult.Value;
+
+        return View(model);
     }
 
     [HttpPost]
@@ -187,7 +217,7 @@ public class ProductsController(ProductService productService, CategoryService c
         var categoriesResult = await categoryService.GetCategories();
         if (!categoriesResult.IsSuccess)
             return categoriesResult.Error;
-        
+
         var categories = categoriesResult.Value;
         return new SelectList(categories, "Slug", "Name");
     }
