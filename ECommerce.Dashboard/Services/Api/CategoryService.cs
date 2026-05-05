@@ -26,12 +26,22 @@ public class CategoryService(ApiRequestService apiRequestService)
 
         return await apiRequestService.SendAsync<IEnumerable<CategoryResponse>>(options);
     }
+
+    public async Task<Result<CategoryResponse>> GetCategory(int id)
+    {
+        return await GetCategoryInner(id.ToString());
+    }
     
-    public async Task<Result<CategoryResponse>> GetCategoryById(int id)
+    public async Task<Result<CategoryResponse>> GetCategory(string slug)
+    {
+        return await GetCategoryInner(slug);
+    }
+    
+    private async Task<Result<CategoryResponse>> GetCategoryInner(string category)
     {
         var options = new ApiRequestOptions
         {
-            Path = CategoryPath + "/" + id,
+            Path = CategoryPath + "/" + category,
             Method = HttpMethod.Get,
             ExpectedFailCodes = [HttpStatusCode.NotFound]
         };
@@ -39,24 +49,34 @@ public class CategoryService(ApiRequestService apiRequestService)
         return await apiRequestService.SendAsync<CategoryResponse>(options);
     }
 
-    public async Task<Result<CategoryResponse>> CreateCategory(CategoryRequest dto)
+    public async Task<Result<CategoryResponse>> CreateCategory(CategoryRequest request)
     {
         var options = new ApiRequestOptions
         {
             Path = CategoryPath,
             Method = HttpMethod.Post,
             ExpectedFailCodes = [HttpStatusCode.BadRequest, HttpStatusCode.UnprocessableEntity],
-            Body = dto
+            Body = request
         };
 
         return await apiRequestService.SendAsync<CategoryResponse>(options);
     }
+    
+    public async Task<Result<CategoryResponse>> UpdateCategory(int id, CategoryRequest request)
+    {
+        return await UpdateCategoryInner(id.ToString(), request);
+    }
+    
+    public async Task<Result<CategoryResponse>> UpdateCategory(string slug, CategoryRequest request)
+    {
+        return await UpdateCategoryInner(slug, request);
+    }
 
-    public async Task<Result<CategoryResponse>> UpdateCategory(int id, CategoryRequest dto)
+    private async Task<Result<CategoryResponse>> UpdateCategoryInner(string category, CategoryRequest request)
     {
         var options = new ApiRequestOptions
         {
-            Path = CategoryPath + "/" + id,
+            Path = CategoryPath + "/" + category,
             Method = HttpMethod.Put,
             ExpectedFailCodes =
             [
@@ -64,17 +84,27 @@ public class CategoryService(ApiRequestService apiRequestService)
                 HttpStatusCode.UnprocessableEntity,
                 HttpStatusCode.NotFound
             ],
-            Body = dto
+            Body = request
         };
 
         return await apiRequestService.SendAsync<CategoryResponse>(options);
     }
-
+    
     public async Task<Result> DeleteCategory(int id)
+    {
+        return await DeleteCategoryInner(id.ToString());
+    }
+    
+    public async Task<Result> DeleteCategory(string slug)
+    {
+        return await DeleteCategoryInner(slug);
+    }
+
+    private async Task<Result> DeleteCategoryInner(string category)
     {
         var options = new ApiRequestOptions
         {
-            Path = CategoryPath + "/" + id,
+            Path = CategoryPath + "/" + category,
             Method = HttpMethod.Delete,
             ExpectedFailCodes = [HttpStatusCode.NotFound]
         };
