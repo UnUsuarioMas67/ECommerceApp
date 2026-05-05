@@ -44,12 +44,14 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
 
     public async Task<IEnumerable<CategoryResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
     {
-        var categories = await context.Categories.AsNoTracking().ToListAsync();
-
-        return categories
-            .Where(c => c.Name.Contains(search ?? "", StringComparison.InvariantCultureIgnoreCase))
+        var categories = await context.Categories
+            .AsNoTracking()
+            .Where(c => c.Name.Contains(search ?? "") || c.Slug.Contains(search ?? ""))
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
-            .Select(mapper.MapToDto);
+            .Select(category => mapper.MapToDto(category))
+            .ToListAsync();
+
+        return categories;
     }
 
     public async Task<Result<CategoryResponseDto>> CreateAsync(CategoryCreateDto dto)
