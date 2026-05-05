@@ -1,0 +1,63 @@
+﻿@model ECommerce.Dashboard.Models.Categories.CategoryListViewModel
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="mb-3 row">
+    <div class="col">
+        <h1 class="m-0">Categories</h1>
+    </div>
+    <div class="col text-end">
+        <a asp-action="Create" class="btn btn-outline-primary"> New</a>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="mb-5">
+    <form asp-action="Index" method="get">
+        <div class="mb-3 input-group">
+            <input asp-for="SearchTerm" class="form-control">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    
+    <div class="mb-3">
+        <a asp-controller="Products" asp-action="Index">Back to Products</a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Slug</th>
+            <th scope="col">Name</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var category in Model.Categories)
+        {
+            <tr>
+                <td>@category.Id</td>
+                <td>@category.Slug</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@category.Id">@category.Name</a>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
