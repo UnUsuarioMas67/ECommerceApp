@@ -24,13 +24,14 @@ public class AuthenticationService(
         if (!passwordValid)
             return new InvalidLoginError();
 
-        var accessToken = jwtService.GenerateAccessToken(client);
+        var jwtToken = jwtService.GenerateAccessToken(client);
         var refreshToken = await refreshTokenService.GenerateRefreshTokenAsync(client);
 
         return new AuthenticationDto
         {
-            AccessToken = accessToken,
+            AccessToken = jwtToken.Token,
             RefreshToken = refreshToken.Token,
+            ExpiresAt = jwtToken.ExpiresAt,
             User = clientMapper.MapToDto(client)
         };
     }
@@ -45,13 +46,14 @@ public class AuthenticationService(
         if (!passwordValid)
             return new InvalidLoginError();
 
-        var accessToken = jwtService.GenerateAccessToken(admin);
+        var jwtToken = jwtService.GenerateAccessToken(admin);
         var refreshToken = await refreshTokenService.GenerateRefreshTokenAsync(admin);
 
         return new AuthenticationDto
         {
-            AccessToken = accessToken,
+            AccessToken = jwtToken.Token,
             RefreshToken = refreshToken.Token,
+            ExpiresAt = jwtToken.ExpiresAt,
             User = adminMapper.MapToDto(admin)
         };
     }
@@ -68,13 +70,14 @@ public class AuthenticationService(
         
         await refreshTokenService.DeleteByClientIdAsync(client.Id);
         
-        var accessToken = jwtService.GenerateAccessToken(client);
+        var jwtToken = jwtService.GenerateAccessToken(client);
         var newRefreshToken = await refreshTokenService.GenerateRefreshTokenAsync(client);
-        
+
         return new AuthenticationDto
         {
-            AccessToken = accessToken,
+            AccessToken = jwtToken.Token,
             RefreshToken = newRefreshToken.Token,
+            ExpiresAt = jwtToken.ExpiresAt,
             User = clientMapper.MapToDto(client)
         };
     }
@@ -91,13 +94,14 @@ public class AuthenticationService(
         
         await refreshTokenService.DeleteByAdminIdAsync(admin.Id);
 
-        var accessToken = jwtService.GenerateAccessToken(admin);
+        var jwtToken = jwtService.GenerateAccessToken(admin);
         var newRefreshToken = await refreshTokenService.GenerateRefreshTokenAsync(admin);
-        
+
         return new AuthenticationDto
         {
-            AccessToken = accessToken,
+            AccessToken = jwtToken.Token,
             RefreshToken = newRefreshToken.Token,
+            ExpiresAt = jwtToken.ExpiresAt,
             User = adminMapper.MapToDto(admin)
         };
     }

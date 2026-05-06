@@ -13,14 +13,14 @@ public class JwtService(IOptions<JwtSettings> settings)
 {
     private readonly JwtSettings _settings = settings.Value;
 
-    public string GenerateAccessToken(Client client)
+    public JwtToken GenerateAccessToken(Client client)
     {
         var credentials = CreateSigningCredentials();
         var claimsIdentity = CreateClaimsIdentity(client);
         return CreateAccessToken(credentials, claimsIdentity);
     }
     
-    public string GenerateAccessToken(Admin admin)
+    public JwtToken GenerateAccessToken(Admin admin)
     {
         var credentials = CreateSigningCredentials();
         var claimsIdentity = CreateClaimsIdentity(admin);
@@ -61,7 +61,7 @@ public class JwtService(IOptions<JwtSettings> settings)
         ]);
     }
 
-    private string CreateAccessToken(SigningCredentials credentials, ClaimsIdentity claimsIdentity)
+    private JwtToken CreateAccessToken(SigningCredentials credentials, ClaimsIdentity claimsIdentity)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -72,8 +72,10 @@ public class JwtService(IOptions<JwtSettings> settings)
             Audience = _settings.Audience,
             Issuer = _settings.Issuer,
         };
-
+        
         var tokenHandler = new JsonWebTokenHandler();
-        return tokenHandler.CreateToken(tokenDescriptor);
+        return new JwtToken(tokenHandler.CreateToken(tokenDescriptor), tokenDescriptor.Expires.Value);
     }
 }
+
+public record JwtToken(string Token, DateTime ExpiresAt);

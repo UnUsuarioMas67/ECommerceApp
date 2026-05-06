@@ -7,4 +7,5 @@ public class AuthenticationDto
     public required UserResponseDto? User { get; set; }
     public required string? AccessToken { get; set; }
     public required string? RefreshToken { get; set; }
+    public required DateTime? ExpiresAt { get; set; }
 }
