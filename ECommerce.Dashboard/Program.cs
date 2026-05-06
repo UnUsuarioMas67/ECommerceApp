@@ -1,6 +1,7 @@
 using ECommerce.Dashboard.Services;
 using ECommerce.Dashboard.Services.Api;
 using ECommerce.Dashboard.Settings;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,10 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("AuthSettings"));
-builder.Services.AddHttpClient("ApiClient", client =>
+builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+builder.Services.AddHttpClient("ApiClient", (serviceProvider, client) =>
 {
-    var apiSettings = builder.Configuration.GetSection("ApiSettings").Get<ApiSettings>();
-    client.BaseAddress = new Uri(apiSettings?.ApiUrl ?? throw new InvalidOperationException("Missing ApiUrl setting"));
+    var apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
+    client.BaseAddress = new Uri(apiSettings.ApiUrl);
 });
 
 builder.Services.AddAuthentication("Cookies")
