@@ -10,7 +10,7 @@ public class ClientService(ApiRequestService apiRequestService)
 {
     private const string ClientsPath = "api/clients";
 
-    public async Task<Result<UserResponse>> GetClientById(int id)
+    public async Task<Result<ClientResponse>> GetClientById(int id)
     {
         var options = new ApiRequestOptions
         {
@@ -19,10 +19,10 @@ public class ClientService(ApiRequestService apiRequestService)
             ExpectedFailCodes = [HttpStatusCode.NotFound]
         };
 
-        return await apiRequestService.SendAsync<UserResponse>(options);
+        return await apiRequestService.SendAsync<ClientResponse>(options);
     }
 
-    public async Task<Result<IEnumerable<UserResponse>>> GetClients(
+    public async Task<Result<IEnumerable<ClientResponse>>> GetClients(
         string? search = null,
         PaginationQuery? paginationQuery = null)
     {
@@ -36,10 +36,10 @@ public class ClientService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAsync<IEnumerable<UserResponse>>(options);
+        return await apiRequestService.SendAsync<IEnumerable<ClientResponse>>(options);
     }
 
-    public async Task<Result<UserResponse>> GetAuthClient()
+    public async Task<Result<ClientResponse>> GetAuthClient()
     {
         var options = new ApiRequestOptions
         {
@@ -47,6 +47,6 @@ public class ClientService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAsync<UserResponse>(options);
+        return await apiRequestService.SendAsync<ClientResponse>(options);
     }
 }
