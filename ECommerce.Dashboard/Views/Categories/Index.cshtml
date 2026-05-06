@@ -48,13 +48,16 @@
         @foreach (var category in Model.Categories)
         {
             <tr>
-                <td>@category.Id</td>
+                <th scope="row">@category.Id</th>
                 <td>@category.Slug</td>
+                <td>@category.Name</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@category.Id">@category.Name</a>
-                </td>
-                <td>
+                    <a asp-controller="Products" asp-action="Index" asp-route-category="@category.Slug" class="btn btn-sm btn-outline-primary">View Products</a>
                     <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <form asp-action="Delete" asp-route-id="@category.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
                 </td>
             </tr>
         }

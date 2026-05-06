@@ -1,0 +1,30 @@
+﻿@model ECommerce.Dashboard.Models.Categories.CategoryCreateViewModel
+@{
+    ViewData["Title"] = "Create Category";
+}
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+    
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control">
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label asp-for="Slug" class="form-label"></label>
+        <input asp-for="Slug" class="form-control">
+        <span asp-validation-for="Slug" class="text-danger"></span>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
