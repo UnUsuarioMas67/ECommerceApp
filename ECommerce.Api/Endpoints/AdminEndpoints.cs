@@ -41,18 +41,18 @@ public static class AdminEndpoints
         return TypedResults.Ok(admins);
     }
 
-    private static async Task<Results<Ok<UserResponseDto>, BadRequest<InvalidAuthenticationError>>> GetAuthAdmin(
+    private static async Task<Results<Ok<UserResponseDto>, UnauthorizedHttpResult>> GetAuthAdmin(
         HttpContext httpContext,
         IAdminsService adminsService)
     {
         var adminId = AuthUser.GetAuthUserId(httpContext);
         if (adminId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var admin = await adminsService.GetByIdAsync(adminId.Value);
         return admin != null 
             ? TypedResults.Ok(admin) 
-            : TypedResults.BadRequest(new InvalidAuthenticationError(adminId.Value, UserRoles.Admin));
+            : TypedResults.Unauthorized();
     }
 
     private static async Task<Results<Ok<UserResponseDto>, NotFound>> GetAdminById(
@@ -64,7 +64,7 @@ public static class AdminEndpoints
     }
 
     private static async Task<Results<Ok<UserResponseDto>, BadRequest<ErrorDto>, NotFound,
-            BadRequest<InvalidAuthenticationError>, UnprocessableEntity<ErrorDto>>>
+            UnauthorizedHttpResult, UnprocessableEntity<ErrorDto>>>
         UpdateAdmin(
             HttpContext context,
             IAdminsService adminsService,
@@ -74,7 +74,7 @@ public static class AdminEndpoints
     {
         var adminId = AuthUser.GetAuthUserId(context);
         if (adminId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
@@ -86,24 +86,24 @@ public static class AdminEndpoints
 
         return result.Error switch
         {
-            NotFoundError => TypedResults.BadRequest(new InvalidAuthenticationError(adminId.Value, UserRoles.Admin)),
+            NotFoundError => TypedResults.Unauthorized(),
             ValidationError error => TypedResults.BadRequest(error.ToDto()),
             _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }
 
-    private static async Task<Results<Ok<UserResponseDto>, NotFound, BadRequest<InvalidAuthenticationError>>> DeleteAdmin(
+    private static async Task<Results<Ok<UserResponseDto>, NotFound, UnauthorizedHttpResult>> DeleteAdmin(
         HttpContext context,
         IAdminsService adminsService,
         int id)
     {
         var adminId = AuthUser.GetAuthUserId(context);
         if (adminId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var admin = await adminsService.DeleteAsync(adminId.Value);
         return admin != null 
             ? TypedResults.Ok(admin) 
-            : TypedResults.BadRequest(new InvalidAuthenticationError(adminId.Value, UserRoles.Admin));
+            : TypedResults.Unauthorized();
     }
 }

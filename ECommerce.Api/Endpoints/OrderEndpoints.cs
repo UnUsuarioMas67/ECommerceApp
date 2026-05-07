@@ -36,27 +36,27 @@ public static class OrderEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Ok<IEnumerable<OrderResponseDto>>, BadRequest<InvalidAuthenticationError>>> GetAuthClientOrders(
+    private static async Task<Results<Ok<IEnumerable<OrderResponseDto>>, UnauthorizedHttpResult>> GetAuthClientOrders(
         HttpContext httpContext,
         IOrderService orderService,
         [AsParameters] PaginationQuery pagination)
     {
         var clientId = AuthUser.GetAuthUserId(httpContext);
         if (clientId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var orders = await orderService.GetByClientAsync(clientId.Value, pagination);
         return TypedResults.Ok(orders);
     }
 
-    private static async Task<Results<Ok<OrderResponseDto>, NotFound, BadRequest<InvalidAuthenticationError>>> GetAuthClientOrderById(
+    private static async Task<Results<Ok<OrderResponseDto>, NotFound, UnauthorizedHttpResult>> GetAuthClientOrderById(
         HttpContext httpContext,
         IOrderService orderService,
         int id)
     {
         var clientId = AuthUser.GetAuthUserId(httpContext);
         if (clientId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var order = await orderService.GetByIdAsync(id, clientId);
         return order != null ? TypedResults.Ok(order) : TypedResults.NotFound();

@@ -33,7 +33,7 @@ public static class CheckoutEndpoints
     }
 
     private static async Task<Results<Ok<CheckoutResponseDto>, BadRequest<ErrorDto>, UnprocessableEntity<ErrorDto>,
-            BadRequest<InvalidAuthenticationError>>> 
+            UnauthorizedHttpResult>> 
         CreateCheckoutSession(
             HttpContext context,
             [FromBody] CheckoutRequestDto request,
@@ -42,7 +42,7 @@ public static class CheckoutEndpoints
     {
         var clientId = AuthUser.GetAuthUserId(context);
         if (!clientId.HasValue)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var validation = await validator.ValidateAsync(request);
         if (!validation.IsValid)
@@ -55,14 +55,14 @@ public static class CheckoutEndpoints
         return TypedResults.UnprocessableEntity(result.Error.ToDto());
     }
     
-    private static async Task<Results<Ok<PaymentResultDto>, NotFound, BadRequest<InvalidAuthenticationError>>> GetPaymentBySession(
+    private static async Task<Results<Ok<PaymentResultDto>, NotFound, UnauthorizedHttpResult>> GetPaymentBySession(
         HttpContext context,
         string sessionId,
         IPaymentService paymentService)
     {
         var clientId = AuthUser.GetAuthUserId(context);
         if (clientId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
         
         var payment = await paymentService.GetPaymentBySessionIdAsync(sessionId, clientId.Value);
         return payment != null ? TypedResults.Ok(payment) : TypedResults.NotFound();

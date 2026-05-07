@@ -36,7 +36,7 @@ public static class AddressEndpoints
 
 
     private static async Task<Results<Created<AddressResponseDto>, BadRequest<ErrorDto>,
-            BadRequest<InvalidAuthenticationError>, UnprocessableEntity<ErrorDto>>>
+            UnauthorizedHttpResult, UnprocessableEntity<ErrorDto>>>
         AddAddress(
             HttpContext httpContext,
             AddressCreateDto dto,
@@ -45,7 +45,7 @@ public static class AddressEndpoints
     {
         var clientId = AuthUser.GetAuthUserId(httpContext);
         if (clientId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
@@ -66,7 +66,7 @@ public static class AddressEndpoints
 
 
     private static async Task<Results<Ok<AddressResponseDto>, BadRequest<ErrorDto>, NotFound,
-            BadRequest<InvalidAuthenticationError>, UnprocessableEntity<ErrorDto>>>
+            UnauthorizedHttpResult, UnprocessableEntity<ErrorDto>>>
         UpdateAddress(
             HttpContext httpContext,
             int id,
@@ -76,7 +76,7 @@ public static class AddressEndpoints
     {
         var clientId = AuthUser.GetAuthUserId(httpContext);
         if (clientId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
@@ -95,7 +95,7 @@ public static class AddressEndpoints
     }
 
 
-    private static async Task<Results<Ok<AddressResponseDto>, NotFound, BadRequest<InvalidAuthenticationError>>>
+    private static async Task<Results<Ok<AddressResponseDto>, NotFound, UnauthorizedHttpResult>>
         DeleteAddress(
             HttpContext httpContext,
             int id,
@@ -103,7 +103,7 @@ public static class AddressEndpoints
     {
         var clientId = AuthUser.GetAuthUserId(httpContext);
         if (clientId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var deleted = await addressesService.DeleteAsync(id, clientId);
         if (deleted == null)
@@ -124,14 +124,14 @@ public static class AddressEndpoints
         return TypedResults.Ok(address);
     }
 
-    private static async Task<Results<Ok<IEnumerable<AddressResponseDto>>, BadRequest<InvalidAuthenticationError>>>
+    private static async Task<Results<Ok<IEnumerable<AddressResponseDto>>, UnauthorizedHttpResult>>
         GetAuthClientAddresses(
             HttpContext httpContext,
             IAddressesService addressesService)
     {
         var clientId = AuthUser.GetAuthUserId(httpContext);
         if (clientId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var addresses = await addressesService.GetByClientAsync(clientId.Value);
         return TypedResults.Ok(addresses);

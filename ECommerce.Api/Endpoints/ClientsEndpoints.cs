@@ -44,18 +44,18 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Results<Ok<UserResponseDto>, BadRequest<InvalidAuthenticationError>>> GetAuthClient(
+    private static async Task<Results<Ok<UserResponseDto>, UnauthorizedHttpResult>> GetAuthClient(
         HttpContext context,
         IClientsService clientsService)
     {
         var clientId = AuthUser.GetAuthUserId(context);
         if (clientId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var clientDto = await clientsService.GetByIdAsync(clientId.Value);
         return clientDto != null
             ? TypedResults.Ok(clientDto)
-            : TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value, UserRoles.Client));
+            : TypedResults.Unauthorized();
     }
 
 
@@ -69,7 +69,7 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Results<Ok<UserResponseDto>, BadRequest<ErrorDto>, BadRequest<InvalidAuthenticationError>,
+    private static async Task<Results<Ok<UserResponseDto>, BadRequest<ErrorDto>, UnauthorizedHttpResult,
             UnprocessableEntity<ErrorDto>>>
         UpdateClient(
             HttpContext context,
@@ -79,7 +79,7 @@ public static class ClientsEndpoints
     {
         var clientId = AuthUser.GetAuthUserId(context);
         if (clientId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var validation = await validator.ValidateAsync(dto);
         if (!validation.IsValid)
@@ -91,23 +91,23 @@ public static class ClientsEndpoints
 
         return result.Error switch
         {
-            NotFoundError => TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value, UserRoles.Client)),
+            NotFoundError => TypedResults.Unauthorized(),
             ValidationError error => TypedResults.BadRequest(error.ToDto()),
             _ => TypedResults.UnprocessableEntity(result.Error.ToDto())
         };
     }
 
-    private static async Task<Results<Ok<UserResponseDto>, BadRequest<InvalidAuthenticationError>>> DeleteClient(
+    private static async Task<Results<Ok<UserResponseDto>, UnauthorizedHttpResult>> DeleteClient(
         HttpContext context,
         IClientsService clientsService)
     {
         var clientId = AuthUser.GetAuthUserId(context);
         if (clientId == null)
-            return TypedResults.BadRequest(new InvalidAuthenticationError());
+            return TypedResults.Unauthorized();
 
         var client = await clientsService.DeleteAsync(clientId.Value);
         return client != null 
             ? TypedResults.Ok(client) 
-            : TypedResults.BadRequest(new InvalidAuthenticationError(clientId.Value, UserRoles.Client));
+            : TypedResults.Unauthorized();
     }
 }
