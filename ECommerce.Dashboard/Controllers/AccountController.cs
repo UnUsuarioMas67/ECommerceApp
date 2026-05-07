@@ -21,7 +21,7 @@ public class AccountController(AuthService authService) : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        var loginResult = await apiAuthService.LoginAsync(model.LoginRequest);
+        var loginResult = await authService.LoginAsync(model.LoginRequest);
         if (!loginResult.IsSuccess)
             return View(model);
         
