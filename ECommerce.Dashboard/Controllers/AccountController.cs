@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Dashboard.Controllers;
 
-public class AccountController(ApiAuthService apiAuthService, SiteAuthService siteAuthService) : Controller
+public class AccountController(AuthService authService) : Controller
 {
     [HttpGet]
     public IActionResult Login()
@@ -24,19 +24,14 @@ public class AccountController(ApiAuthService apiAuthService, SiteAuthService si
         var loginResult = await apiAuthService.LoginAsync(model.LoginRequest);
         if (!loginResult.IsSuccess)
             return View(model);
-
-        var login = loginResult.Value;
-        await siteAuthService.SignInAsync(login.User, login.AccessToken, login.RefreshToken);
-
+        
         return RedirectToAction("Index", "Home");
     }
 
     [HttpGet]
     public async Task<IActionResult> Logout()
     {
-        await apiAuthService.LogoutAsync();
-        await siteAuthService.SignOutAsync();
-        
+        await authService.LogoutAsync();
         return RedirectToAction(nameof(Login));
     }
 }
