@@ -31,7 +31,6 @@ public class OrderService(ApiRequestService apiRequestService)
         {
             Path = OrdersPath + "/" + id,
             Method = HttpMethod.Get,
-            ExpectedFailCodes = [HttpStatusCode.NotFound]
         };
 
         return await apiRequestService.SendAsync<OrderResponse>(options);
@@ -92,7 +91,6 @@ public class OrderService(ApiRequestService apiRequestService)
         {
             Path = OrdersPath + "/me/" + id,
             Method = HttpMethod.Get,
-            ExpectedFailCodes = [HttpStatusCode.NotFound]
         };
 
         return await apiRequestService.SendAsync<OrderResponse>(options);

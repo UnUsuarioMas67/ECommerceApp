@@ -16,7 +16,6 @@ public class ClientService(ApiRequestService apiRequestService)
         {
             Path = ClientsPath + "/" + id,
             Method = HttpMethod.Get,
-            ExpectedFailCodes = [HttpStatusCode.NotFound]
         };
 
         return await apiRequestService.SendAsync<ClientResponse>(options);

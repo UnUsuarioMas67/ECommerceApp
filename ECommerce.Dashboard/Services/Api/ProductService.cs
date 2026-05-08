@@ -36,7 +36,6 @@ public class ProductService(ApiRequestService apiRequestService)
         {
             Path = ProductsPath + "/" + id,
             Method = HttpMethod.Get,
-            ExpectedFailCodes = [HttpStatusCode.NotFound]
         };
 
         return await apiRequestService.SendAsync<ProductResponse>(options);
@@ -48,7 +47,6 @@ public class ProductService(ApiRequestService apiRequestService)
         {
             Path = ProductsPath,
             Method = HttpMethod.Post,
-            ExpectedFailCodes = [HttpStatusCode.BadRequest, HttpStatusCode.UnprocessableEntity],
             Body = dto
         };
 
@@ -61,12 +59,6 @@ public class ProductService(ApiRequestService apiRequestService)
         {
             Path = ProductsPath + "/" + id,
             Method = HttpMethod.Put,
-            ExpectedFailCodes =
-            [
-                HttpStatusCode.BadRequest,
-                HttpStatusCode.UnprocessableEntity,
-                HttpStatusCode.NotFound
-            ],
             Body = dto
         };
 
@@ -79,7 +71,6 @@ public class ProductService(ApiRequestService apiRequestService)
         {
             Path = ProductsPath + "/" + id,
             Method = HttpMethod.Delete,
-            ExpectedFailCodes = [HttpStatusCode.NotFound]
         };
 
         return await apiRequestService.SendAsync(options);
@@ -91,12 +82,6 @@ public class ProductService(ApiRequestService apiRequestService)
         {
             Path = ProductsPath + "/" + id + "/restock?amount=" + amount,
             Method = HttpMethod.Put,
-            ExpectedFailCodes =
-            [
-                HttpStatusCode.BadRequest,
-                HttpStatusCode.UnprocessableEntity,
-                HttpStatusCode.NotFound
-            ],
         };
 
         return await apiRequestService.SendAsync<ProductResponse>(options);

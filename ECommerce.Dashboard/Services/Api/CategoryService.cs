@@ -43,7 +43,6 @@ public class CategoryService(ApiRequestService apiRequestService)
         {
             Path = CategoryPath + "/" + category,
             Method = HttpMethod.Get,
-            ExpectedFailCodes = [HttpStatusCode.NotFound]
         };
 
         return await apiRequestService.SendAsync<CategoryResponse>(options);
@@ -55,7 +54,6 @@ public class CategoryService(ApiRequestService apiRequestService)
         {
             Path = CategoryPath,
             Method = HttpMethod.Post,
-            ExpectedFailCodes = [HttpStatusCode.BadRequest, HttpStatusCode.UnprocessableEntity],
             Body = request
         };
 
@@ -78,12 +76,6 @@ public class CategoryService(ApiRequestService apiRequestService)
         {
             Path = CategoryPath + "/" + category,
             Method = HttpMethod.Put,
-            ExpectedFailCodes =
-            [
-                HttpStatusCode.BadRequest,
-                HttpStatusCode.UnprocessableEntity,
-                HttpStatusCode.NotFound
-            ],
             Body = request
         };
 
@@ -106,7 +98,6 @@ public class CategoryService(ApiRequestService apiRequestService)
         {
             Path = CategoryPath + "/" + category,
             Method = HttpMethod.Delete,
-            ExpectedFailCodes = [HttpStatusCode.NotFound]
         };
 
         return await apiRequestService.SendAsync(options);
