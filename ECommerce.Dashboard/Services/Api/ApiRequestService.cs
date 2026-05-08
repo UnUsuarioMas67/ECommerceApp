@@ -1,10 +1,7 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using ECommerce.Dashboard.DTOs.Auth;
 using ECommerce.Dashboard.DTOs.Error;
-using ECommerce.Dashboard.Exceptions;
 using ECommerce.Dashboard.Results;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
@@ -17,9 +14,6 @@ public class ApiRequestService(
     SiteAuthService siteAuthService,
     IOptions<JsonOptions> jsonOptions)
 {
-    private const string RefreshPath = "api/admins/refresh";
-
-    private readonly HttpClient _httpClient = clientFactory.CreateClient("ApiClient");
     private readonly JsonSerializerOptions _jsonSerializerOptions = jsonOptions.Value.SerializerOptions;
 
     public async Task<Result> SendAsync(ApiRequestOptions options)
@@ -36,21 +30,6 @@ public class ApiRequestService(
         return await ProcessResponse(response);
     }
     
-    private async Task<Result> ProcessResponse(HttpResponseMessage response)
-    {
-        if (response.IsSuccessStatusCode)
-        {
-            return Result.Success();
-        }
-
-        ApiErrorResponse? errorBody = null;
-        if (response.Content.Headers.ContentLength > 0)
-            errorBody = await response.Content.ReadFromJsonAsync<ApiErrorResponse>()
-                        ?? throw new InvalidOperationException("Could not deserialize the response");
-
-        return new ApiResponseError(response.StatusCode, response.ReasonPhrase, errorBody);
-    }
-    
     public async Task<Result<T>> SendAsync<T>(ApiRequestOptions options)
     {
         var tokens = siteAuthService.GetApiTokensFromCookies();
@@ -64,31 +43,11 @@ public class ApiRequestService(
 
         return await ProcessResponse<T>(response);
     }
-
-    private async Task<Result<T>> ProcessResponse<T>(HttpResponseMessage response)
+    
+    private async Task<HttpResponseMessage> SendAsyncInner(ApiRequestOptions options)
     {
-        if (response.IsSuccessStatusCode)
-        {
-            var body = await response.Content.ReadFromJsonAsync<T>()
-                          ?? throw new InvalidOperationException("Could not deserialize the response");
-            return body;
-        }
-
-        ApiErrorResponse? errorBody = null;
-        if (response.Content.Headers.ContentLength > 0)
-            errorBody = await response.Content.ReadFromJsonAsync<ApiErrorResponse>()
-                       ?? throw new InvalidOperationException("Could not deserialize the response");
-
-        return new ApiResponseError(response.StatusCode, response.ReasonPhrase, errorBody);
-    }
-
-    private async Task<HttpResponseMessage?> SendAsyncInner(
-        ApiRequestOptions options,
-        string? accessToken = null,
-        string? refreshToken = null,
-        bool refreshIfExpired = true
-    )
-    {
+        var httpClient = httpClientFactory.CreateClient("ApiClient");
+        
         var request = new HttpRequestMessage(options.Method, options.Path);
 
         if (options.Body != null)
@@ -96,9 +55,6 @@ public class ApiRequestService(
             var json = JsonSerializer.Serialize(options.Body, _jsonSerializerOptions);
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         }
-
-        if (options.SendToken)
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
         var response = await _httpClient.SendAsync(request);
 
@@ -116,29 +72,43 @@ public class ApiRequestService(
 
         throw new UnexpectedApiResponseException(response.StatusCode);
     }
-
-    private async Task<UserLoginResponse?> RefreshAsync(string refreshToken)
+    
+    private async Task<Result> ProcessResponse(HttpResponseMessage response)
     {
-        var response = await _httpClient.PostAsJsonAsync(RefreshPath, new { RefreshToken = refreshToken });
-        if (response.IsSuccessStatusCode)
+        var is400Error = (int)response.StatusCode >= 400 && (int)response.StatusCode < 500;
+        if (is400Error && response.StatusCode != HttpStatusCode.Unauthorized)
         {
-            var login = await response.Content.ReadFromJsonAsync<UserLoginResponse>()
-                        ?? throw new InvalidOperationException("Could not deserialize the response");
-            logger.LogDebug("Refresh request successful. User: {admin}", login.User.Email);
+            ApiErrorResponse? errorBody = null;
+            if (response.Content.Headers.ContentLength > 0)
+                errorBody = await response.Content.ReadFromJsonAsync<ApiErrorResponse>()
+                            ?? throw new InvalidOperationException("Could not deserialize the response");
 
-            await siteAuthService.SignInAsync(login.User, login.AccessToken, login.RefreshToken);
-
-            return login;
+            return new ApiResponseError(response.StatusCode, response.ReasonPhrase, errorBody);
         }
+        
+        response.EnsureSuccessStatusCode();
 
-        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        return Result.Success();
+    }
+    
+    private async Task<Result<T>> ProcessResponse<T>(HttpResponseMessage response)
+    {
+        var isClientError = (int)response.StatusCode >= 400 && (int)response.StatusCode < 500;
+        if (isClientError && response.StatusCode != HttpStatusCode.Unauthorized)
         {
-            logger.LogInformation("Refresh request failed. Invalid or expired refresh token");
-            await siteAuthService.SignOutAsync();
-            return null;
-        }
+            ApiErrorResponse? errorBody = null;
+            if (response.Content.Headers.ContentLength > 0)
+                errorBody = await response.Content.ReadFromJsonAsync<ApiErrorResponse>()
+                            ?? throw new InvalidOperationException("Could not deserialize the response");
 
-        throw new UnexpectedApiResponseException(response.StatusCode);
+            return new ApiResponseError(response.StatusCode, response.ReasonPhrase, errorBody);
+        }
+        
+        response.EnsureSuccessStatusCode();
+        
+        var body = await response.Content.ReadFromJsonAsync<T>()
+                   ?? throw new InvalidOperationException("Could not deserialize the response");
+        return body;
     }
 }
 
