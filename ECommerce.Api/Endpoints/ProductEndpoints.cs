@@ -16,30 +16,29 @@ public static class ProductEndpoints
     {
         var group = endpoints.MapGroup("api/products")
             .WithTags("Product")
-            .AllowAnonymous();
+            .RequireAuthorization(UserRoles.Admin);
 
         group.MapGet("", GetProducts)
-            .WithSummary("Get all Products");
+            .WithSummary("Get all Products")
+            .AllowAnonymous();
         group.MapGet("categories/{category}", GetProductsByCategory)
-            .WithSummary("Get Products by Category");
+            .WithSummary("Get Products by Category")
+            .AllowAnonymous();
         // group.MapGet("categories", GetCategoriesList)
         //     .WithSummary("Get all Categories slugs");
         group.MapGet("{id:int}", GetProductById)
-            .WithSummary("Get Product by Id");
+            .WithSummary("Get Product by Id")
+            .AllowAnonymous();
 
         group.MapPost("", CreateProduct)
-            .WithSummary("Create a new Product")
-            .RequireAuthorization(UserRoles.Admin);
+            .WithSummary("Create a new Product");
         group.MapPut("{id:int}", UpdateProduct)
-            .WithSummary("Update a Product")
-            .RequireAuthorization(UserRoles.Admin);
+            .WithSummary("Update a Product");
         group.MapDelete("{id:int}", DeleteProduct)
-            .WithSummary("Delete a Product")
-            .RequireAuthorization(UserRoles.Admin);
+            .WithSummary("Delete a Product");
 
         group.MapPut("{id:int}/restock", RestockProduct)
-            .WithSummary("Restock a Product")
-            .RequireAuthorization(UserRoles.Admin);
+            .WithSummary("Restock a Product");
 
         return endpoints;
     }
