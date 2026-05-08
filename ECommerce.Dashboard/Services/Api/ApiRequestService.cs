@@ -9,38 +9,21 @@ using Microsoft.Extensions.Options;
 namespace ECommerce.Dashboard.Services.Api;
 
 public class ApiRequestService(
-    IHttpClientFactory clientFactory,
     ILogger<ApiRequestService> logger,
-    SiteAuthService siteAuthService,
-    IOptions<JsonOptions> jsonOptions)
+    IOptions<JsonOptions> jsonOptions,
+    IHttpClientFactory httpClientFactory)
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = jsonOptions.Value.SerializerOptions;
 
     public async Task<Result> SendAsync(ApiRequestOptions options)
     {
-        var tokens = siteAuthService.GetApiTokensFromCookies();
-        
-        if (tokens == null && options.SendToken)
-            return ApiTokensError.MissingCookies;
-
-        var response = await SendAsyncInner(options, tokens?.AccessToken, tokens?.RefreshToken);
-        if (response == null)
-            return ApiTokensError.RefreshToken;
-
+        var response = await SendAsyncInner(options);
         return await ProcessResponse(response);
     }
     
     public async Task<Result<T>> SendAsync<T>(ApiRequestOptions options)
     {
-        var tokens = siteAuthService.GetApiTokensFromCookies();
-        
-        if (tokens == null && options.SendToken)
-            return ApiTokensError.MissingCookies;
-
-        var response = await SendAsyncInner(options, tokens?.AccessToken, tokens?.RefreshToken);
-        if (response == null)
-            return ApiTokensError.RefreshToken;
-
+        var response = await SendAsyncInner(options);
         return await ProcessResponse<T>(response);
     }
     
@@ -49,28 +32,14 @@ public class ApiRequestService(
         var httpClient = httpClientFactory.CreateClient("ApiClient");
         
         var request = new HttpRequestMessage(options.Method, options.Path);
-
+        
         if (options.Body != null)
         {
             var json = JsonSerializer.Serialize(options.Body, _jsonSerializerOptions);
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
         }
 
-        var response = await _httpClient.SendAsync(request);
-
-        if (response.IsSuccessStatusCode || options.ExpectedFailCodes.Contains(response.StatusCode))
-            return response;
-
-        if (response.StatusCode == HttpStatusCode.Unauthorized && options.SendToken && refreshIfExpired)
-        {
-            var login = await RefreshAsync(refreshToken ?? "");
-            if (login == null)
-                return null;
-
-            return await SendAsyncInner(options, login.AccessToken, login.RefreshToken, false);
-        }
-
-        throw new UnexpectedApiResponseException(response.StatusCode);
+        return await httpClient.SendAsync(request);
     }
     
     private async Task<Result> ProcessResponse(HttpResponseMessage response)
@@ -117,6 +86,4 @@ public record ApiRequestOptions
     public required HttpMethod Method { get; init; }
     public required string Path { get; init; }
     public object? Body { get; init; }
-    public HttpStatusCode[] ExpectedFailCodes { get; init; } = [];
-    public bool SendToken { get; init; } = true;
 }
