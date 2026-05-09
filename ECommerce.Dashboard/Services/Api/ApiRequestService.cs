@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 namespace ECommerce.Dashboard.Services.Api;
 
 public class ApiRequestService(
-    ILogger<ApiRequestService> logger,
     IOptions<JsonOptions> jsonOptions,
     IHttpClientFactory httpClientFactory)
 {
@@ -25,6 +24,17 @@ public class ApiRequestService(
     {
         var response = await SendAsyncInner(options);
         return await ProcessResponse<T>(response);
+    }
+    
+    public async Task<T> SendAlwaysSucceedAsync<T>(ApiRequestOptions options)
+    {
+        var response = await SendAsyncInner(options);
+        
+        response.EnsureSuccessStatusCode();
+        
+        var body = await response.Content.ReadFromJsonAsync<T>()
+                   ?? throw new InvalidOperationException("Could not deserialize the response");
+        return body;
     }
     
     private async Task<HttpResponseMessage> SendAsyncInner(ApiRequestOptions options)
@@ -44,6 +54,29 @@ public class ApiRequestService(
     
     private async Task<Result> ProcessResponse(HttpResponseMessage response)
     {
+        var error = await ExtractErrorFromResponse(response);
+        if (error != null)
+            return error;
+        
+        return Result.Success();
+    }
+    
+    private async Task<Result<T>> ProcessResponse<T>(HttpResponseMessage response)
+    {
+        var error = await ExtractErrorFromResponse(response);
+        if (error != null)
+            return error;
+        
+        var body = await response.Content.ReadFromJsonAsync<T>()
+                   ?? throw new InvalidOperationException("Could not deserialize the response");
+        return body;
+    }
+
+    private async Task<Error?> ExtractErrorFromResponse(HttpResponseMessage response)
+    {
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            return new ApiNotFoundResponseError();
+        
         var is400Error = (int)response.StatusCode >= 400 && (int)response.StatusCode < 500;
         if (is400Error && response.StatusCode != HttpStatusCode.Unauthorized)
         {
@@ -52,32 +85,12 @@ public class ApiRequestService(
                 errorBody = await response.Content.ReadFromJsonAsync<ApiErrorResponse>()
                             ?? throw new InvalidOperationException("Could not deserialize the response");
 
-            return new ApiResponseError(response.StatusCode, response.ReasonPhrase, errorBody);
+            return new ApiFailureResponseError(response.StatusCode, response.ReasonPhrase, errorBody);
         }
         
         response.EnsureSuccessStatusCode();
 
-        return Result.Success();
-    }
-    
-    private async Task<Result<T>> ProcessResponse<T>(HttpResponseMessage response)
-    {
-        var isClientError = (int)response.StatusCode >= 400 && (int)response.StatusCode < 500;
-        if (isClientError && response.StatusCode != HttpStatusCode.Unauthorized)
-        {
-            ApiErrorResponse? errorBody = null;
-            if (response.Content.Headers.ContentLength > 0)
-                errorBody = await response.Content.ReadFromJsonAsync<ApiErrorResponse>()
-                            ?? throw new InvalidOperationException("Could not deserialize the response");
-
-            return new ApiResponseError(response.StatusCode, response.ReasonPhrase, errorBody);
-        }
-        
-        response.EnsureSuccessStatusCode();
-        
-        var body = await response.Content.ReadFromJsonAsync<T>()
-                   ?? throw new InvalidOperationException("Could not deserialize the response");
-        return body;
+        return null;
     }
 }
 
