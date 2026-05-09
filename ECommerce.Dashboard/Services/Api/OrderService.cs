@@ -10,7 +10,7 @@ public class OrderService(ApiRequestService apiRequestService)
 {
     private const string OrdersPath = "api/orders";
 
-    public async Task<Result<IEnumerable<OrderResponse>>> GetOrders(PaginationQuery? paginationQuery = null)
+    public async Task<IEnumerable<OrderResponse>> GetOrders(PaginationQuery? paginationQuery = null)
     {
         var query = new StringBuilder("?");
         if (paginationQuery != null)
@@ -22,7 +22,7 @@ public class OrderService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAsync<IEnumerable<OrderResponse>>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<OrderResponse>>(options);
     }
 
     public async Task<Result<OrderResponse>> GetOrderById(int id)
@@ -36,7 +36,7 @@ public class OrderService(ApiRequestService apiRequestService)
         return await apiRequestService.SendAsync<OrderResponse>(options);
     }
 
-    public async Task<Result<IEnumerable<OrderResponse>>> GetOrdersByClient(
+    public async Task<IEnumerable<OrderResponse>> GetOrdersByClient(
         int clientId,
         PaginationQuery? paginationQuery = null)
     {
@@ -50,10 +50,10 @@ public class OrderService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAsync<IEnumerable<OrderResponse>>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<OrderResponse>>(options);
     }
 
-    public async Task<Result<IEnumerable<OrderResponse>>> GetOrdersByProduct(
+    public async Task<IEnumerable<OrderResponse>> GetOrdersByProduct(
         int productId,
         PaginationQuery? paginationQuery = null)
     {
@@ -67,32 +67,6 @@ public class OrderService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAsync<IEnumerable<OrderResponse>>(options);
-    }
-
-    public async Task<Result<IEnumerable<OrderResponse>>> GetMyOrders(PaginationQuery? paginationQuery = null)
-    {
-        var query = new StringBuilder("?");
-        if (paginationQuery != null)
-            query.Append($"limit={paginationQuery.Limit}&page={paginationQuery.Page}");
-
-        var options = new ApiRequestOptions
-        {
-            Path = OrdersPath + "/me" + query,
-            Method = HttpMethod.Get,
-        };
-
-        return await apiRequestService.SendAsync<IEnumerable<OrderResponse>>(options);
-    }
-
-    public async Task<Result<OrderResponse>> GetMyOrderById(int id)
-    {
-        var options = new ApiRequestOptions
-        {
-            Path = OrdersPath + "/me/" + id,
-            Method = HttpMethod.Get,
-        };
-
-        return await apiRequestService.SendAsync<OrderResponse>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<OrderResponse>>(options);
     }
 }

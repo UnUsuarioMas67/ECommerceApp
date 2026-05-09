@@ -10,7 +10,7 @@ public class ProductService(ApiRequestService apiRequestService)
 {
     private const string ProductsPath = "api/products";
 
-    public async Task<Result<IEnumerable<ProductResponse>>> GetProducts(
+    public async Task<IEnumerable<ProductResponse>> GetProducts(
         string? search = null,
         PaginationQuery? paginationQuery = null,
         string? category = null)
@@ -27,7 +27,7 @@ public class ProductService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAsync<IEnumerable<ProductResponse>>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<ProductResponse>>(options);
     }
 
     public async Task<Result<ProductResponse>> GetProductById(int id)

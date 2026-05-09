@@ -10,7 +10,7 @@ public class CategoryService(ApiRequestService apiRequestService)
 {
     private const string CategoryPath = "api/categories";
 
-    public async Task<Result<IEnumerable<CategoryResponse>>> GetCategories(
+    public async Task<IEnumerable<CategoryResponse>> GetCategories(
         string? search = null,
         PaginationQuery? paginationQuery = null)
     {
@@ -24,7 +24,7 @@ public class CategoryService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAsync<IEnumerable<CategoryResponse>>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<CategoryResponse>>(options);
     }
 
     public async Task<Result<CategoryResponse>> GetCategory(int id)

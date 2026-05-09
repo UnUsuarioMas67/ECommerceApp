@@ -21,7 +21,7 @@ public class ClientService(ApiRequestService apiRequestService)
         return await apiRequestService.SendAsync<ClientResponse>(options);
     }
 
-    public async Task<Result<IEnumerable<ClientResponse>>> GetClients(
+    public async Task<IEnumerable<ClientResponse>> GetClients(
         string? search = null,
         PaginationQuery? paginationQuery = null)
     {
@@ -35,17 +35,6 @@ public class ClientService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAsync<IEnumerable<ClientResponse>>(options);
-    }
-
-    public async Task<Result<ClientResponse>> GetAuthClient()
-    {
-        var options = new ApiRequestOptions
-        {
-            Path = ClientsPath + "/me",
-            Method = HttpMethod.Get,
-        };
-
-        return await apiRequestService.SendAsync<ClientResponse>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<ClientResponse>>(options);
     }
 }
