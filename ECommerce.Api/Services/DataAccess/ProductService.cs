@@ -25,7 +25,7 @@ public interface IProductService
     Task<IEnumerable<ProductResponseDto>> GetByCategorySlug(string categorySlug, PaginationQuery pagination,
         string? search = null);
 
-    Task<Result<ProductResponseDto>> Restock(int productId, int newStock);
+    Task<Result<ProductResponseDto>> Restock(int productId, int amount);
 }
 
 public class ProductService(ECommerceContext context, IValidator<Product> validator, ProductMapper mapper)
@@ -129,8 +129,14 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             .ToListAsync();
     }
 
-    public async Task<Result<ProductResponseDto>> Restock(int productId, int newStock)
+    public async Task<Result<ProductResponseDto>> Restock(int productId, int amount)
     {
+        if (amount < 0)
+        {
+            await context.DisposeAsync();
+            return new InvalidProductStockError();
+        }
+        
         var product = await context.Products
             .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == productId);
@@ -138,15 +144,8 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         if (product == null)
             return new NotFoundError();
 
-        if (product.Stock != newStock)
-            product.Stock = newStock;
-
-        if (product.Stock < 0)
-        {
-            await context.DisposeAsync();
-            return new InvalidProductStockError();
-        }
-
+        product.Stock += amount;
+        
         var validation = await validator.ValidateAsync(product);
         if (!validation.IsValid)
         {
