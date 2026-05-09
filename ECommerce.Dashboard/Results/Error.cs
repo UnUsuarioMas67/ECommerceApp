@@ -10,16 +10,7 @@ public record Error(string ErrorType, string Message)
 
 public record LoginCredentialsError() : Error("login_credentials", "Invalid email or password");
 
-public record ApiTokensError : Error
-{
-    private ApiTokensError(string message)
-        : base("api_tokens", message)
-    {
-    }
-
-    public static ApiTokensError MissingCookies => new("Missing API token cookies");
-    public static ApiTokensError RefreshToken => new("Invalid or expired refresh token");
-}
-
-public record ApiResponseError(HttpStatusCode StatusCode, string? Message, ApiErrorResponse? ErrorBody = null)
-    : Error("api_response", Message ?? "API returned failure response");
+public record ApiFailureResponseError(HttpStatusCode StatusCode, string? Message, ApiErrorResponse? ErrorBody = null)
+    : Error("api_error_400", Message ?? "API returned failure response");
+    
+public record ApiNotFoundResponseError() : Error("api_error_404", "API returned NOT FOUND");
