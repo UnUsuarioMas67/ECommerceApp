@@ -1,25 +1,24 @@
 ﻿using System.Net;
 using ECommerce.Dashboard.DTOs.Category;
 using ECommerce.Dashboard.DTOs.Shared;
+using ECommerce.Dashboard.Filters;
 using ECommerce.Dashboard.Models.Categories;
-using ECommerce.Dashboard.Models.Products;
 using ECommerce.Dashboard.Results;
 using ECommerce.Dashboard.Services.Api;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.Dashboard.Controllers;
 
+[Authorize]
+[TypeFilter<HandleApi401Exception>]
 public class CategoriesController(CategoryService categoryService) : Controller
 {
     // GET
     public async Task<IActionResult> Index(int page = 1, string? searchTerm = null)
     {
-        var categoryResult = await categoryService.GetCategories(searchTerm, new PaginationQuery(20, page));
-        if (!categoryResult.IsSuccess)
-            return RedirectToAction("Login", "Account");
-
-        var categories = categoryResult.Value;
-
+        var categories = await categoryService.GetCategories(searchTerm, new PaginationQuery(20, page));
+        
         var viewModel = new CategoryListViewModel
         {
             Categories = categories.ToList(),
@@ -54,11 +53,8 @@ public class CategoriesController(CategoryService categoryService) : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        if (result.Error is ApiTokensError)
-            return RedirectToAction("Login", "Account");
-
-        var responseError = result.Error as ApiResponseError;
-        var errorMessage = responseError?.ErrorBody?.Message ?? throw new InvalidOperationException();
+        var responseError = result.Error as ApiFailureResponseError;
+        var errorMessage = responseError?.ErrorBody.Message;
         TempData["Error"] = errorMessage;
 
         return View(model);
@@ -67,8 +63,6 @@ public class CategoriesController(CategoryService categoryService) : Controller
     public async Task<IActionResult> Edit(int id)
     {
         var categoryResult = await categoryService.GetCategory(id);
-        if (!categoryResult.IsSuccess)
-            return RedirectToAction("Login", "Account");
 
         var category = categoryResult.Value;
 
@@ -102,14 +96,11 @@ public class CategoriesController(CategoryService categoryService) : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        if (result.Error is ApiTokensError)
-            return RedirectToAction("Login", "Account");
-
-        var responseError = result.Error as ApiResponseError;
-        if (responseError?.StatusCode == HttpStatusCode.NotFound)
+        if (result.Error is ApiNotFoundResponseError)
             return RedirectToAction(nameof(NotFound));
         
-        var errorMessage = responseError?.ErrorBody?.Message ?? throw new InvalidOperationException();
+        var responseError = result.Error as ApiFailureResponseError;
+        var errorMessage = responseError?.ErrorBody.Message;
         TempData["Error"] = errorMessage;
 
         return View(model);
@@ -131,18 +122,6 @@ public class CategoriesController(CategoryService categoryService) : Controller
 
         return RedirectToAction(nameof(Index));
     }
-
-    // public async Task<IActionResult> Details(int id)
-    // {
-    //     var result = await categoryService.GetCategoryByIdOrSlug(id.ToString());
-    //     if (result.IsSuccess)
-    //         return View(result.Value);
-    //
-    //     if (result.Error is ApiTokensError)
-    //         return RedirectToAction("Login", "Account");
-    //
-    //     return RedirectToAction(nameof(NotFound));
-    // }
 
     [ActionName("NotFound")]
     public IActionResult ProductNotFound()

@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using ECommerce.Dashboard.DTOs.Product;
 using ECommerce.Dashboard.DTOs.Shared;
+using ECommerce.Dashboard.Filters;
 using ECommerce.Dashboard.Models;
 using ECommerce.Dashboard.Models.Products;
 using ECommerce.Dashboard.Results;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace ECommerce.Dashboard.Controllers;
 
 [Authorize]
+[TypeFilter<HandleApi401Exception>]
 public class ProductsController(ProductService productService, CategoryService categoryService) : Controller
 {
     public async Task<IActionResult> Index(int page = 1, string? searchTerm = null, string? category = null)
@@ -21,15 +23,9 @@ public class ProductsController(ProductService productService, CategoryService c
 
         await Task.WhenAll(categoryTask, productTask);
 
-        var productResult = await productTask;
-        var categoryResult = await categoryTask;
-
-        if (!categoryResult.IsSuccess || !productResult.IsSuccess)
-            return RedirectToAction("Login", "Account");
-
-        var products = productResult.Value;
-        var categories = categoryResult.Value;
-
+        var products = await productTask;
+        var categories = await categoryTask;
+        
         var viewModel = new ProductListViewModel
         {
             Products = products.ToList(),
@@ -46,21 +42,16 @@ public class ProductsController(ProductService productService, CategoryService c
         if (result.IsSuccess)
             return View(result.Value);
 
-        if (result.Error is ApiTokensError)
-            return RedirectToAction("Login", "Account");
-
         return RedirectToAction(nameof(NotFound));
     }
 
     public async Task<IActionResult> Create()
     {
-        var categoryListResult = await categoryService.GetCategories();
-        if (!categoryListResult.IsSuccess)
-            return RedirectToAction("Login", "Account");
+        var categoryList = await categoryService.GetCategories();
 
         var viewModel = new ProductCreateViewModel
         {
-            CategoriesSelect = new SelectList(categoryListResult.Value, "Slug", "Name")
+            CategoriesSelect = new SelectList(categoryList, "Slug", "Name")
         };
 
         return View(viewModel);
@@ -70,11 +61,9 @@ public class ProductsController(ProductService productService, CategoryService c
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(ProductCreateViewModel model)
     {
-        var categoryListResult = await categoryService.GetCategories();
-        if (!categoryListResult.IsSuccess)
-            return RedirectToAction("Login", "Account");
-
-        model.CategoriesSelect = new SelectList(categoryListResult.Value, "Slug", "Name");
+        var categoryList = await categoryService.GetCategories();
+       
+        model.CategoriesSelect = new SelectList(categoryList, "Slug", "Name");
         
         if (!ModelState.IsValid)
             return View(model);
@@ -96,12 +85,9 @@ public class ProductsController(ProductService productService, CategoryService c
             TempData["Success"] = "Product created successfully";
             return RedirectToAction(nameof(Index));
         }
-
-        if (result.Error is ApiTokensError)
-            return RedirectToAction("Login", "Account");
-
-        var responseError = result.Error as ApiResponseError;
-        var errorMessage = responseError?.ErrorBody?.Message ?? throw new InvalidOperationException();
+        
+        var responseError = result.Error as ApiFailureResponseError;
+        var errorMessage = responseError?.ErrorBody.Message;
         TempData["Error"] = errorMessage;
 
         return View(model);
@@ -114,11 +100,9 @@ public class ProductsController(ProductService productService, CategoryService c
 
         await Task.WhenAll(categoryListTask, productTask);
 
-        var categoryListResult = await categoryListTask;
+        var categoryList = await categoryListTask;
         var productResult = await productTask;
-
-        if (!categoryListResult.IsSuccess || (!productResult.IsSuccess && productResult.Error is ApiTokensError))
-            return RedirectToAction("Login", "Account");
+        
         if (!productResult.IsSuccess)
             return RedirectToAction(nameof(NotFound));
 
@@ -133,7 +117,7 @@ public class ProductsController(ProductService productService, CategoryService c
             Description = product.Description,
             Price = product.Price,
             ImageUrl = product.ImageUrl,
-            CategoriesSelect = new SelectList(categoryListResult.Value, "Slug", "Name", product.Category?.Slug)
+            CategoriesSelect = new SelectList(categoryList, "Slug", "Name", product.Category?.Slug)
         };
 
         return View(model);
@@ -143,11 +127,9 @@ public class ProductsController(ProductService productService, CategoryService c
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, ProductUpdateViewModel model)
     {
-        var categoryListResult = await categoryService.GetCategories();
-        if (!categoryListResult.IsSuccess)
-            return RedirectToAction("Login", "Account");
-
-        model.CategoriesSelect = new SelectList(categoryListResult.Value, "Slug", "Name", model.Category);
+        var categoryList = await categoryService.GetCategories();
+      
+        model.CategoriesSelect = new SelectList(categoryList, "Slug", "Name", model.Category);
 
         if (!ModelState.IsValid)
             return View(model);
@@ -168,14 +150,11 @@ public class ProductsController(ProductService productService, CategoryService c
             return RedirectToAction(nameof(Index));
         }
 
-        if (result.Error is ApiTokensError)
-            return RedirectToAction("Login", "Account");
-
-        var responseError = result.Error as ApiResponseError;
-        if (responseError?.StatusCode == HttpStatusCode.NotFound)
+        if (result.Error is ApiNotFoundResponseError)
             return RedirectToAction(nameof(NotFound));
 
-        var errorMessage = responseError?.ErrorBody?.Message ?? throw new InvalidOperationException();
+        var responseError = result.Error as ApiFailureResponseError;
+        var errorMessage = responseError?.ErrorBody.Message;
         TempData["Error"] = errorMessage;
 
         return View(model);
