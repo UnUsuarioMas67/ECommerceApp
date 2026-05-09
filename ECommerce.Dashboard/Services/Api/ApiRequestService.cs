@@ -80,9 +80,7 @@ public class ApiRequestService(
         var is400Error = (int)response.StatusCode >= 400 && (int)response.StatusCode < 500;
         if (is400Error && response.StatusCode != HttpStatusCode.Unauthorized)
         {
-            ApiErrorResponse? errorBody = null;
-            if (response.Content.Headers.ContentLength > 0)
-                errorBody = await response.Content.ReadFromJsonAsync<ApiErrorResponse>()
+            var errorBody = await response.Content.ReadFromJsonAsync<ApiErrorResponse>()
                             ?? throw new InvalidOperationException("Could not deserialize the response");
 
             return new ApiFailureResponseError(response.StatusCode, response.ReasonPhrase, errorBody);

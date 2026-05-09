@@ -10,7 +10,7 @@ public record Error(string ErrorType, string Message)
 
 public record LoginCredentialsError() : Error("login_credentials", "Invalid email or password");
 
-public record ApiFailureResponseError(HttpStatusCode StatusCode, string? Message, ApiErrorResponse? ErrorBody = null)
+public record ApiFailureResponseError(HttpStatusCode StatusCode, string? Message, ApiErrorResponse ErrorBody)
     : Error("api_error_400", Message ?? "API returned failure response");
     
 public record ApiNotFoundResponseError() : Error("api_error_404", "API returned NOT FOUND");
