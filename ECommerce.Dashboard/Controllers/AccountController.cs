@@ -51,7 +51,7 @@ public class AccountController(AuthService authService, CookieHelperService cook
         return RedirectToAction("Index", "Home");
     }
 
-    [HttpGet]
+    [HttpPost]
     public async Task<IActionResult> Logout()
     {
         await authService.LogoutAsync();
