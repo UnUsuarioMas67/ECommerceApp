@@ -25,7 +25,10 @@ public class AccountController(AuthService authService, CookieHelperService cook
 
         var loginResult = await authService.LoginAsync(model.LoginRequest);
         if (!loginResult.IsSuccess)
+        {
+            TempData["Error"] = loginResult.Error.Message;
             return View(model);
+        }
 
         var login = loginResult.Value;
         
