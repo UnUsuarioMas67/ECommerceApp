@@ -1,0 +1,56 @@
+﻿@model ECommerce.Dashboard.Models.Clients.ClientListViewModel
+@{
+    ViewData["Title"] = "Clients";
+}
+
+<div class="mb-3 row">
+    <div class="col">
+        <h1 class="m-0">Clients</h1>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="mb-5">
+    <form asp-action="Index" method="get">
+        <div class="mb-3 input-group">
+            <input asp-for="SearchTerm" class="form-control" placeholder="Search by name">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Birth Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var client in Model.Clients)
+        {
+            <tr>
+                <th scope="row">@client.Id</th>
+                <td>
+                    <a asp-action="Details" asp-route-id="@client.Id">@client.FirstName @client.LastName</a>
+                </td>
+                <td>@client.Email</td>
+                <td>@client.PhoneNumber</td>
+                <td>@client.BirthDate.ToString("yyyy-MM-dd")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
