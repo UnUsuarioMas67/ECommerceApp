@@ -28,6 +28,9 @@ public class OrderService(
     {
         var query = context.ShopOrders
             .AsNoTracking()
+            .Include(o => o.Client)
+            .Include(o => o.Address)
+            .ThenInclude(a => a.Country)
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Where(o => o.Id == orderId);
@@ -44,6 +47,9 @@ public class OrderService(
     {
         var orders = await context.ShopOrders
             .AsNoTracking()
+            .Include(o => o.Client)
+            .Include(o => o.Address)
+            .ThenInclude(a => a.Country)
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .OrderByDescending(o => o.OrderDate)
@@ -58,6 +64,9 @@ public class OrderService(
     {
         var orders = await context.ShopOrders
             .AsNoTracking()
+            .Include(o => o.Client)
+            .Include(o => o.Address)
+            .ThenInclude(a => a.Country)
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Where(o => o.ClientId == clientId)
@@ -73,6 +82,9 @@ public class OrderService(
     {
         var orders = await context.ShopOrders
             .AsNoTracking()
+            .Include(o => o.Client)
+            .Include(o => o.Address)
+            .ThenInclude(a => a.Country)
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Where(o => o.Items.Any(i => i.ProductId == productId))

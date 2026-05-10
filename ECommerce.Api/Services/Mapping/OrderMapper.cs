@@ -3,7 +3,7 @@ using ECommerce.Api.Entities;
 
 namespace ECommerce.Api.Services.Mapping;
 
-public class OrderMapper
+public class OrderMapper(AddressMapper addressMapper)
 {
     public OrderResponseDto MapToDto(ShopOrder order)
     {
@@ -11,7 +11,9 @@ public class OrderMapper
         {
             Id = order.Id,
             ClientId = order.ClientId,
-            AddressId = order.AddressId,
+            ClientEmail = order.Client?.Email,
+            ClientName = order.Client != null ? order.Client.FirstName + " " + order.Client.LastName : null,
+            Address = addressMapper.MapToDto(order.Address),
             OrderDate = order.OrderDate,
             Status = OrderStatuses.GetStatusName(order.StatusId),
             Items = order.Items.Select(MapLineToDto).ToList()
