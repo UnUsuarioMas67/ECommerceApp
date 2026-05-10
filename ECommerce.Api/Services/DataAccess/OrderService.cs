@@ -46,6 +46,7 @@ public class OrderService(
             .AsNoTracking()
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
+            .OrderByDescending(o => o.OrderDate)
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
             .Take(pagination.LimitOrDefault)
             .ToListAsync();
@@ -60,6 +61,7 @@ public class OrderService(
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Where(o => o.ClientId == clientId)
+            .OrderByDescending(o => o.OrderDate)
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
             .Take(pagination.LimitOrDefault)
             .ToListAsync();
@@ -74,6 +76,7 @@ public class OrderService(
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Where(o => o.Items.Any(i => i.ProductId == productId))
+            .OrderByDescending(o => o.OrderDate)
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
             .Take(pagination.LimitOrDefault)
             .ToListAsync();
