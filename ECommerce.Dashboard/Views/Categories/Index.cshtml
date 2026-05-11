@@ -28,7 +28,7 @@
             <button type="submit" class="btn btn-primary">Search</button>
         </div>
     </form>
-    
+
     <div class="mb-3">
         <a asp-controller="Products" asp-action="Index">Back to Products</a>
     </div>
@@ -52,11 +52,15 @@
                 <td>@category.Slug</td>
                 <td>@category.Name</td>
                 <td>
-                    <a asp-controller="Products" asp-action="Index" asp-route-category="@category.Slug" class="btn btn-sm btn-outline-primary">View Products</a>
+                    <a asp-controller="Products" asp-action="Index" asp-route-category="@category.Slug"
+                       class="btn btn-sm btn-outline-primary">View Products</a>
                     <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-sm btn-outline-primary">Edit</a>
                     <form asp-action="Delete" asp-route-id="@category.Id" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Are you sure?')">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
                     </form>
                 </td>
             </tr>
