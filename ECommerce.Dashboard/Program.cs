@@ -40,6 +40,7 @@ builder.Services.AddSingleton<CookieHelperService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ApiRequestService>();
 
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<OrderService>();
