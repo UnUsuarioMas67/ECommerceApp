@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using ECommerce.Dashboard.DTOs.Auth;
 using ECommerce.Dashboard.Models.Auth;
 using ECommerce.Dashboard.Services;
 using ECommerce.Dashboard.Services.Api;
@@ -23,7 +24,13 @@ public class AccountController(AuthService authService, CookieHelperService cook
         if (!ModelState.IsValid)
             return View(model);
 
-        var loginResult = await authService.LoginAsync(model.LoginRequest);
+        var request = new UserLoginRequest
+        {
+            Email = model.Email,
+            Password = model.Password,
+        };
+
+        var loginResult = await authService.LoginAsync(request);
         if (!loginResult.IsSuccess)
         {
             TempData["Error"] = loginResult.Error.Message;
