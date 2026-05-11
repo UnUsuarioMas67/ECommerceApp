@@ -52,6 +52,7 @@ public class StripeCheckoutService : IStripeCheckoutService
 
         var client = await _context.Clients
             .Include(cl => cl.Addresses)
+            .ThenInclude(a => a.Country)
             .Include(cl => cl.Carts)
             .ThenInclude(c => c.Items)
             .ThenInclude(i => i.Product)
