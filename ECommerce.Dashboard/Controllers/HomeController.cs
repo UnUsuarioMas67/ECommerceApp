@@ -10,7 +10,7 @@ public class HomeController(ILogger<HomeController> logger) : Controller
 {
     private readonly ILogger<HomeController> _logger = logger;
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
         return View();
     }
