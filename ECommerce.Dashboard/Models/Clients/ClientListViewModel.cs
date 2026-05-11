@@ -1,4 +1,4 @@
-using ECommerce.Dashboard.DTOs.User;
+using ECommerce.Dashboard.DTOs.Client;
 
 namespace ECommerce.Dashboard.Models.Clients;
 

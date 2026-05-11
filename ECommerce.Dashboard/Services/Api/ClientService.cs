@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text;
+using ECommerce.Dashboard.DTOs.Client;
 using ECommerce.Dashboard.DTOs.Shared;
-using ECommerce.Dashboard.DTOs.User;
 using ECommerce.Dashboard.Results;
 
 namespace ECommerce.Dashboard.Services.Api;

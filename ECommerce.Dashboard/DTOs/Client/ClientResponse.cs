@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Dashboard.DTOs.User;
+﻿namespace ECommerce.Dashboard.DTOs.Client;
 
 public class ClientResponse
 {
