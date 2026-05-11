@@ -1,5 +1,4 @@
 ﻿using ECommerce.Dashboard.DTOs.User;
-using ECommerce.Dashboard.Models.Auth;
 
 namespace ECommerce.Dashboard.DTOs.Auth;
 

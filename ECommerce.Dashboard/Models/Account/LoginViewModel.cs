@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.Dashboard.Models.Auth;
+namespace ECommerce.Dashboard.Models.Account;
 
 public class LoginViewModel
 {

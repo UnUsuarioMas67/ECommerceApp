@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using ECommerce.Dashboard.DTOs.Auth;
 using ECommerce.Dashboard.Models.Auth;
+using ECommerce.Dashboard.Models.Account;
 using ECommerce.Dashboard.Services;
 using ECommerce.Dashboard.Services.Api;
 using Microsoft.AspNetCore.Authentication;
