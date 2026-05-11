@@ -1,0 +1,90 @@
+@model ECommerce.Dashboard.Models.Orders.OrderListViewModel
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<div class="mb-3 row">
+    <div class="col">
+        <h1 class="m-0">Orders</h1>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="mb-5">
+    <form asp-action="Index" method="get">
+        <div class="mb-3 input-group">
+            <select class="form-select" asp-for="Status" style="max-width: 200px;">
+                <option selected value="">- All Statuses -</option>
+                <option value="PENDING">Pending</option>
+                <option value="PAID">Paid</option>
+                <option value="EXPIRED">Expired</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Client</th>
+            <th scope="col">Date</th>
+            <th scope="col">Status</th>
+            <th scope="col">Total</th>
+            <th scope="col">Products</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var order in Model.Orders)
+        {
+            <tr>
+                <th scope="row">@order.Id</th>
+                <td>
+                    <div>@order.ClientName</div>
+                    <div class="small text-muted">@order.ClientEmail</div>
+                </td>
+                <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>
+                    <span class="badge @GetStatusBadgeClass(order.Status)">@order.Status</span>
+                </td>
+                <td>$ @order.TotalPrice</td>
+                <td>@order.TotalProducts</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">Details</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.Orders.Any() == false)
+{
+    <div class="text-center text-muted py-5">
+        <p>No orders found.</p>
+    </div>
+}
+
+@{
+    string GetStatusBadgeClass(string status)
+    {
+        return status.ToLower() switch
+        {
+            "pending" => "bg-warning text-dark",
+            "paid" => "bg-success",
+            "expired" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}

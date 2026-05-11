@@ -1,0 +1,115 @@
+@model ECommerce.Dashboard.DTOs.Order.OrderResponse
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="m-0">Order #@Model.Id</h5>
+                <span class="badge @GetStatusBadgeClass(Model.Status)">@Model.Status</span>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Order Date</dt>
+                    <dd class="col-sm-9">@Model.OrderDate.ToString("yyyy-MM-dd HH:mm:ss")</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="m-0">Client Information</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Id</dt>
+                    <dd class="col-sm-9">@Model.ClientId</dd>
+                    
+                    <dt class="col-sm-3">Name</dt>
+                    <dd class="col-sm-9">@Model.ClientName</dd>
+
+                    <dt class="col-sm-3">Email</dt>
+                    <dd class="col-sm-9">@Model.ClientEmail</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="m-0">Shipping Address</h5>
+            </div>
+            <div class="card-body">
+                <address class="mb-0">
+                    @Model.Address.AddressLine1<br>
+                    @if (!string.IsNullOrEmpty(Model.Address.AddressLine2))
+                    {
+                        @Model.Address.AddressLine2<br>
+                    }
+                    @Model.Address.City, @Model.Address.Region<br>
+                    @Model.Address.PostalCode, @Model.Address.Country
+                </address>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="m-0">Order Summary</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <div>@item.ProductName</div>
+                                <div class="small text-muted">@item.ProductSku</div>
+                            </td>
+                            <td class="text-end">
+                                <div>@item.Quantity x $ @item.UnitPrice</div>
+                                <div class="fw-bold">$ @item.Subtotal</div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                    <tfoot class="table-dark">
+                        <tr>
+                            <td>Total</td>
+                            <td class="text-end"><strong>$ @Model.TotalPrice</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    string GetStatusBadgeClass(string status)
+    {
+        return status.ToLower() switch
+        {
+            "pending" => "bg-warning text-dark",
+            "paid" => "bg-success",
+            "expired" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}
