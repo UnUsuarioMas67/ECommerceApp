@@ -1,6 +1,4 @@
-﻿using ECommerce.Dashboard.DTOs;
-using ECommerce.Dashboard.DTOs.User;
-using ECommerce.Dashboard.Models.Auth;
+﻿using ECommerce.Dashboard.DTOs.User;
 using ECommerce.Dashboard.Results;
 
 namespace ECommerce.Dashboard.Services.Api;
