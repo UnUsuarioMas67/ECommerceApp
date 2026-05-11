@@ -1,8 +1,7 @@
-﻿using System.Globalization;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text.Json;
 using ECommerce.Dashboard.DTOs.Auth;
-using ECommerce.Dashboard.Models.Auth;
+using ECommerce.Dashboard.DTOs.User;
 using ECommerce.Dashboard.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -41,7 +40,7 @@ public class ApiTokenRefreshHandler(RequestDelegate next, CookieHelperService co
         await RefreshSignInAsync(login.User, context);
     }
 
-    private async Task RefreshSignInAsync(AdminUser user, HttpContext context)
+    private async Task RefreshSignInAsync(AdminUserResponse user, HttpContext context)
     {
         var identity = new ClaimsIdentity([
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),

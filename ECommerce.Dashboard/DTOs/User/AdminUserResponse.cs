@@ -1,6 +1,6 @@
-﻿namespace ECommerce.Dashboard.Models.Auth;
+﻿namespace ECommerce.Dashboard.DTOs.User;
 
-public class AdminUser
+public class AdminUserResponse
 {
     public int Id { get; set; }
     public string FirstName { get; set; } = string.Empty;

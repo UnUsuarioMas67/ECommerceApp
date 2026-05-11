@@ -9,7 +9,7 @@ public class UserService(ApiRequestService apiRequestService)
 {
     private const string AdminPath = "api/admins";
     
-    public async Task<AdminUser> GetCurrent()
+    public async Task<AdminUserResponse> GetCurrent()
     {
         var options = new ApiRequestOptions
         {
@@ -17,10 +17,10 @@ public class UserService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
         
-        return await apiRequestService.SendAlwaysSucceedAsync<AdminUser>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<AdminUserResponse>(options);
     }
 
-    public async Task<Result<AdminUser>> UpdateUser(AdminUserUpdate request)
+    public async Task<Result<AdminUserResponse>> UpdateUser(AdminUserUpdate request)
     {
         var options = new ApiRequestOptions
         {
@@ -29,6 +29,6 @@ public class UserService(ApiRequestService apiRequestService)
             Body = request
         };
         
-        return await apiRequestService.SendAsync<AdminUser>(options);
+        return await apiRequestService.SendAsync<AdminUserResponse>(options);
     }
 }
