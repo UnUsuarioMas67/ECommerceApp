@@ -43,10 +43,14 @@
         </dl>
 
         <div class="mt-3">
-            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" title="Edit product" class="btn btn-primary">
+                <i class="bi bi-pencil-fill"></i>
+            </a>
             <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
                 @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                <button type="submit" class="btn btn-danger" title="Delete product" onclick="return confirm('Are you sure?')">
+                    <i class="bi bi-trash-fill"></i>
+                </button>
             </form>
         </div>
 
@@ -59,7 +63,9 @@
                 <input type="number" name="amount" class="form-control" placeholder="Amount" min="1" required>
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-success">Restock</button>
+                <button type="submit" class="btn btn-success" title="Add stock">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
             </div>
         </form>
     </div>

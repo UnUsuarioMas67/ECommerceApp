@@ -24,7 +24,7 @@
 <div class="mb-5">
     <form asp-action="Index" method="get">
         <div class="mb-3 input-group">
-            <input asp-for="SearchTerm" class="form-control">
+            <input asp-for="SearchTerm" class="form-control" placeholder="Search categories">
             <button type="submit" class="btn btn-primary">Search</button>
         </div>
     </form>
@@ -41,7 +41,7 @@
             <th scope="col">Id</th>
             <th scope="col">Slug</th>
             <th scope="col">Name</th>
-            <th scope="col">Actions</th>
+            <th scope="col" class="text-center">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -51,13 +51,17 @@
                 <th scope="row">@category.Id</th>
                 <td>@category.Slug</td>
                 <td>@category.Name</td>
-                <td>
+                <td class="text-center">
                     <a asp-controller="Products" asp-action="Index" asp-route-category="@category.Slug"
-                       class="btn btn-sm btn-outline-primary">View Products</a>
-                    <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                       class="btn btn-sm btn-outline-primary">
+                        View Products
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-sm btn-outline-primary" title="Edit category">
+                        <i class="bi bi-pencil-fill"></i>
+                    </a>
                     <form asp-action="Delete" asp-route-id="@category.Id" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete category"
                                 onclick="return confirm('Are you sure?')">
                             <i class="bi bi-trash-fill"></i>
                         </button>

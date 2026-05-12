@@ -39,10 +39,10 @@
             <th scope="col">#</th>
             <th scope="col">Client</th>
             <th scope="col">Date</th>
-            <th scope="col">Status</th>
-            <th scope="col">Total</th>
-            <th scope="col">Products</th>
-            <th scope="col">Actions</th>
+            <th scope="col" class="text-center">Status</th>
+            <th scope="col" class="text-center">Total</th>
+            <th scope="col" class="text-center">Products</th>
+            <th scope="col" class="text-center">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -55,13 +55,15 @@
                     <div class="small text-muted">@order.ClientEmail</div>
                 </td>
                 <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
-                <td>
+                <td class="text-center">
                     <span class="badge @GetStatusBadgeClass(order.Status)">@order.Status</span>
                 </td>
-                <td>$ @order.TotalPrice</td>
-                <td>@order.TotalProducts</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">Details</a>
+                <td class="text-center">$ @order.TotalPrice</td>
+                <td class="text-center">@order.TotalProducts</td>
+                <td class="text-center">
+                    <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary">
+                        Details
+                    </a>
                 </td>
             </tr>
         }

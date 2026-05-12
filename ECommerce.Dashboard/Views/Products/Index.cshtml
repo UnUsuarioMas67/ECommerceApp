@@ -24,7 +24,7 @@
 <div class="mb-5">
     <form asp-action="Index" method="get">
         <div class="mb-3 input-group">
-            <input asp-for="SearchTerm" class="form-control">
+            <input asp-for="SearchTerm" class="form-control" placeholder="Search products">
             <button type="submit" class="btn btn-primary">Search</button>
         </div>
 
@@ -48,9 +48,9 @@
             <th scope="col">Sku</th>
             <th scope="col">Name</th>
             <th scope="col">Category</th>
-            <th scope="col">Price</th>
-            <th scope="col">Stock</th>
-            <th scope="col">Actions</th>
+            <th class="text-center" scope="col">Price</th>
+            <th class="text-center" scope="col">Stock</th>
+            <th class="text-center" scope="col">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -63,18 +63,20 @@
                     <a asp-action="Details" asp-route-id="@product.Id">@product.Name</a>
                 </td>
                 <td>@product.Category?.Name</td>
-                <td>$ @product.Price</td>
+                <td class="text-center">$ @product.Price</td>
 
                 @if (product.Stock == 0)
                 {
-                    <td class="text-danger">@product.Stock</td>
+                    <td class="text-danger text-center">@product.Stock</td>
                 }
                 else
                 {
-                    <td>@product.Stock</td>
+                    <td class="text-center">@product.Stock</td>
                 }
-                <td>
-                    <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                <td class="text-center">
+                    <a asp-action="Edit" asp-route-id="@product.Id" title="Edit product" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil-fill"></i>
+                    </a>
                 </td>
             </tr>
         }
