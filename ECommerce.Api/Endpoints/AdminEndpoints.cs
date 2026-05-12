@@ -63,7 +63,7 @@ public static class AdminEndpoints
         return admin != null ? TypedResults.Ok(admin) : TypedResults.NotFound();
     }
 
-    private static async Task<Results<Ok<UserResponseDto>, BadRequest<ErrorDto>, NotFound,
+    private static async Task<Results<Ok<UserResponseDto>, BadRequest<ErrorDto>,
             UnauthorizedHttpResult, UnprocessableEntity<ErrorDto>>>
         UpdateAdmin(
             HttpContext context,
@@ -92,7 +92,7 @@ public static class AdminEndpoints
         };
     }
 
-    private static async Task<Results<Ok<UserResponseDto>, NotFound, UnauthorizedHttpResult>> DeleteAdmin(
+    private static async Task<Results<Ok<UserResponseDto>, UnauthorizedHttpResult>> DeleteAdmin(
         HttpContext context,
         IAdminsService adminsService,
         int id)
