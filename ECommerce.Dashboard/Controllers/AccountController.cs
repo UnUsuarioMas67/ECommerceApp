@@ -15,12 +15,12 @@ public class AccountController(AuthService authService, CookieHelperService cook
     [HttpGet]
     public IActionResult Login()
     {
-        var model = new LoginViewModel();
+        var model = new LoginModel();
         return View(model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model)
+    public async Task<IActionResult> Login(LoginModel model)
     {
         if (!ModelState.IsValid)
             return View(model);

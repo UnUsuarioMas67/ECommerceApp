@@ -2,7 +2,7 @@
 
 namespace ECommerce.Dashboard.Models.Account;
 
-public class LoginViewModel
+public class LoginModel
 {
     [EmailAddress]
     [DataType(DataType.EmailAddress)]
