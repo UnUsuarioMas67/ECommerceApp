@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -31,6 +32,32 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Orders</a>
                     </li>
                 </ul>
+                
+                <div class="navbar-nav">
+                    <div class="nav-item dropdown">
+                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            @Context.User.FindFirstValue(ClaimTypes.Name)
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                
+                                <a asp-controller="Account" asp-action="Settings" class="dropdown-item">
+                                    <i class="bi bi-gear-fill"></i>
+                                    Account Settings
+                                </a>
+                            </li>
+                            <hr class="my-2">
+                            <li>
+                                <form method="post" asp-controller="Account" asp-action="Logout">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-door-closed-fill"></i>
+                                        Sign Out
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
