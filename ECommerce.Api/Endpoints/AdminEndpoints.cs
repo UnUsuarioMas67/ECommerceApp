@@ -24,9 +24,9 @@ public static class AdminEndpoints
             .WithSummary("Get authenticated admin");
         group.MapGet("{id:int}", GetAdminById)
             .WithSummary("Get admin by id");
-        group.MapPut("{id:int}", UpdateAdmin)
+        group.MapPut("", UpdateAdmin)
             .WithSummary("Update admin");
-        group.MapDelete("{id:int}", DeleteAdmin)
+        group.MapDelete("", DeleteAdmin)
             .WithSummary("Delete admin");
 
         return endpoints;
@@ -68,7 +68,6 @@ public static class AdminEndpoints
         UpdateAdmin(
             HttpContext context,
             IAdminsService adminsService,
-            int id,
             UserUpdateDto dto,
             IValidator<UserUpdateDto> validator)
     {
@@ -94,8 +93,7 @@ public static class AdminEndpoints
 
     private static async Task<Results<Ok<UserResponseDto>, UnauthorizedHttpResult>> DeleteAdmin(
         HttpContext context,
-        IAdminsService adminsService,
-        int id)
+        IAdminsService adminsService)
     {
         var adminId = AuthUser.GetAuthUserId(context);
         if (adminId == null)
