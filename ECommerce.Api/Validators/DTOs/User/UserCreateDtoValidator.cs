@@ -24,6 +24,11 @@ public class UserCreateDtoValidator : AbstractValidator<UserCreateDto>
         RuleFor(u => u.Password)
             .NotEmpty()
             .MinimumLength(TextLengthRules.PasswordMinLenght);
+        
+        RuleFor(u => u.PasswordConfirm)
+            .NotEmpty()
+            .Equal(u => u.Password)
+            .WithMessage("Password and confirmation password do not match.");
 
         RuleFor(u => u.Email)
             .EmailAddress()
