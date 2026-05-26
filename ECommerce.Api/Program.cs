@@ -21,6 +21,15 @@ builder.Services.AddStripeSettings(builder.Configuration.GetSection("Stripe"));
 builder.Services.AddValidators();
 builder.Services.AddObjectMappers();
 builder.Services.AddApiServices();
+builder.Services.AddCors(o =>
+{
+    o.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin();
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -43,9 +52,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapApiEndpoints();
+
+app.UseCors();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapApiEndpoints();
 
 app.Run();
