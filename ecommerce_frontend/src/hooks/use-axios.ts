@@ -10,7 +10,7 @@ export type ApiRequestError = {
 type ExternalAxiosRequestConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
 export function useAxios() {
-  const context = useAuth();
+  const { getAccessToken } = useAuth();
 
   const axiosInstance = useMemo(() => {
     const instance = axios.create({
@@ -19,7 +19,7 @@ export function useAxios() {
 
     instance.interceptors.request.use(async (config: ExternalAxiosRequestConfig) => {
       console.log('request interceptor in use');
-      const accessToken = await context.getAccessToken();
+      const accessToken = await getAccessToken();
       if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`;
       }
@@ -27,7 +27,7 @@ export function useAxios() {
     });
 
     return instance;
-  }, [context]);
+  }, [getAccessToken]);
 
   return axiosInstance;
 }
