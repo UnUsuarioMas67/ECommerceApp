@@ -1,7 +1,6 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { AuthContext } from './AuthContext';
 import axios from 'axios';
-
 import type { UserAuth, User } from '../../../types/api-types';
 
 type AuthState = {
@@ -10,112 +9,108 @@ type AuthState = {
   expiresAt: number;
 };
 
+const axiosInstance = axios.create({ baseURL: 'http://localhost:5113/api' });
+
 function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [authState, setAuthState] = useState<AuthState | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(sessionStorage.getItem('refreshToken'));
-
-  const refreshPromiseRef = useRef<Promise<UserAuth | null> | null>(null);
+  const [auth, setAuth] = useState<AuthState | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const refreshPromiseRef = useRef<Promise<UserAuth | null>>(null);
 
-  const logout = useCallback(() => {
-    sessionStorage.removeItem('refreshToken');
-    if (refreshToken) setRefreshToken(null);
-    if (authState) setAuthState(null);
-  }, [authState, refreshToken]);
+  const setRefreshToken = useCallback((rt: string) => {
+    localStorage.setItem('refreshToken', rt);
+  }, []);
 
-  const login = (userTokens: UserAuth) => {
-    setAuthState({
-      token: userTokens.accessToken,
-      user: userTokens.user,
-      expiresAt: Date.parse(userTokens.expiresAt),
-    });
-    setRefreshToken(userTokens.refreshToken);
-    sessionStorage.setItem('refreshToken', userTokens.refreshToken);
-  };
+  const getRefreshToken = useCallback(() => {
+    return localStorage.getItem('refreshToken');
+  }, []);
 
-  const performRefresh = useCallback(async (rt: string): Promise<UserAuth | null> => {
+  const setCredentials = useCallback(
+    (auth: UserAuth) => {
+      setRefreshToken(auth.refreshToken);
+      setAuth({ token: auth.accessToken, user: auth.user, expiresAt: Date.parse(auth.expiresAt) });
+    },
+    [setRefreshToken],
+  );
+
+  const clearCredentials = useCallback(() => {
+    setAuth(null);
+    localStorage.removeItem('refreshToken');
+  }, []);
+
+  const fetchRefresh = useCallback(async (rt: string) => {
     if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+      abortControllerRef.current.abort('New refresh request sended.');
     }
 
     abortControllerRef.current = new AbortController();
 
     try {
-      const response = await axios.post<UserAuth>(
-        'http://localhost:5113/api/clients/refresh',
+      const response = await axiosInstance.post<UserAuth>(
+        '/clients/refresh',
         { refreshToken: rt },
-        {
-          signal: abortControllerRef.current.signal,
-          validateStatus: (status) => {
-            const isSuccess = status >= 200 || status < 300;
-            const isUnauthorized = status === 401;
-            return isSuccess || isUnauthorized;
-          },
-        },
+        { signal: abortControllerRef.current.signal },
       );
 
-      // If the refresh token is invalid or expired, the server will respond with 401 Unauthorized
-      if (response.status === 401) {
-        console.log('Invalid or expired refresh token');
-        return null;
-      }
-
-      const userTokens = response.data;
-
-      console.log(userTokens);
-      return userTokens;
+      return response.data;
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.log('Refresh cancelled');
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        console.log('Refresh request failed. Invalid token.');
+      } else {
+        throw error;
       }
 
-      throw error;
+      return null;
+    } finally {
+      abortControllerRef.current = null;
     }
   }, []);
 
-  const getValidToken = useCallback(async (): Promise<string | null> => {
+  const getAccessToken = useCallback(async () => {
     if (refreshPromiseRef.current) {
-      const userTokens = await refreshPromiseRef.current;
-      return userTokens?.accessToken ?? null;
+      const newAuth = await refreshPromiseRef.current;
+      return newAuth?.accessToken ?? null;
     }
 
     const isTokenExpired = () => {
-      if (!authState?.expiresAt) return true;
-      return authState.expiresAt >= Date.now();
+      if (!auth?.expiresAt) return true;
+
+      return auth?.expiresAt < Date.now();
     };
 
-    if (authState && !isTokenExpired()) return authState.token;
+    if (auth && !isTokenExpired()) return auth.token;
+
+    const refreshToken = getRefreshToken();
 
     if (!refreshToken) {
-      logout();
+      clearCredentials();
+      console.error('No refresh token found');
       return null;
     }
 
-    refreshPromiseRef.current = performRefresh(refreshToken).finally(() => {
-      refreshPromiseRef.current = null;
-    });
+    refreshPromiseRef.current = fetchRefresh(refreshToken).finally(() => (refreshPromiseRef.current = null));
 
-    const userTokens = await refreshPromiseRef.current;
-    if (!userTokens) {
-      logout();
-      return null;
+    const newAuth = await refreshPromiseRef.current;
+    if (newAuth) {
+      setCredentials(newAuth);
+      console.log('Refresh attempt successful');
+      return newAuth.accessToken;
     }
 
-    login(userTokens);
-    return userTokens.accessToken;
-  }, [authState, refreshToken, performRefresh, logout]);
+    console.error('Invalid refresh token');
+    clearCredentials();
+    return null;
+  }, [auth, clearCredentials, fetchRefresh, getRefreshToken, setCredentials]);
 
   return (
-    <AuthContext
+    <AuthContext.Provider
       value={{
-        login: login,
-        logout: logout,
-        getValidToken,
-        getUser: () => authState?.user ?? null,
-        isAuthenticated: () => !!getValidToken(),
+        currentUser: auth?.user ?? null,
+        getAccessToken,
+        setCredentials,
+        clearCredentials,
       }}>
       {children}
-    </AuthContext>
+    </AuthContext.Provider>
   );
 }
 
