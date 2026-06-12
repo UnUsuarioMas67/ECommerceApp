@@ -7,9 +7,9 @@ import Button from 'react-bootstrap/Button';
 
 function NavbarComponent() {
   return (
-    <Navbar expand="lg" className="bg-dark mb-4" data-bs-theme="dark">
+    <Navbar expand="lg" className="bg-dark mb-4 py-3" data-bs-theme="dark">
       <Container>
-        <Navbar.Brand href="#home">ECommerce</Navbar.Brand>
+        <Navbar.Brand className='fw-bold'>ECommerce</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
