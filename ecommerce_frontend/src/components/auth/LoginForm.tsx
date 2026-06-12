@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { loginSchema, type LoginRequest } from '../../schemas/account';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import { useLogin } from '../../hooks/user';
 import { useNavigate } from 'react-router';
 import { isAxiosError } from 'axios';
@@ -11,14 +11,6 @@ import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 
 import type { SubmitHandler } from 'react-hook-form';
-
-const loginSchema = z.object({
-  email: z.email({ error: (iss) => (iss.input === '' ? 'Email is required' : 'Invalid email address') }),
-  password: z.string().min(1, 'Password is required'),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
-
 function handleLoginErrorMsg(error: Error): string {
   if (isAxiosError(error)) {
     if (error.response) {
@@ -43,13 +35,13 @@ function LoginForm() {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<LoginFormData>({
+  } = useForm<LoginRequest>({
     resolver: zodResolver(loginSchema),
   });
 
   const { mutate, isPending, isSuccess } = useLogin();
 
-  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
+  const onSubmit: SubmitHandler<LoginRequest> = async (data) => {
     mutate(data, {
       onSuccess: () => {
         navigate('/protected-name');

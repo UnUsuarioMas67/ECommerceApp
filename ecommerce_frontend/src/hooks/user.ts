@@ -1,9 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { useAxios } from './use-axios';
-import type { UserAuth } from '../types/api-types';
 import { useAuth } from '../components/auth/context/AuthContext';
-
-type LoginRequest = { email: string; password: string };
+import type { UserAuth } from '../types/api-types';
+import type { LoginRequest } from '../schemas/account';
 
 export function useLogin() {
   const axiosInstance = useAxios();
