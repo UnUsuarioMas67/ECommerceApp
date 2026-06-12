@@ -1,7 +1,7 @@
 import { loginSchema, type LoginRequest } from '../../schemas/account';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useLogin } from '../../hooks/user';
+import { useLogin } from '../../hooks/account';
 import { useNavigate } from 'react-router';
 import { isAxiosError } from 'axios';
 
