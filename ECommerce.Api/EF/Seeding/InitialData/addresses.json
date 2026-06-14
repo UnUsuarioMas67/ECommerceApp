@@ -1,0 +1,407 @@
+[
+  {
+    "countryCca2": "US",
+    "clientId": 2,
+    "addressLine1": "123 Oak Street",
+    "addressLine2": "Apt 4B",
+    "city": "New York",
+    "postalCode": "10001",
+    "region": "New York"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 3,
+    "addressLine1": "456 Maple Avenue",
+    "addressLine2": "Suite 200",
+    "city": "Los Angeles",
+    "postalCode": "90001",
+    "region": "California"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 3,
+    "addressLine1": "789 Pine Road",
+    "addressLine2": "Unit 12",
+    "city": "San Diego",
+    "postalCode": "92101",
+    "region": "California"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 4,
+    "addressLine1": "321 Elm Street",
+    "addressLine2": "Building A",
+    "city": "Chicago",
+    "postalCode": "60601",
+    "region": "Illinois"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 6,
+    "addressLine1": "654 Birch Lane",
+    "addressLine2": "Apt 7",
+    "city": "Houston",
+    "postalCode": "77001",
+    "region": "Texas"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 6,
+    "addressLine1": "987 Cedar Court",
+    "addressLine2": "Floor 3",
+    "city": "Dallas",
+    "postalCode": "75201",
+    "region": "Texas"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 7,
+    "addressLine1": "147 Walnut Drive",
+    "addressLine2": "Suite 5",
+    "city": "Phoenix",
+    "postalCode": "85001",
+    "region": "Arizona"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 8,
+    "addressLine1": "258 Spruce Way",
+    "addressLine2": "Unit 9",
+    "city": "Philadelphia",
+    "postalCode": "19101",
+    "region": "Pennsylvania"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 8,
+    "addressLine1": "369 Ash Boulevard",
+    "addressLine2": "Apt 2C",
+    "city": "Pittsburgh",
+    "postalCode": "15201",
+    "region": "Pennsylvania"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 9,
+    "addressLine1": "741 Poplar Street",
+    "addressLine2": "Building B",
+    "city": "San Antonio",
+    "postalCode": "78201",
+    "region": "Texas"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 11,
+    "addressLine1": "852 Hickory Lane",
+    "addressLine2": "Suite 100",
+    "city": "Miami",
+    "postalCode": "33101",
+    "region": "Florida"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 11,
+    "addressLine1": "963 Willow Road",
+    "addressLine2": "Apt 15",
+    "city": "Orlando",
+    "postalCode": "32801",
+    "region": "Florida"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 12,
+    "addressLine1": "159 Sycamore Drive",
+    "addressLine2": "Unit 3",
+    "city": "Seattle",
+    "postalCode": "98101",
+    "region": "Washington"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 13,
+    "addressLine1": "357 Magnolia Avenue",
+    "addressLine2": "Floor 2",
+    "city": "Denver",
+    "postalCode": "80201",
+    "region": "Colorado"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 13,
+    "addressLine1": "468 Cherry Street",
+    "addressLine2": "Suite 7B",
+    "city": "Boulder",
+    "postalCode": "80301",
+    "region": "Colorado"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 14,
+    "addressLine1": "753 Dogwood Court",
+    "addressLine2": "Apt 8",
+    "city": "Boston",
+    "postalCode": "02101",
+    "region": "Massachusetts"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 16,
+    "addressLine1": "951 Redwood Place",
+    "addressLine2": "Unit 11",
+    "city": "Portland",
+    "postalCode": "97201",
+    "region": "Oregon"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 16,
+    "addressLine1": "264 Juniper Terrace",
+    "addressLine2": "Building C",
+    "city": "Salem",
+    "postalCode": "97301",
+    "region": "Oregon"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 17,
+    "addressLine1": "573 Aspen Way",
+    "addressLine2": "Suite 300",
+    "city": "Detroit",
+    "postalCode": "48201",
+    "region": "Michigan"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 18,
+    "addressLine1": "681 Cottonwood Lane",
+    "addressLine2": "Apt 6",
+    "city": "Atlanta",
+    "postalCode": "30301",
+    "region": "Georgia"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 18,
+    "addressLine1": "792 Fir Boulevard",
+    "addressLine2": "Unit 2A",
+    "city": "Savannah",
+    "postalCode": "31401",
+    "region": "Georgia"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 19,
+    "addressLine1": "813 Beech Street",
+    "addressLine2": "Floor 4",
+    "city": "Minneapolis",
+    "postalCode": "55401",
+    "region": "Minnesota"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 21,
+    "addressLine1": "924 Hemlock Court",
+    "addressLine2": "Suite 12",
+    "city": "Charlotte",
+    "postalCode": "28201",
+    "region": "North Carolina"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 21,
+    "addressLine1": "135 Willow Way",
+    "addressLine2": "Apt 5D",
+    "city": "Raleigh",
+    "postalCode": "27601",
+    "region": "North Carolina"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 22,
+    "addressLine1": "246 Laurel Drive",
+    "addressLine2": "Building D",
+    "city": "Nashville",
+    "postalCode": "37201",
+    "region": "Tennessee"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 23,
+    "addressLine1": "579 Pinecone Road",
+    "addressLine2": "Unit 8",
+    "city": "Kansas City",
+    "postalCode": "64101",
+    "region": "Missouri"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 23,
+    "addressLine1": "683 Acorn Lane",
+    "addressLine2": "Suite 50",
+    "city": "St Louis",
+    "postalCode": "63101",
+    "region": "Missouri"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 24,
+    "addressLine1": "794 Maplewood Court",
+    "addressLine2": "Apt 3B",
+    "city": "Baltimore",
+    "postalCode": "21201",
+    "region": "Maryland"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 26,
+    "addressLine1": "357 Redmond Avenue",
+    "addressLine2": "Floor 1",
+    "city": "Tampa",
+    "postalCode": "33601",
+    "region": "Florida"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 26,
+    "addressLine1": "468 Citrus Street",
+    "addressLine2": "Unit 7",
+    "city": "Jacksonville",
+    "postalCode": "32201",
+    "region": "Florida"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 27,
+    "addressLine1": "579 Palm Drive",
+    "addressLine2": "Suite 15",
+    "city": "Austin",
+    "postalCode": "73301",
+    "region": "Texas"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 28,
+    "addressLine1": "681 Sunrise Boulevard",
+    "addressLine2": "Apt 9C",
+    "city": "Sacramento",
+    "postalCode": "95814",
+    "region": "California"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 28,
+    "addressLine1": "792 Sunset Lane",
+    "addressLine2": "Building E",
+    "city": "San Francisco",
+    "postalCode": "94101",
+    "region": "California"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 29,
+    "addressLine1": "813 Lakeside Drive",
+    "addressLine2": "Unit 4",
+    "city": "Milwaukee",
+    "postalCode": "53201",
+    "region": "Wisconsin"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 31,
+    "addressLine1": "924 Harbor Court",
+    "addressLine2": "Floor 2",
+    "city": "New Orleans",
+    "postalCode": "70112",
+    "region": "Louisiana"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 31,
+    "addressLine1": "135 River Road",
+    "addressLine2": "Suite 8",
+    "city": "Baton Rouge",
+    "postalCode": "70801",
+    "region": "Louisiana"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 32,
+    "addressLine1": "246 Mountain View Drive",
+    "addressLine2": "Apt 2",
+    "city": "Salt Lake City",
+    "postalCode": "84101",
+    "region": "Utah"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 33,
+    "addressLine1": "579 Valley Lane",
+    "addressLine2": "Building F",
+    "city": "Memphis",
+    "postalCode": "38101",
+    "region": "Tennessee"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 33,
+    "addressLine1": "683 Prairie Avenue",
+    "addressLine2": "Unit 10",
+    "city": "Louisville",
+    "postalCode": "40201",
+    "region": "Kentucky"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 34,
+    "addressLine1": "794 Meadow Lane",
+    "addressLine2": "Suite 20",
+    "city": "Indianapolis",
+    "postalCode": "46201",
+    "region": "Indiana"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 36,
+    "addressLine1": "357 Lakeview Drive",
+    "addressLine2": "Apt 6A",
+    "city": "Columbus",
+    "postalCode": "43201",
+    "region": "Ohio"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 36,
+    "addressLine1": "468 Hilltop Road",
+    "addressLine2": "Floor 3",
+    "city": "Cleveland",
+    "postalCode": "44101",
+    "region": "Ohio"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 37,
+    "addressLine1": "579 Park Boulevard",
+    "addressLine2": "Unit 15",
+    "city": "Las Vegas",
+    "postalCode": "89101",
+    "region": "Nevada"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 39,
+    "addressLine1": "681 Desert Lane",
+    "addressLine2": "Suite 9",
+    "city": "Albuquerque",
+    "postalCode": "87101",
+    "region": "New Mexico"
+  },
+  {
+    "countryCca2": "US",
+    "clientId": 39,
+    "addressLine1": "792 Canyon Road",
+    "addressLine2": "Apt 4",
+    "city": "Santa Fe",
+    "postalCode": "87501",
+    "region": "New Mexico"
+  }
+]

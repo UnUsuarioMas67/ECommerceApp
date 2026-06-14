@@ -68,7 +68,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasIndex("CountryCca2");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.Admin", b =>
@@ -112,7 +112,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Admins");
+                    b.ToTable("Admins", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.AdminRefreshToken", b =>
@@ -140,7 +140,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.ToTable("AdminRefreshTokens");
+                    b.ToTable("AdminRefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.Cart", b =>
@@ -158,7 +158,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.CartItem", b =>
@@ -176,7 +176,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.Category", b =>
@@ -199,7 +199,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.Client", b =>
@@ -243,7 +243,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Clients", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.ClientRefreshToken", b =>
@@ -271,7 +271,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientRefreshTokens");
+                    b.ToTable("ClientRefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.Country", b =>
@@ -287,7 +287,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasKey("Cca2");
 
-                    b.ToTable("Countries");
+                    b.ToTable("Countries", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.OrderLine", b =>
@@ -317,7 +317,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderLines");
+                    b.ToTable("OrderLines", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.OrderStatus", b =>
@@ -335,7 +335,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderStatuses");
+                    b.ToTable("OrderStatuses", (string)null);
 
                     b.HasData(
                         new
@@ -383,7 +383,7 @@ namespace ECommerce.Api.EF.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.Product", b =>
@@ -426,7 +426,7 @@ namespace ECommerce.Api.EF.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.ShopOrder", b =>
@@ -471,7 +471,7 @@ namespace ECommerce.Api.EF.Migrations
                     b.HasIndex("StripeSessionId")
                         .IsUnique();
 
-                    b.ToTable("ShopOrders");
+                    b.ToTable("ShopOrders", (string)null);
                 });
 
             modelBuilder.Entity("ECommerce.Api.Entities.Address", b =>

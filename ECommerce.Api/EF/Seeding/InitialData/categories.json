@@ -1,0 +1,12 @@
+[
+  { "slug": "processors", "name": "Processors" },
+  { "slug": "motherboards", "name": "Motherboards" },
+  { "slug": "graphics-cards", "name": "Graphics Cards" },
+  { "slug": "memory-ram", "name": "Memory RAM" },
+  { "slug": "storage", "name": "Storage" },
+  { "slug": "power-supplies", "name": "Power Supplies" },
+  { "slug": "computer-cases", "name": "Computer Cases" },
+  { "slug": "cooling", "name": "Cooling" },
+  { "slug": "peripherals", "name": "Peripherals" },
+  { "slug": "networking", "name": "Networking" }
+]

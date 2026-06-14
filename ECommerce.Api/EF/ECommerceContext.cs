@@ -1,4 +1,5 @@
-﻿using ECommerce.Api.Entities;
+﻿using ECommerce.Api.EF.Seeding;
+using ECommerce.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 using RESTCountries.NET.Services;
 
@@ -41,52 +42,8 @@ public class ECommerceContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ECommerceContext).Assembly);
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSeeding((context, _) =>
-        {
-            var client = context.Set<Client>()
-                .FirstOrDefault(c => c.Email == "rp456@julio.com");
-            if (client == null)
-            {
-                var newClient = new Client
-                {
-                    FirstName = "Ramón",
-                    LastName = "Pruebas",
-                    Email = "rp456@julio.com",
-                    PhoneNumber = "849-666-7777",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("cliente123"),
-                    BirthDate = new DateOnly(2005, 4, 13),
-                    CreatedAt = DateTime.Parse("2026-01-26"),
-                };
-                context.Set<Client>().Add(newClient);
-            }
-
-            var admin = context.Set<Admin>()
-                .FirstOrDefault(a => a.Email == "jp123@julio.com");
-            if (admin != null)
-            {
-                var newAdmin = new Admin
-                {
-                    FirstName = "Julio",
-                    LastName = "Pruebas",
-                    Email = "jp123@julio.com",
-                    PhoneNumber = "809-111-2222",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
-                    BirthDate = new DateOnly(2001, 7, 22),
-                    CreatedAt = DateTime.Parse("2026-01-26"),
-                };
-                context.Set<Admin>().Add(newAdmin);
-            }
-
-            var countries = context.Set<Country>();
-            var countriesToAdd = RestCountriesService.GetAllCountries()
-                .Select(country => new Country { Name = country.Name.Common, Cca2 = country.Cca2 });
-
-            if (!countries.Any())
-                countries.AddRange(countriesToAdd);
-
-            context.SaveChanges();
-        });
-    }
+    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    // {
+    //     optionsBuilder.AddSeedingToDbContext();
+    // }
 }

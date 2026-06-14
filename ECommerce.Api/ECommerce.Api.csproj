@@ -22,4 +22,8 @@
         <PackageReference Include="Scalar.AspNetCore" Version="2.12.25" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="EF\Seeding\InitialData\" />
+    </ItemGroup>
+
 </Project>

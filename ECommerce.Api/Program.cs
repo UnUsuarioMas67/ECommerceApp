@@ -1,4 +1,5 @@
 using ECommerce.Api.EF;
+using ECommerce.Api.EF.Seeding;
 using ECommerce.Api.Extensions;
 using ECommerce.Api.Settings;
 using ECommerce.Api.Shared;
@@ -12,8 +13,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
 
-builder.Services.AddDbContext<ECommerceContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb")));
+builder.Services.AddDbContext<ECommerceContext>(options =>
+{
+    options
+        .UseSqlServer(builder.Configuration.GetConnectionString("ECommerceDb"))
+        .AddSeedingToDbContext();
+});
 
 builder.Services.Configure<OrderExpirySettings>(builder.Configuration.GetSection("OrderExpirySettings"));
 builder.Services.ConfigureAuth(builder.Configuration.GetSection("JwtSettings"));
@@ -48,7 +53,10 @@ if (app.Environment.IsDevelopment())
 
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ECommerceContext>();
-    dbContext.Database.Migrate();
+    if (dbContext.Database.GetPendingMigrations().Any())
+        dbContext.Database.Migrate();
+    else
+        dbContext.Database.EnsureCreated();
 }
 
 app.UseHttpsRedirection();
