@@ -1,0 +1,11 @@
+﻿[
+  {
+    "firstName": "Bryan",
+    "lastName": "Mendoza",
+    "email": "bm123@email.com",
+    "passwordHash": "$2a$04$bqELXxxAIAVEtX1TY8KY/.uIdnDTzqN0DQT/PCBQut30YrNJ4oqPC",
+    "phoneNumber": "+16667778888",
+    "birthDate": "2001-07-22",
+    "createdAt": "2026-01-26T15:13:07Z"
+  }
+]

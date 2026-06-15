@@ -12,7 +12,7 @@ public static class DbContextOptionsBuilderExtension
         var productSeed = new Seed<Product>(@"EF\Seeding\InitialData\products.json");
         var countrySeed = new CountrySeed();
         var addressSeed = new Seed<Address>(@"EF\Seeding\InitialData\addresses.json");
-        var adminSeed = new AdminSeed();
+        var adminSeed = new Seed<Admin>(@"EF\Seeding\InitialData\admins.json");
         optionsBuilder.UseSeeding((context, _) =>
         {
             categorySeed.AddData(context);
