@@ -5,7 +5,7 @@
 
 <h1>Create Product</h1>
 
-<form asp-action="Create" method="post">
+<form asp-action="Create" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
     
     @if (TempData["Error"] != null)
@@ -44,15 +44,15 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="InitialStock" class="form-label"></label>
+        <label asp-for="InitialStock" class="form-label">Initial Stock</label>
         <input asp-for="InitialStock" class="form-control" type="number">
         <span asp-validation-for="InitialStock" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="ImageUrl" class="form-label"></label>
-        <input asp-for="ImageUrl" class="form-control" type="url">
-        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+        <label asp-for="ImageFile" class="form-label">Image File</label>
+        <input asp-for="ImageFile" class="form-control" accept="image/png, image/jpeg">
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
     </div>
 
     <div class="mt-3">

@@ -10,5 +10,5 @@ public class ProductCreate
     public required string Description { get; set; } = string.Empty;
     public required decimal Price { get; set; }
     public required int InitialStock { get; set; }
-    public required string? ImageUrl { get; set; }
+    public required IFormFile? ImageFile { get; set; }
 }

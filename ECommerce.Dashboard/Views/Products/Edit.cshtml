@@ -6,28 +6,28 @@
 
 <h1>Edit Product</h1>
 
-<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
 
     <input type="hidden" asp-for="Id">
-    
+
     <div class="mb-3">
         <label asp-for="Sku" class="form-label mb-0 mt-3"></label>
         <input readonly asp-for="Sku" class="form-control-plaintext fw-bold">
     </div>
-    
+
     <div class="mb-3">
         <label asp-for="Name" class="form-label"></label>
         <input asp-for="Name" class="form-control">
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
-    
+
     <div class="mb-3">
         <label asp-for="Category" class="form-label"></label>
         <select asp-items="Model.CategoriesSelect" asp-for="Category" class="form-select"></select>
         <span asp-validation-for="Category" class="text-danger"></span>
     </div>
-    
+
     <div class="mb-3">
         <label asp-for="Description" class="form-label"></label>
         <textarea asp-for="Description" class="form-control" rows="4"></textarea>
@@ -41,13 +41,21 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="ImageUrl" class="form-label"></label>
-        <input asp-for="ImageUrl" class="form-control" type="url">
-        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+        <label asp-for="ImageFile" class="form-label">Image File</label>
+        <input asp-for="ImageFile" class="form-control" accept="image/png, image/jpeg">
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
     </div>
 
     <div class="mt-3">
         <button type="submit" class="btn btn-primary">Save</button>
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </div>
+
+    @if (Model.ImageUrl != null)
+    {
+        var imgSrc = $"http://localhost:5113/images/products/{Model.ImageUrl}";
+        <div class="col-md-4 mt-4">
+            <img src=@imgSrc alt="@Model.Name" class="img-fluid" onerror="this.src = 'https://placehold.co/300'">
+        </div>
+    }
 </form>

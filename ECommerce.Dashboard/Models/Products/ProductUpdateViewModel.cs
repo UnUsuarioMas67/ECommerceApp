@@ -28,8 +28,9 @@ public class ProductUpdateViewModel
     [Range(0, 10_000_000)]
     public decimal Price { get; set; }
     
-    [DataType(DataType.Url)]
     public string? ImageUrl { get; set; }
+
+    public IFormFile? ImageFile { get; set; }
     
     public SelectList CategoriesSelect { get; set; } = new(new List<CategoryResponse>());
 }

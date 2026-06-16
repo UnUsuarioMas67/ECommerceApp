@@ -20,7 +20,7 @@ public class UserService(ApiRequestService apiRequestService)
 
     public async Task<Result<AdminUserResponse>> UpdateUser(AdminUserUpdate request)
     {
-        var options = new ApiRequestOptions
+        var options = new ApiRequestOptionsJson
         {
             Path = AdminPath,
             Method = HttpMethod.Put,

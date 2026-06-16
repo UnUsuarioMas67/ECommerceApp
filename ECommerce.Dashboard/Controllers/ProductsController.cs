@@ -75,7 +75,7 @@ public class ProductsController(ProductService productService, CategoryService c
             Category = model.Category,
             Description = model.Description,
             Price = model.Price,
-            ImageUrl = model.ImageUrl,
+            ImageFile = model.ImageFile,
             InitialStock = model.InitialStock
         };
 
@@ -140,7 +140,7 @@ public class ProductsController(ProductService productService, CategoryService c
             Category = model.Category,
             Description = model.Description,
             Price = model.Price,
-            ImageUrl = model.ImageUrl
+            ImageFile = model.ImageFile
         };
 
         var result = await productService.UpdateProduct(id, request);

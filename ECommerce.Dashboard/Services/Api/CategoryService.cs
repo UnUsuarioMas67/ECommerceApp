@@ -50,7 +50,7 @@ public class CategoryService(ApiRequestService apiRequestService)
 
     public async Task<Result<CategoryResponse>> CreateCategory(CategoryRequest request)
     {
-        var options = new ApiRequestOptions
+        var options = new ApiRequestOptionsJson
         {
             Path = CategoryPath,
             Method = HttpMethod.Post,
@@ -72,7 +72,7 @@ public class CategoryService(ApiRequestService apiRequestService)
 
     private async Task<Result<CategoryResponse>> UpdateCategoryInner(string category, CategoryRequest request)
     {
-        var options = new ApiRequestOptions
+        var options = new ApiRequestOptionsJson
         {
             Path = CategoryPath + "/" + category,
             Method = HttpMethod.Put,

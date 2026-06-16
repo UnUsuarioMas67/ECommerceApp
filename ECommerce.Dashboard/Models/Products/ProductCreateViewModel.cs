@@ -32,8 +32,9 @@ public class ProductCreateViewModel
     [Range(0, int.MaxValue)]
     public int InitialStock { get; set; }
     
-    [DataType(DataType.Url)]
     public string? ImageUrl { get; set; }
+
+    public IFormFile? ImageFile { get; set; }
     
     public SelectList CategoriesSelect { get; set; } = new(new List<CategoryResponse>());
 }
