@@ -14,9 +14,12 @@
     <div class="alert alert-success">@TempData["Success"]</div>
 }
 
+@{ var imgSrc = Model.ImageUrl != null ? $"http://localhost:5113/images/products/{Model.ImageUrl}" : "https://placehold.co/300"; }
+
+
 <div class="row">
     <div class="col-md-4">
-        <img src="https://placehold.co/300" alt="@Model.Name" class="img-fluid">
+        <img src=@imgSrc alt="@Model.Name" class="img-fluid">
     </div>
     <div class="col-md-8">
         <dl class="row">

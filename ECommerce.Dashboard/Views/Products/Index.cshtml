@@ -56,8 +56,9 @@
         <tbody>
         @foreach (var product in Model.Products)
         {
+            var imgSrc = product.ImageUrl != null ? $"http://localhost:5113/images/products/{product.ImageUrl}" : "https://placehold.co/64";
             <tr>
-                <td><img src="https://placehold.co/64" alt="some image"></td>
+                <td><img src=@imgSrc alt="some image" style="width: 64px"></td>
                 <th scope="row">@product.Sku</th>
                 <td>
                     <a asp-action="Details" asp-route-id="@product.Id">@product.Name</a>
