@@ -64,8 +64,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
-app.MapGet("/antiforgery",
-        (IAntiforgery antiforgery, HttpContext httpContext) => antiforgery.GetAndStoreTokens(httpContext).RequestToken)
+app.MapGet("/api/antiforgery", (IAntiforgery antiforgery, HttpContext httpContext) 
+            => new { antiforgery.GetAndStoreTokens(httpContext).RequestToken })
     .RequireAuthorization(UserRoles.Admin)
     .WithTags("Antiforgery Token")
     .WithSummary("Get Antiforgery token");
