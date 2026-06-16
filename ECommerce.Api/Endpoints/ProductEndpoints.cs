@@ -86,7 +86,7 @@ public static class ProductEndpoints
     private static async Task<Results<Created<ProductResponseDto>, BadRequest<ErrorDto>, UnprocessableEntity<ErrorDto>>> CreateProduct(
         HttpContext httpContext,
         IProductService productService,
-        ProductCreateDto dto,
+        [FromForm] ProductCreateDto dto,
         IValidator<ProductCreateDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
@@ -109,7 +109,7 @@ public static class ProductEndpoints
     private static async Task<Results<Ok<ProductResponseDto>, BadRequest<ErrorDto>, NotFound, UnprocessableEntity<ErrorDto>>> UpdateProduct(
         IProductService productService, 
         int id, 
-        ProductUpdateDto dto,
+        [FromForm] ProductUpdateDto dto,
         IValidator<ProductUpdateDto> validator)
     {
         var validation = await validator.ValidateAsync(dto);
