@@ -38,7 +38,8 @@ public class ProductMapper(ECommerceContext context, CategoryMapper categoryMapp
             Sku = dto.Sku,
             Category = category,
             CategoryId = category.Id,
-            ImageUrl = dto.ImageUrl,
+            // Ignore ImageUrl
+            // ImageUrl = dto.ImageUrl,
             Stock = dto.InitialStock
         };
     }
@@ -56,9 +57,10 @@ public class ProductMapper(ECommerceContext context, CategoryMapper categoryMapp
 
         if (dto.Price != null && dto.Price != toUpdate.Price)
             toUpdate.Price = dto.Price.Value;
-
-        if (dto.ImageUrl != null && dto.ImageUrl != toUpdate.ImageUrl)
-            toUpdate.ImageUrl = dto.ImageUrl;
+        
+        // Ignore ImageUrl
+        // if (dto.ImageUrl != null && dto.ImageUrl != toUpdate.ImageUrl)
+        //     toUpdate.ImageUrl = dto.ImageUrl;
 
         if (dto.Category != null && dto.Category != toUpdate.Category?.Slug)
         {

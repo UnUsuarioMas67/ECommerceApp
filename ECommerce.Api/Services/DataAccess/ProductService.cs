@@ -3,6 +3,7 @@ using ECommerce.Api.DTOs.Shared;
 using ECommerce.Api.EF;
 using ECommerce.Api.Entities;
 using ECommerce.Api.Errors;
+using ECommerce.Api.Services.Files;
 using ECommerce.Api.Services.Mapping;
 using ECommerce.Api.Shared;
 using FluentValidation;
@@ -28,7 +29,11 @@ public interface IProductService
     Task<Result<ProductResponseDto>> Restock(int productId, int amount);
 }
 
-public class ProductService(ECommerceContext context, IValidator<Product> validator, ProductMapper mapper)
+public class ProductService(
+    ECommerceContext context,
+    IValidator<Product> validator,
+    ProductMapper mapper,
+    ImageService imageService)
     : IProductService
 {
     public async Task<ProductResponseDto?> GetByIdAsync(int productId)
@@ -47,6 +52,15 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
         var verification = await VerifyProduct(created, dto.Category);
         if (!verification.IsSuccess)
             return verification.Error;
+
+        if (dto.ImageFile != null)
+        {
+            var imageResult = await imageService.SaveImageAsync(dto.ImageFile);
+            if (!imageResult.IsSuccess)
+                return imageResult.Error;
+
+            created.ImageUrl = imageResult.Value;
+        }
 
         await context.Products.AddAsync(created);
         await context.SaveChangesAsync();
@@ -72,6 +86,15 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             return verification.Error;
         }
 
+        if (dto.ImageFile != null)
+        {
+            var imageResult = await imageService.SaveImageAsync(dto.ImageFile);
+            if (!imageResult.IsSuccess)
+                return imageResult.Error;
+
+            updated.ImageUrl = imageResult.Value;
+        }
+
         await context.SaveChangesAsync();
 
         return mapper.MapToDto(updated);
@@ -88,6 +111,9 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
 
         context.Products.Remove(product);
         await context.SaveChangesAsync();
+
+        if (product.ImageUrl != null)
+            imageService.DeleteImage(product.ImageUrl);
 
         return mapper.MapToDto(product);
     }
@@ -136,7 +162,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             await context.DisposeAsync();
             return new InvalidProductStockError();
         }
-        
+
         var product = await context.Products
             .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == productId);
@@ -145,7 +171,7 @@ public class ProductService(ECommerceContext context, IValidator<Product> valida
             return new NotFoundError();
 
         product.Stock += amount;
-        
+
         var validation = await validator.ValidateAsync(product);
         if (!validation.IsValid)
         {
