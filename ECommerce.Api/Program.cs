@@ -3,6 +3,7 @@ using ECommerce.Api.EF.Seeding;
 using ECommerce.Api.Extensions;
 using ECommerce.Api.Settings;
 using ECommerce.Api.Shared;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -36,6 +37,8 @@ builder.Services.AddCors(o =>
     });
 });
 
+builder.Services.AddAntiforgery();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -59,12 +62,20 @@ if (app.Environment.IsDevelopment())
         dbContext.Database.EnsureCreated();
 }
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
+app.MapGet("/antiforgery",
+        (IAntiforgery antiforgery, HttpContext httpContext) => antiforgery.GetAndStoreTokens(httpContext).RequestToken)
+    .RequireAuthorization(UserRoles.Admin)
+    .WithTags("Antiforgery Token")
+    .WithSummary("Get Antiforgery token");
 app.MapApiEndpoints();
 
 app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAntiforgery();
+
 
 app.Run();
