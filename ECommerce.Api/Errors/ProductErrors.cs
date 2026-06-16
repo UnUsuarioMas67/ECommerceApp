@@ -33,3 +33,5 @@ public record CategoryNotExistsError(string Category)
 public record InvalidProductPriceError() : Error("Price cannot be negative", "invalid_price");
 
 public record InvalidProductStockError() : Error("Stock cannot be negative", "invalid_stock");
+
+public record ImageFileError(string Message) : Error(Message, "invalid_image"); 

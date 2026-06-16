@@ -2,6 +2,7 @@
 using ECommerce.Api.Services.Auth;
 using ECommerce.Api.Services.Checkout;
 using ECommerce.Api.Services.DataAccess;
+using ECommerce.Api.Services.Files;
 using ECommerce.Api.Services.Mapping;
 using ECommerce.Api.Settings;
 using ECommerce.Api.Shared;
@@ -64,6 +65,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAdminsService, AdminsService>();
         services.AddScoped<IAddressesService, AddressesService>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddTransient<ImageService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ICartsService, CartsService>();
         services.AddScoped<IOrderService, OrderService>();
