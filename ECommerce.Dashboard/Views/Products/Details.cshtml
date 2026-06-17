@@ -1,6 +1,10 @@
-﻿@model ECommerce.Dashboard.DTOs.Product.ProductResponse
+﻿@using ECommerce.Dashboard.Settings
+@using Microsoft.Extensions.Options
+@model ECommerce.Dashboard.DTOs.Product.ProductResponse
+@inject IOptions<ApiSettings> ApiOptions
 @{
     ViewData["Title"] = "Product Details";
+    var imagesUrl = ApiOptions.Value.ImagesUrl;
 }
 
 <h1 class="mb-3">@Model.Name</h1>
@@ -19,7 +23,7 @@
     <div class="col-md-4">
         @if (Model.ImageUrl != null)
         {
-            var imgSrc = $"http://localhost:5113/images/products/{Model.ImageUrl}";
+            var imgSrc = $"{imagesUrl}/products/{Model.ImageUrl}";
             <img src=@imgSrc alt="@Model.Name" class="img-fluid" onerror="this.src = 'https://placehold.co/300'">
         }
         else

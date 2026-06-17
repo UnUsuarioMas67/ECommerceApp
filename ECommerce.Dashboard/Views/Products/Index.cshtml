@@ -1,6 +1,10 @@
-﻿@model ECommerce.Dashboard.Models.Products.ProductListViewModel
+﻿@using ECommerce.Dashboard.Settings
+@using Microsoft.Extensions.Options
+@model ECommerce.Dashboard.Models.Products.ProductListViewModel
+@inject IOptions<ApiSettings> ApiOptions
 @{
     ViewData["Title"] = "Products";
+    var imagesUrl = ApiOptions.Value.ImagesUrl;
 }
 
 <div class="mb-3 row">
@@ -60,7 +64,7 @@
                 <td>
                     @if (product.ImageUrl != null)
                     {
-                        var imgSrc = $"http://localhost:5113/images/products/{product.ImageUrl}";
+                        var imgSrc = $"{imagesUrl}/products/{product.ImageUrl}";
                         <img src=@imgSrc alt="@product.Name" class="img-thumbnail" style="width: 100px"
                              onerror="this.src = 'https://placehold.co/100'">
                     }
