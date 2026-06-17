@@ -9,7 +9,6 @@ public class ProductCreateDto
     public string Description { get; set; }
     public decimal Price { get; set; }
     public int InitialStock { get; set; }
-    public string? ImageUrl { get; set; }
     public IFormFile? ImageFile { get; set; }
     public string __RequestVerificationToken { get; set; }
 }
