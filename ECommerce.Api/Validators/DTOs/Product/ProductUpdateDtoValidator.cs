@@ -27,5 +27,8 @@ public class ProductUpdateDtoValidator : AbstractValidator<ProductUpdateDto>
             .Unless(p => p.Category == null)
             .WithMessage("Category is required")
             .MaximumLength(TextLengthRules.Name);
+
+        RuleFor(p => p.__RequestVerificationToken)
+            .NotEmpty();
     }
 }

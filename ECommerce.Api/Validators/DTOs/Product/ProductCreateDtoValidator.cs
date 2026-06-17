@@ -33,5 +33,8 @@ public class ProductCreateDtoValidator : AbstractValidator<ProductCreateDto>
         RuleFor(p => p.InitialStock)
             .GreaterThanOrEqualTo(0)
             .WithMessage("Stock cannot be negative");
+        
+        RuleFor(p => p.__RequestVerificationToken)
+            .NotEmpty();
     }
 }
