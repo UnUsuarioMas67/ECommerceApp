@@ -104,10 +104,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        currentUser: auth?.user ?? null,
         getAccessToken,
         setCredentials,
         clearCredentials,
+        ensureLoggedIn: async () => !!(await getAccessToken()),
       }}>
       {children}
     </AuthContext.Provider>
