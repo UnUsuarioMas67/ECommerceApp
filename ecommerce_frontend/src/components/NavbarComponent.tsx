@@ -19,13 +19,13 @@ function NavbarComponent() {
 
   return (
     <Navbar sticky="top" expand="lg" className="bg-primary mb-4" data-bs-theme="dark">
-      <Container>
+      <Container fluid className='px-5'>
         <Navbar.Brand className="fw-bold text-white">ECommerce</Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
         <Navbar.Collapse id="basic-navbar-nav">
-          <Form className="w-100 mx-4 mt-2 mt-lg-0" data-bs-theme="light">
+          <Form style={{maxWidth: '800px'}} className="w-100 mx-lg-4 mx-xl-auto mt-2 mt-lg-0" data-bs-theme="light">
             <Row className="gx-1 gy-2">
               <Col lg={2}>
                 <Form.Select size="sm" aria-label="Filter by category">
@@ -52,7 +52,8 @@ function NavbarComponent() {
             <Nav.Link>
               <Cart4 size={24} />
             </Nav.Link>
-            <NavDropdown title={dropdownTitle} id="basic-nav-dropdown" data-bs-theme="light">
+
+            <NavDropdown title={dropdownTitle} align="end" id="basic-nav-dropdown" data-bs-theme="light">
               <NavDropdown.Item as={Link} to='/login'>Sign In</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Header>
