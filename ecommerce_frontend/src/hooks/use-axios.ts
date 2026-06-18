@@ -1,6 +1,7 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { useAuth } from '../components/auth/context/AuthContext';
 import { useMemo } from 'react';
+import { apiUrl } from '../utils/api-routes';
 
 export type ApiRequestError = {
   type: 'failure_response' | 'request_failed' | 'not_found' | 'unauthorized' | 'server_error' | 'aborted';
@@ -14,7 +15,7 @@ export function useAxios() {
 
   const axiosInstance = useMemo(() => {
     const instance = axios.create({
-      baseURL: 'http://localhost:5113/api',
+      baseURL: apiUrl,
     });
 
     instance.interceptors.request.use(async (config: ExternalAxiosRequestConfig) => {
