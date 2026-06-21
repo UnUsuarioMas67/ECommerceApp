@@ -8,7 +8,7 @@ import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Row } from 'react-bootstrap';
 import { Search, Cart4, PersonFill, BoxArrowRight, Gear } from 'react-bootstrap-icons';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import type { User } from '../types/api-types';
 
 type Props = {
@@ -16,6 +16,7 @@ type Props = {
 };
 
 function NavbarComponent({ currentUser }: Props) {
+  const navigate = useNavigate();
   const userDropdownTitle = (
     <>
       Username <PersonFill size={24} title="User dropdown" />
@@ -58,12 +59,10 @@ function NavbarComponent({ currentUser }: Props) {
           <Nav className="flex-shrink-0 align-items-center">
             {!currentUser ? (
               <>
-                <Nav.Link as={Link} to="/login">Sign In</Nav.Link>
-                <Nav.Link as={Link} to="/register">
-                  <Button variant="outline-light" className="m-0">
-                    Sign Up
-                  </Button>
-                </Nav.Link>
+                <Nav.Link onClick={() => navigate({to: '/login'})}>Sign In</Nav.Link>
+                <Button variant="outline-light" className="mx-1" onClick={() => navigate({to: '/register', })}>
+                  Sign Up
+                </Button>
               </>
             ) : (
               <>
