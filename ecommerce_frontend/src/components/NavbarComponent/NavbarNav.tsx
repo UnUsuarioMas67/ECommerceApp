@@ -13,7 +13,7 @@ function NavbarNav({ currentUser }: Props) {
   const navigate = useNavigate();
   const userDropdownTitle = (
     <>
-      Username <PersonFill size={24} title="User dropdown" />
+      {currentUser?.firstName} {currentUser?.lastName} <PersonFill size={24} title="User dropdown" />
     </>
   );
 
