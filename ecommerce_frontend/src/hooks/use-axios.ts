@@ -1,7 +1,7 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { useAuth } from '../components/auth/context/AuthContext';
 import { useMemo } from 'react';
-import { apiUrl } from '../utils/api-routes';
+import { apiUrl } from '../api';
 
 export type ApiRequestError = {
   type: 'failure_response' | 'request_failed' | 'not_found' | 'unauthorized' | 'server_error' | 'aborted';

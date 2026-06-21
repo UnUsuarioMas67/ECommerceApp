@@ -6,7 +6,7 @@ import type { AxiosInstance } from 'axios';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProductCard from '../../components/ProductCard';
-import { imagesUrl } from '../../utils/api-routes';
+import { imagesUrl } from '../../api';
 
 export const Route = createFileRoute('/_app/')({
   component: RouteComponent,
@@ -33,7 +33,7 @@ function RouteComponent() {
       <title>{products ? `${products.length} Products` : 'Home'}</title>
 
       <h1>Products</h1>
-      
+
       <Row xs={1} md={2} lg={3} xl={4} className="g-3">
         {products &&
           products.map((product) => (
