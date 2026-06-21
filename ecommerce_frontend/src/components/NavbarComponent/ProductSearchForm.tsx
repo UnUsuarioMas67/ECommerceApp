@@ -1,20 +1,31 @@
-import Form from 'react-bootstrap/Form'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Button from 'react-bootstrap/Button'
-import InputGroup from 'react-bootstrap/InputGroup'
-import { Search } from 'react-bootstrap-icons'
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+import { Search } from 'react-bootstrap-icons';
+import { useAxios } from '../../hooks/use-axios';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { getCategories } from '../../api';
 
 function ProductSearchForm() {
+  const axiosInstance = useAxios();
+  const { data: categories } = useSuspenseQuery({
+    queryKey: ['categories'],
+    queryFn: async () => await getCategories(axiosInstance),
+  });
+
   return (
     <Form style={{ maxWidth: '900px' }} className="w-100 mx-lg-4 mx-xl-auto mt-2 mt-lg-0" data-bs-theme="light">
       <Row className="gx-1 gy-2">
         <Col lg={2}>
           <Form.Select size="sm" aria-label="Filter by category">
             <option>-- All --</option>
-            <option value="1">Category 1</option>
-            <option value="2">Category 2</option>
-            <option value="3">Category 3</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.slug}>
+                {category.name}
+              </option>
+            ))}
           </Form.Select>
         </Col>
 
