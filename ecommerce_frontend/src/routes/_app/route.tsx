@@ -32,7 +32,7 @@ function RouteComponent() {
   });
 
   return (
-    <div className="d-flex flex-column vh-100">
+    <div className="d-flex flex-column min-vh-100">
       <NavbarComponent currentUser={user ?? undefined} />
       <Container as="main" className="flex-grow-1">
         <Outlet />
