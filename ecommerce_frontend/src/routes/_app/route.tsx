@@ -9,12 +9,12 @@ export const Route = createFileRoute('/_app')({
 
 function RouteComponent() {
   return (
-    <>
+    <div className='d-flex flex-column vh-100'>
       <NavbarComponent />
-      <Container as="main">
+      <Container as="main" className='flex-grow-1'>
         <Outlet />
       </Container>
       <FooterComponent />
-    </>
+    </div>
   );
 }
