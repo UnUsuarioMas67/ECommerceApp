@@ -55,11 +55,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         console.log('Refresh request failed. Invalid token.');
+        return null;
       } else {
         throw error;
       }
-
-      return null;
     } finally {
       abortControllerRef.current = null;
     }
