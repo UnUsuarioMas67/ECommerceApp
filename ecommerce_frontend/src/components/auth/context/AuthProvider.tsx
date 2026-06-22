@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { AuthContext } from './AuthContext';
 import axios from 'axios';
-import type { UserAuth, User } from '../../../types/api-types';
+import type { UserAuth, User } from '../../../api/types';
 
 type AuthState = {
   token: string;

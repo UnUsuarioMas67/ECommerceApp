@@ -1,7 +1,7 @@
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link } from '@tanstack/react-router';
-import type { User } from '../../types/api-types';
+import type { User } from '../../api/types';
 import ProductSearchForm from './ProductSearchForm';
 import NavbarNav from './NavbarNav';
 

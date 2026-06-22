@@ -1,6 +1,6 @@
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import type { Product } from '../types/api-types';
+import type { Product } from '../api/types';
 
 function ProductCard({ product, imagesUrl }: { product: Product; imagesUrl: string }) {
   const fallbackImageUrl = 'https://placehold.co/180';
@@ -8,10 +8,14 @@ function ProductCard({ product, imagesUrl }: { product: Product; imagesUrl: stri
 
   return (
     <Card>
-      <Card.Img variant="top" src={imageSrc} onError={(e) => {
-        e.currentTarget.onerror = null;
-        e.currentTarget.src = fallbackImageUrl;
-      }}/>
+      <Card.Img
+        variant="top"
+        src={imageSrc}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = fallbackImageUrl;
+        }}
+      />
       <Card.Header>{product.sku}</Card.Header>
       <Card.Body>
         <Card.Title>{product.name}</Card.Title>

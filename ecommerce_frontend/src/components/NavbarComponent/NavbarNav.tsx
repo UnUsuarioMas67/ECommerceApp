@@ -3,7 +3,7 @@ import { BoxArrowRight, Cart4, Gear, PersonFill } from 'react-bootstrap-icons';
 import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import type { User } from '../../types/api-types';
+import type { User } from '../../api/types';
 
 type Props = {
   currentUser?: User;
