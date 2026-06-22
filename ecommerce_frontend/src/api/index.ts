@@ -18,3 +18,19 @@ export async function fetchCategories(axiosInstance: AxiosInstance) {
   const response = await axiosInstance.get<Category[]>('/categories');
   return response.data;
 }
+
+type FetchProductOptions = {
+  searchTerm?: string;
+  category?: string;
+};
+
+export async function fetchProducts(axiosInstance: AxiosInstance, options?: FetchProductOptions): Promise<Product[]> {
+  const { searchTerm, category } = options ?? {};
+  
+  let url = '/products';
+  if (category) url += `/categories/${category}`;
+  if (searchTerm) url += `?search=${searchTerm}`;
+
+  const response = await axiosInstance.get<Product[]>(url);
+  return response.data;
+}

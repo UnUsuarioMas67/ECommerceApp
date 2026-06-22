@@ -1,29 +1,34 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useAxios } from '../../hooks/use-axios';
 import { useQuery } from '@tanstack/react-query';
-import type { Product } from '../../types/api-types';
-import type { AxiosInstance } from 'axios';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProductCard from '../../components/ProductCard';
-import { imagesUrl } from '../../api';
+import { fetchProducts, imagesUrl } from '../../api';
+import z from 'zod';
+
+const searchSchema = z.object({
+  searchTerm: z.string().optional(),
+  category: z.string().optional(),
+});
 
 export const Route = createFileRoute('/_app/')({
   component: RouteComponent,
+  validateSearch: searchSchema,
 });
 
-async function fetchProducts(axiosInstance: AxiosInstance): Promise<Product[]> {
-  const response = await axiosInstance.get<Product[]>('/products');
-  return response.data;
-}
-
 function RouteComponent() {
+  const { category, searchTerm } = Route.useSearch();
   const axiosInstance = useAxios();
   const {
     data: products,
     isLoading,
     error,
-  } = useQuery({ queryKey: ['products'], queryFn: () => fetchProducts(axiosInstance), staleTime: 5 * 1000 });
+  } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => fetchProducts(axiosInstance, { category, searchTerm }),
+    staleTime: 5 * 1000,
+  });
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -33,6 +38,7 @@ function RouteComponent() {
       <title>{products ? `${products.length} Products` : 'Home'}</title>
 
       <h1>Products</h1>
+      <p>Search term</p>
 
       <Row xs={1} md={2} lg={3} xl={4} className="g-3">
         {products &&
