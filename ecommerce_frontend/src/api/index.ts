@@ -14,7 +14,7 @@ export async function getCurrentUser(axiosInstace: AxiosInstance) {
   return response.data;
 }
 
-export async function getCategories(axiosInstance: AxiosInstance) {
+export async function fetchCategories(axiosInstance: AxiosInstance) {
   const response = await axiosInstance.get<Category[]>('/categories');
   return response.data;
 }

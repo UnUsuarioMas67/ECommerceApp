@@ -6,13 +6,13 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { Search } from 'react-bootstrap-icons';
 import { useAxios } from '../../hooks/use-axios';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { getCategories } from '../../api';
+import { fetchCategories } from '../../api';
 
 function ProductSearchForm() {
   const axiosInstance = useAxios();
   const { data: categories } = useSuspenseQuery({
     queryKey: ['categories'],
-    queryFn: async () => await getCategories(axiosInstance),
+    queryFn: async () => await fetchCategories(axiosInstance),
   });
 
   return (

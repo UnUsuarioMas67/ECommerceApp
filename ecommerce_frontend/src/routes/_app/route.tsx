@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import FooterComponent from '../../components/FooterComponent';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useAxios } from '../../hooks/use-axios';
-import { getCategories, getCurrentUser } from '../../api';
+import { fetchCategories, getCurrentUser } from '../../api';
 
 export const Route = createFileRoute('/_app')({
   component: RouteComponent,
@@ -18,9 +18,9 @@ export const Route = createFileRoute('/_app')({
       }),
       queryClient.ensureQueryData({
         queryKey: ['categories'],
-        queryFn: async () => await getCategories(axiosInstance)
-      })
-    ])
+        queryFn: async () => await fetchCategories(axiosInstance),
+      }),
+    ]);
   },
 });
 
