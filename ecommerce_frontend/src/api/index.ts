@@ -4,6 +4,7 @@ import type { Category, Product, User } from './types';
 export const apiUrl = 'http://localhost:5113/api';
 export const imagesUrl = 'http://localhost:5113/images';
 
+// TODO: Handle get current user request in the AuthProvider
 export async function getCurrentUser(axiosInstace: AxiosInstance) {
   const response = await axiosInstace.get<User>('/clients/me', {
     validateStatus: (status) => status === 200 || status === 401,
