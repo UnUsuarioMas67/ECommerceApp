@@ -14,11 +14,11 @@ export const Route = createFileRoute('/_app')({
     await Promise.all([
       queryClient.ensureQueryData({
         queryKey: ['users', 'me'],
-        queryFn: async () => await getCurrentUser(axiosInstance),
+        queryFn: () => getCurrentUser(axiosInstance),
       }),
       queryClient.ensureQueryData({
         queryKey: ['categories'],
-        queryFn: async () => await fetchCategories(axiosInstance),
+        queryFn: () => fetchCategories(axiosInstance),
       }),
     ]);
   },
@@ -28,7 +28,7 @@ function RouteComponent() {
   const axios = useAxios();
   const { data: user } = useSuspenseQuery({
     queryKey: ['users', 'me'],
-    queryFn: async () => await getCurrentUser(axios),
+    queryFn: () => getCurrentUser(axios),
   });
 
   return (

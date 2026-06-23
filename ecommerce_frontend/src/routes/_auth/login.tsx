@@ -43,7 +43,7 @@ function RouteComponent() {
 
   const { mutate, isPending, isSuccess } = useLogin();
 
-  const onSubmit: SubmitHandler<LoginRequest> = async (data) => {
+  const onSubmit: SubmitHandler<LoginRequest> = (data) => {
     mutate(data, {
       onSuccess: () => {
         navigate({ to: '/' });
