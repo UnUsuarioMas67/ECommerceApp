@@ -1,15 +1,16 @@
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link } from '@tanstack/react-router';
-import type { User } from '../../api/types';
+import type { Category, User } from '../../api/types';
 import ProductSearchForm from './ProductSearchForm';
 import NavbarNav from './NavbarNav';
 
 type Props = {
   currentUser?: User;
+  categories: Category[];
 };
 
-function NavbarComponent({ currentUser }: Props) {
+function NavbarComponent({ currentUser, categories }: Props) {
   return (
     <Navbar sticky="top" expand="lg" className="bg-primary mb-4" data-bs-theme="dark">
       <Container fluid className="px-5">
@@ -20,7 +21,7 @@ function NavbarComponent({ currentUser }: Props) {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
         <Navbar.Collapse id="basic-navbar-nav">
-          <ProductSearchForm />
+          <ProductSearchForm categories={categories} />
           <NavbarNav currentUser={currentUser} />
         </Navbar.Collapse>
       </Container>

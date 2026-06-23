@@ -25,15 +25,19 @@ export const Route = createFileRoute('/_app')({
 });
 
 function RouteComponent() {
-  const axios = useAxios();
+  const axiosInstance = useAxios();
   const { data: user } = useSuspenseQuery({
     queryKey: ['users', 'me'],
-    queryFn: () => getCurrentUser(axios),
+    queryFn: () => getCurrentUser(axiosInstance),
+  });
+  const { data: categories } = useSuspenseQuery({
+    queryKey: ['categories'],
+    queryFn: () => fetchCategories(axiosInstance),
   });
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      <NavbarComponent currentUser={user ?? undefined} />
+      <NavbarComponent currentUser={user ?? undefined} categories={categories} />
       <Container as="main" className="flex-grow-1">
         <Outlet />
       </Container>
