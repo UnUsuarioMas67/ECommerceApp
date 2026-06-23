@@ -5,12 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProductCard from '../../components/ProductCard';
 import { fetchProducts, imagesUrl } from '../../api';
-import z from 'zod';
-
-const searchSchema = z.object({
-  searchTerm: z.string().optional(),
-  category: z.string().optional(),
-});
+import { searchSchema } from '../../schemas';
 
 export const Route = createFileRoute('/_app/')({
   component: RouteComponent,

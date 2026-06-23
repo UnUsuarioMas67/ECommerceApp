@@ -1,17 +1,17 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { isAxiosError } from 'axios';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { loginSchema, type LoginRequest } from '../../schemas/account';
+import { loginSchema, type LoginRequest } from '../../schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLogin } from '../../hooks/account';
 
-import Alert from 'react-bootstrap/Alert'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import Alert from 'react-bootstrap/Alert';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 export const Route = createFileRoute('/_auth/login')({
   component: RouteComponent,
-})
+});
 
 function handleLoginErrorMsg(error: Error): string {
   if (isAxiosError(error)) {
@@ -46,7 +46,7 @@ function RouteComponent() {
   const onSubmit: SubmitHandler<LoginRequest> = async (data) => {
     mutate(data, {
       onSuccess: () => {
-        navigate({to: '/'});
+        navigate({ to: '/' });
       },
       onError: (error) => {
         setError('root', { message: handleLoginErrorMsg(error) });
