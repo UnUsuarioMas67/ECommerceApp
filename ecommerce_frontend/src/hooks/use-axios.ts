@@ -1,5 +1,5 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
-import { useAuth } from '../components/auth/context/AuthContext';
+import { useAuth } from '../components/AuthProvider/AuthContext';
 import { useMemo } from 'react';
 import { apiUrl } from '../api';
 

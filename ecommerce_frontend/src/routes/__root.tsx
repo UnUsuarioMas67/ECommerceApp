@@ -2,7 +2,7 @@ import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import NotFoundLayout from '../layout/NotFoundLayout';
 import type { QueryClient } from '@tanstack/react-query';
-import type { useAuth } from '../components/auth/context/AuthContext';
+import type { useAuth } from '../components/AuthProvider/AuthContext';
 import type { AxiosInstance } from 'axios';
 
 type RouterContext = {

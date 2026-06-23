@@ -4,11 +4,11 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import AuthProvider from './components/auth/context/AuthProvider';
+import AuthProvider from './components/AuthProvider';
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
-import { useAuth } from './components/auth/context/AuthContext';
+import { useAuth } from './components/AuthProvider/AuthContext';
 import { useAxios } from './hooks/use-axios';
 
 const queryClient = new QueryClient();
