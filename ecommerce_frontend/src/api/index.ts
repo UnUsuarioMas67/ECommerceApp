@@ -23,15 +23,25 @@ export async function fetchCategories(axiosInstance: AxiosInstance) {
 type FetchProductOptions = {
   searchTerm?: string;
   category?: string;
+  itemsPerPage?: number;
+  pageParam: number;
 };
 
-export async function fetchProducts(axiosInstance: AxiosInstance, options?: FetchProductOptions): Promise<Product[]> {
-  const { searchTerm, category } = options ?? {};
-  
+export async function fetchProducts(axiosInstance: AxiosInstance, options: FetchProductOptions) {
+  const { searchTerm, category, pageParam, itemsPerPage } = options;
+
   let url = '/products';
   if (category) url += `/categories/${category}`;
-  if (searchTerm) url += `?search=${searchTerm}`;
 
-  const response = await axiosInstance.get<Product[]>(url);
-  return response.data;
+  url += `?page=${pageParam}`;
+  if (searchTerm) url += `&search=${searchTerm}`;
+  url += `&limit=${itemsPerPage ?? 16}`;
+
+  const data = (await axiosInstance.get<Product[]>(url)).data;
+
+  return {
+    data,
+    currentPage: pageParam,
+    nextPage: data.length > 0 ? pageParam + 1 : null,
+  };
 }

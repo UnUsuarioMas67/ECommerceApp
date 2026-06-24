@@ -7,15 +7,16 @@ import { Search } from 'react-bootstrap-icons';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { searchSchema, type ProductSearch } from '../../schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import type { Category } from '../../api/types';
 
 type Props = {
-  categories: Category[]
-}
+  categories: Category[];
+};
 
-function ProductSearchForm({categories}: Props) {
+function ProductSearchForm({ categories }: Props) {
   const { register, handleSubmit } = useForm<ProductSearch>({ resolver: zodResolver(searchSchema) });
+  const { searchTerm, category } = useLocation({select: (state) => state.search});
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<ProductSearch> = (data) => {
@@ -23,7 +24,7 @@ function ProductSearchForm({categories}: Props) {
     if (!categories.find((c) => c.slug === category)) category = undefined;
     if (searchTerm === '') searchTerm = undefined;
 
-    navigate({ to: '/', search: { searchTerm, category } });
+    navigate({ to: '/', search: { searchTerm, category }, reloadDocument: true });
   };
 
   return (
@@ -32,9 +33,9 @@ function ProductSearchForm({categories}: Props) {
       className="w-100 mx-lg-4 mx-xl-auto mt-2 mt-lg-0"
       data-bs-theme="light"
       onSubmit={handleSubmit(onSubmit)}>
-      <Row className="gx-1 gy-2">
+      <Row className="gx-1 gy-2 ">
         <Col lg={2}>
-          <Form.Select size="sm" aria-label="Filter by category" {...register('category')}>
+          <Form.Select size="sm" aria-label="Filter by category" {...register('category', { value: category })}>
             <option>-- All --</option>
             {categories.map((category) => (
               <option key={category.id} value={category.slug}>
@@ -50,7 +51,7 @@ function ProductSearchForm({categories}: Props) {
               placeholder="Search..."
               aria-label="Search products"
               aria-describedby="basic-addon2"
-              {...register('searchTerm')}
+              {...register('searchTerm', { value: searchTerm })}
             />
 
             <Button variant="secondary" id="search-product-btn" type="submit">
