@@ -64,16 +64,17 @@ function RouteComponent() {
       )}
       <h1>Products</h1>
 
-      {data.pages &&
-        data.pages.map((page) => (
-          <Row xs={1} md={2} lg={3} xl={4} className="g-3 mb-3" key={page.currentPage}>
-            {page.data.map((product) => (
+      <Row xs={1} md={2} lg={3} xl={4} className="g-3">
+        {data.pages &&
+          data.pages
+            .map((page) => page.data)
+            .flat()
+            .map((product) => (
               <Col key={product.id}>
                 <ProductCard product={product} imagesUrl={imagesUrl} />
               </Col>
             ))}
-          </Row>
-        ))}
+      </Row>
 
       <div className="d-flex justify-content-center" ref={ref}>
         {isFetchingNextPage && (
