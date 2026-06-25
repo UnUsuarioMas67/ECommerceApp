@@ -20,6 +20,11 @@ export async function fetchCategories(axiosInstance: AxiosInstance) {
   return response.data;
 }
 
+export async function fetchCategory(axiosInstance: AxiosInstance, category: number | string) {
+  const response = await axiosInstance.get<Category>(`/categories/${category}`)
+  return response.data
+}
+
 type FetchProductOptions = {
   searchTerm?: string;
   category?: string;
@@ -44,4 +49,9 @@ export async function fetchProducts(axiosInstance: AxiosInstance, options: Fetch
     currentPage: pageParam,
     nextPage: data.length > 0 ? pageParam + 1 : null,
   };
+}
+
+export async function fetchProduct(axiosInstance: AxiosInstance, id: number) {
+  const response = await axiosInstance.get<Product>(`/products/${id}`);
+  return response.data;
 }
