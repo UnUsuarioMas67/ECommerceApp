@@ -34,7 +34,7 @@ function ProductSearchForm({ categories }: Props) {
       data-bs-theme="light"
       onSubmit={handleSubmit(onSubmit)}>
       <Row className="gx-1 gy-2 ">
-        <Col lg={2}>
+        <Col lg={3}>
           <Form.Select size="sm" aria-label="Filter by category" {...register('category', { value: category })}>
             <option>-- All --</option>
             {categories.map((category) => (
