@@ -58,8 +58,8 @@ function RouteComponent() {
   else if (categoryObj) title = `${categoryObj.name} - ECommerce`;
 
   return status === 'pending' ? (
-    <div className="d-flex justify-content-center" ref={ref}>
-      <Spinner className="my-5" animation="border" role="status" variant="primary">
+    <div className="d-flex justify-content-center align-items-center" style={{ height: '100px' }} ref={ref}>
+      <Spinner animation="border" role="status" variant="primary">
         <span className="visually-hidden">Loading...</span>
       </Spinner>
     </div>
@@ -71,7 +71,7 @@ function RouteComponent() {
 
       {searchTerm && (
         <p className="text-secondary bg-body-tertiary p-1 px-3 small rounded-3">
-          Showing results for <strong className='text-primary-emphasis'>'{searchTerm}'</strong>
+          Showing results for <strong className="text-primary-emphasis">'{searchTerm}'</strong>
         </p>
       )}
 
@@ -89,9 +89,9 @@ function RouteComponent() {
             ))}
       </Row>
 
-      <div className="d-flex justify-content-center" ref={ref}>
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100px' }} ref={ref}>
         {isFetchingNextPage && (
-          <Spinner className="my-5" animation="border" role="status" variant="primary">
+          <Spinner animation="border" role="status" variant="primary">
             <span className="visually-hidden">Loading...</span>
           </Spinner>
         )}
