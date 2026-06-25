@@ -22,7 +22,7 @@ function NavbarComponent({ currentUser, categories }: Props) {
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse id="basic-navbar-nav" className='justify-content-center'>
           <ProductSearchForm categories={categories} />
           <NavbarNav currentUser={currentUser} />
         </Navbar.Collapse>

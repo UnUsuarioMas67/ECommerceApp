@@ -29,7 +29,7 @@ function ProductSearchForm({ categories }: Props) {
 
   return (
     <Form
-      style={{ maxWidth: '900px' }}
+      style={{ maxWidth: '600px' }}
       className="w-100 mx-lg-4 mx-xl-auto mt-2 mt-lg-0"
       data-bs-theme="light"
       onSubmit={handleSubmit(onSubmit)}>
