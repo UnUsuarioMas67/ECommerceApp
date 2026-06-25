@@ -3,12 +3,12 @@ import { useAxios } from '../../hooks/use-axios';
 import { useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Spinner from 'react-bootstrap/Spinner';
 import ProductCard from '../../components/ProductCard';
 import { fetchCategory, fetchProducts, imagesUrl } from '../../api';
 import { searchSchema } from '../../schemas';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 export const Route = createFileRoute('/_app/')({
   component: RouteComponent,
@@ -58,10 +58,8 @@ function RouteComponent() {
   else if (categoryObj) title = `${categoryObj.name} - ECommerce`;
 
   return status === 'pending' ? (
-    <div className="d-flex justify-content-center align-items-center" style={{ height: '100px' }} ref={ref}>
-      <Spinner animation="border" role="status" variant="primary">
-        <span className="visually-hidden">Loading...</span>
-      </Spinner>
+    <div className="d-flex justify-content-center align-items-center" style={{ height: '100px' }}>
+      <LoadingSpinner />
     </div>
   ) : status === 'error' || categoryError ? (
     <p className="text-danger">Oops! Something went wrong.</p>
@@ -90,11 +88,7 @@ function RouteComponent() {
       </Row>
 
       <div className="d-flex justify-content-center align-items-center" style={{ height: '100px' }} ref={ref}>
-        {isFetchingNextPage && (
-          <Spinner animation="border" role="status" variant="primary">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        )}
+        {isFetchingNextPage && <LoadingSpinner />}
       </div>
     </>
   );
