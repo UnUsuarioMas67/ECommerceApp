@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useAxios } from '../../hooks/use-axios';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Spinner from 'react-bootstrap/Spinner';
 import ProductCard from '../../components/ProductCard';
-import { fetchProducts, imagesUrl } from '../../api';
+import { fetchCategory, fetchProducts, imagesUrl } from '../../api';
 import { searchSchema } from '../../schemas';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
@@ -13,6 +13,13 @@ import { useEffect } from 'react';
 export const Route = createFileRoute('/_app/')({
   component: RouteComponent,
   validateSearch: searchSchema,
+  loaderDeps: ({ search: { category } }) => ({ category }),
+  loader: ({ context: { queryClient, axiosInstance }, deps: { category } }) => {
+    queryClient.ensureQueryData({
+      queryKey: ['category', 'search'],
+      queryFn: () => (category ? fetchCategory(axiosInstance, category) : null),
+    });
+  },
 });
 
 function RouteComponent() {
@@ -35,6 +42,11 @@ function RouteComponent() {
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
 
+  const { data: categoryObj, isError: categoryError } = useSuspenseQuery({
+    queryKey: ['category', 'search'],
+    queryFn: () => (category ? fetchCategory(axiosInstance, category) : null),
+  });
+
   const { ref, inView } = useInView();
 
   useEffect(() => {
@@ -43,7 +55,7 @@ function RouteComponent() {
 
   let title: string | undefined;
   if (searchTerm) title = `'${searchTerm}' - ECommerce`;
-  else if (category) title = `${category} - ECommerce`;
+  else if (categoryObj) title = `${categoryObj.name} - ECommerce`;
 
   return status === 'pending' ? (
     <div className="d-flex justify-content-center" ref={ref}>
@@ -51,18 +63,19 @@ function RouteComponent() {
         <span className="visually-hidden">Loading...</span>
       </Spinner>
     </div>
-  ) : status === 'error' ? (
+  ) : status === 'error' || categoryError ? (
     <p className="text-danger">Oops! Something went wrong.</p>
   ) : (
     <>
       {title && <title>{title}</title>}
 
       {searchTerm && (
-        <p className="text-secondary bg-body-tertiary p-1 px-3 small rounded-pill">
-          Showing results for <strong>'{searchTerm}'</strong>
+        <p className="text-secondary bg-body-tertiary p-1 px-3 small rounded-3">
+          Showing results for <strong className='text-primary-emphasis'>'{searchTerm}'</strong>
         </p>
       )}
-      <h1>Products</h1>
+
+      <h1>{categoryObj ? categoryObj.name : 'All products'}</h1>
 
       <Row xs={1} md={2} lg={3} xl={4} className="g-3">
         {data.pages &&
