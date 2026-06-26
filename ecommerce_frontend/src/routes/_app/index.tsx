@@ -4,7 +4,7 @@ import { useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProductCard from '../../components/ProductCard';
-import { fetchCategory, fetchProducts, imagesUrl } from '../../api';
+import { fetchCategory, fetchProducts } from '../../api';
 import { searchSchema } from '../../schemas';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
@@ -82,7 +82,7 @@ function RouteComponent() {
             .flat()
             .map((product) => (
               <Col key={product.id}>
-                <ProductCard product={product} imagesUrl={imagesUrl} />
+                <ProductCard product={product} />
               </Col>
             ))}
       </Row>
