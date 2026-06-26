@@ -75,7 +75,7 @@ function RouteComponent() {
 
       <h1>{categoryObj ? categoryObj.name : 'All products'}</h1>
 
-      <Row xs={1} md={2} lg={3} xl={4} className="g-3">
+      <Row xs={1} lg={2} className="g-3">
         {data.pages &&
           data.pages
             .map((page) => page.data)
