@@ -25,7 +25,6 @@ export const Route = createFileRoute('/products/$productId')({
   },
   notFoundComponent: () => <Navigate to="/" />,
   pendingComponent: () => <Row className='justify-content-center mt-5'><LoadingSpinner/></Row>,
-  errorComponent: ErrorComponent,
 });
 
 function RouteComponent() {
@@ -64,16 +63,5 @@ function RouteComponent() {
         </Col>
       </Row>
     </>
-  );
-}
-
-function ErrorComponent() {
-  return (
-    <Row className="pt-5 justify-content-center">
-      <Col className="text-center">
-        <p className='display-2'>Oops!</p>
-        <p className='fs-5 text-body-secondary'>An unexpected error has ocurred. Please try again later.</p>
-      </Col>
-    </Row>
   );
 }

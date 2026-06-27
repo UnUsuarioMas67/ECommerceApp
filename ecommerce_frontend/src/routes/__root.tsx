@@ -1,6 +1,5 @@
 import { createRootRouteWithContext, Outlet, useMatchRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import NotFoundLayout from '../layout/NotFoundLayout';
 import { useSuspenseQuery, type QueryClient } from '@tanstack/react-query';
 import type { useAuth } from '../components/AuthProvider/AuthContext';
 import type { AxiosInstance } from 'axios';
@@ -9,6 +8,8 @@ import { fetchCategories, getCurrentUser } from '../api';
 import NavbarComponent from '../components/NavbarComponent';
 import Container from 'react-bootstrap/esm/Container';
 import FooterComponent from '../components/FooterComponent';
+import ErrorPage from './-error-page';
+import NotFoundPage from './-not-found';
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -43,7 +44,7 @@ const RootLayout = () => {
 
         <FooterComponent />
       </div>
-      
+
       <TanStackRouterDevtools />
     </>
   );
@@ -51,7 +52,8 @@ const RootLayout = () => {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
-  notFoundComponent: NotFoundLayout,
+  notFoundComponent: NotFoundPage,
+  errorComponent: ErrorPage,
   loader: async ({ context: { queryClient, authContext, axiosInstance } }) => {
     if (!(await authContext.ensureLoggedIn())) return;
 
