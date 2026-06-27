@@ -67,10 +67,10 @@ function RouteComponent() {
 
 function ErrorComponent() {
   return (
-    <Row className="pt-5">
+    <Row className="pt-5 justify-content-center">
       <Col className="text-center">
-        <h1>Something went wrong!</h1>
-        <p className="fs-4">An unexpected error has ocurred.</p>
+        <p className='display-2'>Oops!</p>
+        <p className='fs-5 text-body-secondary'>An unexpected error has ocurred. Please try again later.</p>
       </Col>
     </Row>
   );
