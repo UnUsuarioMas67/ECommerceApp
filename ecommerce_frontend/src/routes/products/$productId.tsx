@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/esm/Col';
 import Row from 'react-bootstrap/esm/Row';
 import ProductImage from '../../components/ProductImage';
 import AddToCartButton from '../../components/AddToCartButton';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 export const Route = createFileRoute('/products/$productId')({
   component: RouteComponent,
@@ -23,6 +24,7 @@ export const Route = createFileRoute('/products/$productId')({
     });
   },
   notFoundComponent: () => <Navigate to="/" />,
+  pendingComponent: () => <Row className='justify-content-center mt-5'><LoadingSpinner/></Row>,
   errorComponent: ErrorComponent,
 });
 
