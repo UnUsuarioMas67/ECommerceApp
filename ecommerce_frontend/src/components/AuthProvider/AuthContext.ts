@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { UserAuth } from '../../../api/types';
+import type { UserAuth } from '../../api/types';
 
 type AuthContextType = {
   getAccessToken: () => Promise<string | null>;
