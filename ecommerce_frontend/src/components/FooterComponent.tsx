@@ -1,6 +1,6 @@
 function FooterComponent() {
   return (
-    <div className="py-5 text-center">FooterComponent</div>
+    <footer className="py-5 text-center border-top text-body-secondary">Copyright @ UnUsuarioMas67</footer>
   )
 }
 
