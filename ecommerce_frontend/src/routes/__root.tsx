@@ -35,7 +35,7 @@ const RootLayout = () => {
       <div className="d-flex flex-column min-vh-100">
         {!matchedNoNavRoute && <NavbarComponent user={currentUser} categories={categories} />}
 
-        <Container as="main" className="flex-grow-1">
+        <Container as="main" className="flex-grow-1 p-0" fluid>
           <Outlet />
         </Container>
 

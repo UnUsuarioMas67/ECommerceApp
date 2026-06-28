@@ -1,16 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useAxios } from '../hooks/use-axios';
+import { useAxios } from '../../hooks/use-axios';
 import { useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import ProductCard from '../components/ProductCard';
-import { fetchCategory, fetchProducts } from '../api';
-import { searchSchema } from '../schemas';
+import ProductCard from '../../components/ProductCard';
+import { fetchCategory, fetchProducts } from '../../api';
+import { searchSchema } from '../../schemas';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
-import LoadingSpinner from '../components/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_products/')({
   component: RouteComponent,
   validateSearch: searchSchema,
   loaderDeps: ({ search: { category } }) => ({ category }),

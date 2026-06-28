@@ -9,25 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProductsRouteRouteImport } from './routes/_products/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProductsProductIdRouteImport } from './routes/products/$productId'
+import { Route as ProductsIndexRouteImport } from './routes/_products/index'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as ProductsProductsProductIdRouteImport } from './routes/_products/products/$productId'
 
+const ProductsRouteRoute = ProductsRouteRouteImport.update({
+  id: '/_products',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const ProductsIndexRoute = ProductsIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
-  id: '/products/$productId',
-  path: '/products/$productId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ProductsRouteRoute,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/register',
@@ -39,26 +39,33 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const ProductsProductsProductIdRoute =
+  ProductsProductsProductIdRouteImport.update({
+    id: '/products/$productId',
+    path: '/products/$productId',
+    getParentRoute: () => ProductsRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof ProductsIndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
-  '/products/$productId': typeof ProductsProductIdRoute
+  '/products/$productId': typeof ProductsProductsProductIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof ProductsIndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
-  '/products/$productId': typeof ProductsProductIdRoute
+  '/products/$productId': typeof ProductsProductsProductIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
+  '/_products': typeof ProductsRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
-  '/products/$productId': typeof ProductsProductIdRoute
+  '/_products/': typeof ProductsIndexRoute
+  '/_products/products/$productId': typeof ProductsProductsProductIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -67,21 +74,28 @@ export interface FileRouteTypes {
   to: '/' | '/login' | '/register' | '/products/$productId'
   id:
     | '__root__'
-    | '/'
     | '/_auth'
+    | '/_products'
     | '/_auth/login'
     | '/_auth/register'
-    | '/products/$productId'
+    | '/_products/'
+    | '/_products/products/$productId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
-  ProductsProductIdRoute: typeof ProductsProductIdRoute
+  ProductsRouteRoute: typeof ProductsRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_products': {
+      id: '/_products'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof ProductsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -89,19 +103,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_products/': {
+      id: '/_products/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/products/$productId': {
-      id: '/products/$productId'
-      path: '/products/$productId'
-      fullPath: '/products/$productId'
-      preLoaderRoute: typeof ProductsProductIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProductsIndexRouteImport
+      parentRoute: typeof ProductsRouteRoute
     }
     '/_auth/register': {
       id: '/_auth/register'
@@ -116,6 +123,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRouteRoute
+    }
+    '/_products/products/$productId': {
+      id: '/_products/products/$productId'
+      path: '/products/$productId'
+      fullPath: '/products/$productId'
+      preLoaderRoute: typeof ProductsProductsProductIdRouteImport
+      parentRoute: typeof ProductsRouteRoute
     }
   }
 }
@@ -134,10 +148,23 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
+interface ProductsRouteRouteChildren {
+  ProductsIndexRoute: typeof ProductsIndexRoute
+  ProductsProductsProductIdRoute: typeof ProductsProductsProductIdRoute
+}
+
+const ProductsRouteRouteChildren: ProductsRouteRouteChildren = {
+  ProductsIndexRoute: ProductsIndexRoute,
+  ProductsProductsProductIdRoute: ProductsProductsProductIdRoute,
+}
+
+const ProductsRouteRouteWithChildren = ProductsRouteRoute._addFileChildren(
+  ProductsRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
-  ProductsProductIdRoute: ProductsProductIdRoute,
+  ProductsRouteRoute: ProductsRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
