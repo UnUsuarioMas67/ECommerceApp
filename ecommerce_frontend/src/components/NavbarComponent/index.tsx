@@ -3,7 +3,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import type { Category, User } from '../../api/types';
 import ProductSearchForm from './ProductSearchForm';
 import NavbarNav from './NavbarNav';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 
 type Props = {
   user: User | null;
@@ -11,15 +11,10 @@ type Props = {
 };
 
 function NavbarComponent({ user: currentUser, categories }: Props) {
-  const navigate = useNavigate();
-
   return (
     <Navbar sticky="top" expand="lg" className="bg-primary mb-4" data-bs-theme="dark">
       <Container fluid className="px-5">
-        <Navbar.Brand
-          as={Link}
-          className="fw-bold text-white"
-          onClick={() => navigate({ to: '/', reloadDocument: true })}>
+        <Navbar.Brand as={Link} className="fw-bold text-white" to="/" reloadDocument>
           ECommerce
         </Navbar.Brand>
 
