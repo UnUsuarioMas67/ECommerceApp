@@ -9,7 +9,7 @@ import { type LoginRequest, loginSchema } from '../../schemas';
 import { isAxiosError } from 'axios';
 import { useAuth } from '../../components/AuthProvider/AuthContext';
 import { useMutation } from '@tanstack/react-query';
-import { postLogin } from '../../api';
+import { postLogin } from '../../api/user';
 import { useAxios } from '../../hooks/use-axios';
 import type { UserAuth } from '../../api/types';
 

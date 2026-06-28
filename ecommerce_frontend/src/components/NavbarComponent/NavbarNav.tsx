@@ -5,7 +5,7 @@ import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import type { User } from '../../api/types';
 import { useAuth } from '../AuthProvider/AuthContext';
-import { postLogout } from '../../api';
+import { postLogout } from '../../api/user';
 import { useAxios } from '../../hooks/use-axios';
 
 type Props = {

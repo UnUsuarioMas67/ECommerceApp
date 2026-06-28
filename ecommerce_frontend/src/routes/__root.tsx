@@ -4,7 +4,7 @@ import { useSuspenseQuery, type QueryClient } from '@tanstack/react-query';
 import { useAuth } from '../components/AuthProvider/AuthContext';
 import type { AxiosInstance } from 'axios';
 import { useAxios } from '../hooks/use-axios';
-import { fetchCategories } from '../api';
+import { fetchCategories } from '../api/categories';
 import NavbarComponent from '../components/NavbarComponent';
 import Container from 'react-bootstrap/esm/Container';
 import FooterComponent from '../components/FooterComponent';

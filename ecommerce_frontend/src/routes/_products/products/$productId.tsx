@@ -1,7 +1,7 @@
 import { createFileRoute, Navigate, notFound } from '@tanstack/react-router';
 import { useAxios } from '../../../hooks/use-axios';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { fetchProduct } from '../../../api';
+import { fetchProduct } from '../../../api/products';
 import { isAxiosError } from 'axios';
 import Col from 'react-bootstrap/esm/Col';
 import Row from 'react-bootstrap/esm/Row';

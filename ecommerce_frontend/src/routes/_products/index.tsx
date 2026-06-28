@@ -4,7 +4,8 @@ import { useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-quer
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProductCard from '../../components/ProductCard';
-import { fetchCategory, fetchProducts } from '../../api';
+import { fetchCategory } from '../../api/categories';
+import { fetchProducts } from '../../api/products';
 import { searchSchema } from '../../schemas';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
