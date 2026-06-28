@@ -1,17 +1,13 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { isAxiosError } from 'axios';
-import { useForm, type SubmitHandler } from 'react-hook-form';
-import { loginSchema, type LoginRequest } from '../../schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from '@tanstack/react-router';
+import Alert from 'react-bootstrap/esm/Alert';
+import Button from 'react-bootstrap/esm/Button';
+import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
+import Form from 'react-bootstrap/esm/Form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { useLogin } from '../../hooks/account';
-
-import Alert from 'react-bootstrap/Alert';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-
-export const Route = createFileRoute('/_auth/login')({
-  component: RouteComponent,
-});
+import { type LoginRequest, loginSchema } from '../../schemas';
+import { isAxiosError } from 'axios';
 
 function handleLoginErrorMsg(error: Error): string {
   if (isAxiosError(error)) {
@@ -29,7 +25,7 @@ function handleLoginErrorMsg(error: Error): string {
   throw error;
 }
 
-function RouteComponent() {
+function LoginForm() {
   const navigate = useNavigate();
 
   const {
@@ -41,7 +37,7 @@ function RouteComponent() {
     resolver: zodResolver(loginSchema),
   });
 
-  const { mutate, isPending, isSuccess } = useLogin();
+  const { mutate, isPending } = useLogin();
 
   const onSubmit: SubmitHandler<LoginRequest> = (data) => {
     mutate(data, {
@@ -56,35 +52,30 @@ function RouteComponent() {
 
   return (
     <>
-      <h1>Login</h1>
-
       {errors.root && <Alert variant="danger">{errors.root.message}</Alert>}
-      {isSuccess && <Alert variant="success">Login Successful!</Alert>}
 
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Form.Group className="mb-3" controlId="email">
-          <Form.Label>Email</Form.Label>
-          <Form.Control type="email" placeholder="Enter email" {...register('email')} isInvalid={!!errors.email} />
-
+        <FloatingLabel controlId="floatingInput" label="Email address" className="mb-3">
+          <Form.Control type="email" placeholder="name@example.com" {...register('email')} isInvalid={!!errors.email} />
           <Form.Control.Feedback type="invalid">{errors.email?.message}</Form.Control.Feedback>
-        </Form.Group>
+        </FloatingLabel>
 
-        <Form.Group className="mb-3" controlId="password">
-          <Form.Label>Password</Form.Label>
+        <FloatingLabel controlId="floatingPassword" label="Password">
           <Form.Control
             type="password"
-            placeholder="Enter password"
+            placeholder="Password"
             {...register('password')}
             isInvalid={!!errors.password}
           />
-
           <Form.Control.Feedback type="invalid">{errors.password?.message}</Form.Control.Feedback>
-        </Form.Group>
+        </FloatingLabel>
 
-        <Button variant="primary" type="submit" disabled={isPending}>
+        <Button className="w-100 mt-5" variant="primary" type="submit" disabled={isPending}>
           {isPending ? 'Logging in...' : 'Login'}
         </Button>
       </Form>
     </>
   );
 }
+
+export default LoginForm;
