@@ -21,6 +21,7 @@ export const Route = createFileRoute('/_products/products/$productId')({
             if (error.response?.status === 404) throw notFound();
           }
         }),
+      staleTime: Infinity,
     });
   },
   notFoundComponent: () => <Navigate to="/" />,
@@ -37,6 +38,7 @@ function RouteComponent() {
   const { data: product } = useSuspenseQuery({
     queryKey: ['products', productId],
     queryFn: () => fetchProduct(axiosInstance, Number(productId)),
+    staleTime: Infinity,
   });
 
   return (
