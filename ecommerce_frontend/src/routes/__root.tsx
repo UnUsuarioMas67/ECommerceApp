@@ -23,6 +23,7 @@ const RootLayout = () => {
   const { data: categories } = useSuspenseQuery({
     queryKey: ['categories'],
     queryFn: () => fetchCategories(axiosInstance),
+    staleTime: Infinity
   });
 
   // hide navbar in login and register pages
