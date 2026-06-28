@@ -1,16 +1,26 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useLocation, useNavigate, useRouter } from '@tanstack/react-router';
 import { BoxArrowRight, Cart4, Gear, PersonFill } from 'react-bootstrap-icons';
 import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import type { User } from '../../api/types';
+import { useAuth } from '../AuthProvider/AuthContext';
 
 type Props = {
   user: User | null;
 };
 
 function NavbarNav({ user: currentUser }: Props) {
+  const { clearCredentials } = useAuth();
   const navigate = useNavigate();
+  const router = useRouter();
+  
+  const onSignOutClick = () => {
+    navigate({ to: '/login'});  
+    clearCredentials();
+    router.invalidate();
+  };
+  
   const userDropdownTitle = (
     <>
       {currentUser?.firstName} {currentUser?.lastName} <PersonFill size={24} title="User dropdown" />
@@ -33,7 +43,7 @@ function NavbarNav({ user: currentUser }: Props) {
               <Gear size={18} className="me-2" /> Account Settings
             </NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item>
+            <NavDropdown.Item onClick={onSignOutClick}>
               <BoxArrowRight size={18} className="me-2" /> Sign Out
             </NavDropdown.Item>
           </NavDropdown>
