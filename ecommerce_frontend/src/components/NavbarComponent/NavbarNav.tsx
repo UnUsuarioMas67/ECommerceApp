@@ -1,10 +1,12 @@
-import { useLocation, useNavigate, useRouter } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { BoxArrowRight, Cart4, Gear, PersonFill } from 'react-bootstrap-icons';
 import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import type { User } from '../../api/types';
 import { useAuth } from '../AuthProvider/AuthContext';
+import { postLogout } from '../../api';
+import { useAxios } from '../../hooks/use-axios';
 
 type Props = {
   user: User | null;
@@ -13,12 +15,14 @@ type Props = {
 function NavbarNav({ user: currentUser }: Props) {
   const { clearCredentials } = useAuth();
   const navigate = useNavigate();
-  const router = useRouter();
+  const {invalidate: invalidateRouter} = useRouter();
+  const axiosInstance = useAxios();
   
-  const onSignOutClick = () => {
+  const onSignOutClick = async() => {
+    postLogout(axiosInstance);
     navigate({ to: '/login'});  
     clearCredentials();
-    router.invalidate();
+    invalidateRouter();
   };
   
   const userDropdownTitle = (
