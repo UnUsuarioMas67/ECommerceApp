@@ -20,7 +20,7 @@ function RouteComponent() {
           <Link className='h2 text-center text-decoration-none d-lg-none' to="/" style={{marginBottom: '100px'}}>
             ECommerce
           </Link>
-          <h1 className="text-center text-body mb-5">Sign Up</h1>
+          <h1 className="text-center text-body mb-5">Sign In</h1>
           <LoginForm />
           <span className='text-center small'>Don't have an account? <Link to='/register'>Register</Link></span>
         </Col>
