@@ -40,7 +40,7 @@ const RootLayout = () => {
           <Outlet />
         </Container>
 
-        <FooterComponent />
+        <FooterComponent small={ matchedNoNavRoute } />
       </div>
 
       <TanStackRouterDevtools />
