@@ -7,7 +7,7 @@ export const Route = createFileRoute('/_products')({
 
 function RouteComponent() {
   return (
-    <Container>
+    <Container as="main">
       <Outlet />
     </Container>
   );
