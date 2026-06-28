@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useAxios } from '../../hooks/use-axios';
-import { useInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProductCard from '../../components/ProductCard';
@@ -13,38 +13,47 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 export const Route = createFileRoute('/_products/')({
   component: RouteComponent,
   validateSearch: searchSchema,
-  loaderDeps: ({ search: { category } }) => ({ category }),
-  loader: ({ context: { queryClient, axiosInstance }, deps: { category } }) => {
-    queryClient.ensureQueryData({
-      queryKey: ['category', 'search'],
-      queryFn: () => (category ? fetchCategory(axiosInstance, category) : null),
-    });
+  loaderDeps: ({ search: { category, searchTerm } }) => ({ category, searchTerm }),
+  loader: async ({ context: { queryClient, axiosInstance }, deps: { category, searchTerm } }) => {
+    await Promise.all([
+      queryClient.prefetchQuery({
+        queryKey: ['categories', 'search'],
+        queryFn: () => (category ? fetchCategory(axiosInstance, category) : null),
+        staleTime: Infinity,
+      }),
+      queryClient.prefetchInfiniteQuery({
+        queryKey: ['products'],
+        queryFn: ({ pageParam }) => fetchProducts(axiosInstance, { category, searchTerm, pageParam }),
+        initialPageParam: 1,
+        pages: 1,
+        getNextPageParam: (lastPage) => lastPage.nextPage,
+        staleTime: 1000 * 60
+      }),
+    ]);
   },
+  pendingComponent: () => (
+    <Row className="justify-content-center mt-5">
+      <LoadingSpinner />
+    </Row>
+  ),
 });
 
 function RouteComponent() {
   const { category, searchTerm } = Route.useSearch();
-
   const axiosInstance = useAxios();
 
-  const fetchProductsWithTimeout = (pageParam: number): ReturnType<typeof fetchProducts> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(fetchProducts(axiosInstance, { category, searchTerm, pageParam }));
-      }, 500);
-    });
-  };
-
-  const { data, status, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
+  const { data, error, status, fetchNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery({
     queryKey: ['products'],
-    queryFn: ({ pageParam }) => fetchProductsWithTimeout(pageParam),
+    queryFn: ({ pageParam }) => fetchProducts(axiosInstance, { category, searchTerm, pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
+    staleTime: 1000 * 60
   });
 
   const { data: categoryObj, isError: categoryError } = useSuspenseQuery({
-    queryKey: ['category', 'search'],
+    queryKey: ['categories', 'search'],
     queryFn: () => (category ? fetchCategory(axiosInstance, category) : null),
+    staleTime: Infinity,
   });
 
   const { ref, inView } = useInView();
@@ -57,11 +66,10 @@ function RouteComponent() {
   if (searchTerm) title = `'${searchTerm}' - ECommerce`;
   else if (categoryObj) title = `${categoryObj.name} - ECommerce`;
 
-  return status === 'pending' ? (
-    <div className="d-flex justify-content-center align-items-center" style={{ height: '100px' }}>
-      <LoadingSpinner />
-    </div>
-  ) : status === 'error' || categoryError ? (
+  if (status === 'error')
+    console.log(error)
+
+  return status === 'error' || categoryError ? (
     <p className="text-danger">Oops! Something went wrong.</p>
   ) : (
     <>
