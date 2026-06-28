@@ -1,17 +1,21 @@
 import type { AxiosInstance } from 'axios';
-import type { Category, Product, User } from './types';
+import type { Category, Product, User, UserAuth } from './types';
+import type { LoginRequest, RegisterRequest } from '../schemas';
 
 export const apiUrl = 'http://localhost:5113/api';
 export const imagesUrl = 'http://localhost:5113/images';
 
-// TODO: Handle get current user request in the AuthProvider
-export async function getCurrentUser(axiosInstace: AxiosInstance) {
-  const response = await axiosInstace.get<User>('/clients/me', {
-    validateStatus: (status) => status === 200 || status === 401,
-  });
+export async function postLogin(axiosInstance: AxiosInstance, data: LoginRequest) {
+  const response = await axiosInstance.post<UserAuth>('/clients/login', data);
+  return response.data;
+}
 
-  if (response.status === 401) return null;
+export async function postLogout(axiosInstance: AxiosInstance) {
+  await axiosInstance.post('clients/logout');
+}
 
+export async function postRegister(axiosInstance: AxiosInstance, data: RegisterRequest) {
+  const response = await axiosInstance.post<User>('/clients/login', data);
   return response.data;
 }
 
@@ -21,8 +25,8 @@ export async function fetchCategories(axiosInstance: AxiosInstance) {
 }
 
 export async function fetchCategory(axiosInstance: AxiosInstance, category: number | string) {
-  const response = await axiosInstance.get<Category>(`/categories/${category}`)
-  return response.data
+  const response = await axiosInstance.get<Category>(`/categories/${category}`);
+  return response.data;
 }
 
 type FetchProductOptions = {

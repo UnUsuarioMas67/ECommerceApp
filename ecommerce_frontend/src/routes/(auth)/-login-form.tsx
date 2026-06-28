@@ -1,13 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import Alert from 'react-bootstrap/esm/Alert';
 import Button from 'react-bootstrap/esm/Button';
 import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
 import Form from 'react-bootstrap/esm/Form';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { useLogin } from '../../hooks/account';
 import { type LoginRequest, loginSchema } from '../../schemas';
 import { isAxiosError } from 'axios';
+import { useAuth } from '../../components/AuthProvider/AuthContext';
+import { useMutation } from '@tanstack/react-query';
+import { postLogin } from '../../api';
+import { useAxios } from '../../hooks/use-axios';
+import type { UserAuth } from '../../api/types';
 
 function handleLoginErrorMsg(error: Error): string {
   if (isAxiosError(error)) {
@@ -27,6 +31,9 @@ function handleLoginErrorMsg(error: Error): string {
 
 function LoginForm() {
   const navigate = useNavigate();
+  const { setCredentials } = useAuth();
+  const axiosInstance = useAxios();
+  const { invalidate: invalidateRouter } = useRouter();
 
   const {
     register,
@@ -37,17 +44,20 @@ function LoginForm() {
     resolver: zodResolver(loginSchema),
   });
 
-  const { mutate, isPending } = useLogin();
+  const { mutate, isPending } = useMutation<UserAuth, Error, LoginRequest>({
+    mutationFn: (data) => postLogin(axiosInstance, data),
+    onSuccess: (auth) => {
+      navigate({ to: '/' });
+      setCredentials(auth);
+      invalidateRouter();
+    },
+    onError: (error) => {
+      setError('root', { message: handleLoginErrorMsg(error) });
+    },
+  });
 
   const onSubmit: SubmitHandler<LoginRequest> = (data) => {
-    mutate(data, {
-      onSuccess: () => {
-        navigate({ to: '/' });
-      },
-      onError: (error) => {
-        setError('root', { message: handleLoginErrorMsg(error) });
-      },
-    });
+    mutate(data);
   };
 
   return (
