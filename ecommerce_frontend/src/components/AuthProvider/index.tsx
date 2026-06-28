@@ -107,6 +107,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         setCredentials,
         clearCredentials,
         ensureLoggedIn: async () => !!(await getAccessToken()),
+        currentUser: auth?.user ?? null,
       }}>
       {children}
     </AuthContext.Provider>

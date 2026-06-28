@@ -1,11 +1,12 @@
 import { createContext, useContext } from 'react';
-import type { UserAuth } from '../../api/types';
+import type { User, UserAuth } from '../../api/types';
 
 type AuthContextType = {
   getAccessToken: () => Promise<string | null>;
   setCredentials: (auth: UserAuth) => void;
   clearCredentials: () => void;
   ensureLoggedIn: () => Promise<boolean>;
+  currentUser: User | null;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);

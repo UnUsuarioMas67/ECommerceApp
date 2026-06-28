@@ -6,10 +6,10 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import type { User } from '../../api/types';
 
 type Props = {
-  currentUser?: User;
+  user: User | null;
 };
 
-function NavbarNav({ currentUser }: Props) {
+function NavbarNav({ user: currentUser }: Props) {
   const navigate = useNavigate();
   const userDropdownTitle = (
     <>
