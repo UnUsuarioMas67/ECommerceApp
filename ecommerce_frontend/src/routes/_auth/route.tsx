@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import z from 'zod';
 
 export const Route = createFileRoute('/_auth')({
@@ -6,6 +6,10 @@ export const Route = createFileRoute('/_auth')({
   validateSearch: z.object({
     redirect: z.string().optional(),
   }),
+  beforeLoad: async ({context: {authContext} }) => {
+    if (await authContext.ensureLoggedIn())
+      throw redirect({to: '/'})
+  }
 });
 
 function RouteComponent() {
