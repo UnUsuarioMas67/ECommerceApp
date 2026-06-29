@@ -1,4 +1,4 @@
-import { useNavigate, useRouter } from '@tanstack/react-router';
+import { useLocation, useNavigate, useRouter } from '@tanstack/react-router';
 import { BoxArrowRight, Cart4, Gear, PersonFill } from 'react-bootstrap-icons';
 import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
@@ -15,16 +15,17 @@ type Props = {
 function NavbarNav({ user: currentUser }: Props) {
   const { clearCredentials } = useAuth();
   const navigate = useNavigate();
-  const {invalidate: invalidateRouter} = useRouter();
+  const location = useLocation();
+  const { invalidate: invalidateRouter } = useRouter();
   const axiosInstance = useAxios();
-  
-  const onSignOutClick = async() => {
+
+  const onSignOutClick = async () => {
     postLogout(axiosInstance);
-    navigate({ to: '/login'});  
+    navigate({ to: '/login', search: { redirect: location.href } });
     clearCredentials();
     invalidateRouter();
   };
-  
+
   const userDropdownTitle = (
     <>
       {currentUser?.firstName} {currentUser?.lastName} <PersonFill size={24} title="User dropdown" />
@@ -35,8 +36,11 @@ function NavbarNav({ user: currentUser }: Props) {
     <Nav className="flex-shrink-0 align-items-center">
       {!currentUser ? (
         <>
-          <Nav.Link onClick={() => navigate({ to: '/login' })}>Sign In</Nav.Link>
-          <Button variant="outline-light" className="mx-1" onClick={() => navigate({ to: '/register' })}>
+          <Nav.Link onClick={() => navigate({ to: '/login', search: { redirect: location.href } })}>Sign In</Nav.Link>
+          <Button
+            variant="outline-light"
+            className="mx-1"
+            onClick={() => navigate({ to: '/register', search: { redirect: location.href } })}>
             Sign Up
           </Button>
         </>

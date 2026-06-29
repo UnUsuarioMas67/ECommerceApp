@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from '@tanstack/react-router';
 import Alert from 'react-bootstrap/esm/Alert';
 import Button from 'react-bootstrap/esm/Button';
 import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
@@ -35,8 +34,11 @@ function handleRegisterErrorMsg(error: Error): string | Api422ErrorBody {
   throw error;
 }
 
-function RegisterForm() {
-  const navigate = useNavigate();
+type Props = {
+  onSubmitSuccessful: (user: User) => void
+}
+
+function RegisterForm({onSubmitSuccessful}: Props) {
   const axiosInstance = useAxios();
 
   const {
@@ -50,8 +52,8 @@ function RegisterForm() {
 
   const { mutate, isPending } = useMutation<User, Error, RegisterRequest>({
     mutationFn: (data) => postRegister(axiosInstance, data),
-    onSuccess: () => {
-      navigate({ to: '/login' });
+    onSuccess: (data) => {
+      onSubmitSuccessful(data)
     },
     onError: (error) => {
       const registerError = handleRegisterErrorMsg(error);

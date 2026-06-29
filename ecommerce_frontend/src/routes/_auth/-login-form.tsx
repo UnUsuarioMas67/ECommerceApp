@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate, useRouter } from '@tanstack/react-router';
 import Alert from 'react-bootstrap/esm/Alert';
 import Button from 'react-bootstrap/esm/Button';
 import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
@@ -7,7 +6,6 @@ import Form from 'react-bootstrap/esm/Form';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { type LoginRequest, loginSchema } from '../../schemas';
 import { isAxiosError } from 'axios';
-import { useAuth } from '../../components/AuthProvider/AuthContext';
 import { useMutation } from '@tanstack/react-query';
 import { postLogin } from '../../api/user';
 import { useAxios } from '../../hooks/use-axios';
@@ -29,11 +27,12 @@ function handleLoginErrorMsg(error: Error): string {
   throw error;
 }
 
-function LoginForm() {
-  const navigate = useNavigate();
-  const { setCredentials } = useAuth();
+type Props = {
+  onSubmitSuccessful: (auth: UserAuth) => void
+}
+
+function LoginForm({onSubmitSuccessful}: Props) {
   const axiosInstance = useAxios();
-  const { invalidate: invalidateRouter } = useRouter();
 
   const {
     register,
@@ -47,9 +46,7 @@ function LoginForm() {
   const { mutate, isPending } = useMutation<UserAuth, Error, LoginRequest>({
     mutationFn: (data) => postLogin(axiosInstance, data),
     onSuccess: (auth) => {
-      navigate({ to: '/' });
-      setCredentials(auth);
-      invalidateRouter();
+      onSubmitSuccessful(auth)
     },
     onError: (error) => {
       setError('root', { message: handleLoginErrorMsg(error) });
