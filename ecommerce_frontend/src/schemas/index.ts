@@ -21,9 +21,8 @@ export const registerSchema = z
     email: z.email({ error: (iss) => (iss.input === '' ? required('Email') : 'Invalid email address') }),
     password: z
       .string()
-      .min(1, required('Password'))
-      .max(8, lengthError('Password', 8, 'max')),
-    passwordConfirm: z.string().min(1, required('Confirm password')),
+      .min(8, { error: (iss) => (iss.input === '' ? 'Password is required' : lengthError('Password', 8, 'min')) }),
+    passwordConfirm: z.string().min(1, {error: required('Confirm password')}),
     phoneNumber: z.e164({ error: (iss) => (iss.input === '' ? required('Phone number') : 'Invalid phone number') }),
     birthDate: z.iso.date({ error: (iss) => (iss.input === '' ? 'Birth date is required' : 'Invalid date') }),
   })
