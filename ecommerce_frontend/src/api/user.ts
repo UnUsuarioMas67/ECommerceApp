@@ -12,6 +12,6 @@ export async function postLogout(axiosInstance: AxiosInstance) {
 }
 
 export async function postRegister(axiosInstance: AxiosInstance, data: RegisterRequest) {
-  const response = await axiosInstance.post<User>('/clients/login', data);
+  const response = await axiosInstance.post<User>('/clients/register', data);
   return response.data;
 }
