@@ -1,11 +1,16 @@
 import { createContext, useContext } from 'react';
-import type { CartItem } from '../../api/types';
+
+export type CartItem = {
+  productId: number;
+  quantity: number;
+};
 
 type CartContextType = {
   items: CartItem[];
-  setItem: (item: CartItem) => void;
-  removeItem: (id: number) => void;
-  getItem: (id: number) => CartItem | undefined;
+  getItemQuantity: (productId: number) => number;
+  increaseItemQuantity: (productId: number) => void;
+  decreaseItemQuantity: (productId: number) => void;
+  removeItem: (productId: number) => void;
   clearCart: () => void;
 };
 
