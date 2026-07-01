@@ -5,12 +5,13 @@ import ReactDOM from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthProvider from './components/AuthProvider';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
 import { useAuth } from './components/AuthProvider/AuthContext';
 import { useAxios } from './hooks/use-axios';
+import CartProvider from './components/CartProvider';
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,7 @@ const router = createRouter({
   context: {
     queryClient: undefined!,
     authContext: undefined!,
-    axiosInstance: undefined!
+    axiosInstance: undefined!,
   },
 });
 
@@ -39,9 +40,11 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <App />
+          <CartProvider>
+            <App />
+          </CartProvider>
         </AuthProvider>
-        <ReactQueryDevtools/>
+        <ReactQueryDevtools />
       </QueryClientProvider>
     </StrictMode>,
   );
