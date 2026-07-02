@@ -25,6 +25,7 @@ const RootLayout = () => {
     queryKey: ['categories'],
     queryFn: () => fetchCategories(axiosInstance),
     staleTime: Infinity,
+    refetchOnWindowFocus: false,
   });
 
   // hide navbar in login and register pages
