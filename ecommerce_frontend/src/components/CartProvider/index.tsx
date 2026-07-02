@@ -1,5 +1,6 @@
 import { CartContext, type CartItem } from './CartContext';
 import { useLocalStorage } from '../../hooks/use-localstorage';
+import { useState } from 'react';
 
 type Props = {
   children: React.ReactNode;
@@ -7,6 +8,7 @@ type Props = {
 
 function CartProvider({ children }: Props) {
   const [cartItems, setCartItems] = useLocalStorage<CartItem[]>('shoppingCart', []);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const getItemQuantity = (productId: number) => {
     return cartItems.find((item) => item.productId === productId)?.quantity || 0;
@@ -52,9 +54,22 @@ function CartProvider({ children }: Props) {
     setCartItems(() => []);
   };
 
+  const totalItems = cartItems.map((item) => item.quantity).reduce((prev, curr) => prev + curr, 0);
+
   return (
     <CartContext
-      value={{ items: cartItems, getItemQuantity, increaseItemQuantity, decreaseItemQuantity, removeItem, clearCart }}>
+      value={{
+        items: cartItems,
+        getItemQuantity,
+        increaseItemQuantity,
+        decreaseItemQuantity,
+        removeItem,
+        clearCart,
+        isCartOpen,
+        openCart: () => setIsCartOpen(true),
+        closeCart: () => setIsCartOpen(false),
+        totalItems,
+      }}>
       {children}
     </CartContext>
   );

@@ -1,13 +1,12 @@
 import Offcanvas from 'react-bootstrap/esm/Offcanvas';
+import { useCart } from '../CartProvider/CartContext';
 
-type Props = {
-  show: boolean;
-  onHide: () => void;
-};
 
-function ShoppingCartSidebar({ show, onHide }: Props) {
+function ShoppingCartSidebar() {
+  const { isCartOpen, closeCart } = useCart()
+  
   return (
-    <Offcanvas show={show} onHide={onHide} placement="end" scroll>
+    <Offcanvas show={isCartOpen} onHide={closeCart} placement="end" scroll>
       <Offcanvas.Header closeButton>
         <Offcanvas.Title>Shopping cart</Offcanvas.Title>
       </Offcanvas.Header>

@@ -8,10 +8,9 @@ import { Link } from '@tanstack/react-router';
 type Props = {
   user: User | null;
   categories: Category[];
-  onCartBtnClick?: () => void
 };
 
-function NavbarComponent({ user: currentUser, categories, onCartBtnClick }: Props) {
+function NavbarComponent({ user: currentUser, categories }: Props) {
   return (
     <Navbar sticky="top" expand="lg" className="bg-primary mb-4" data-bs-theme="dark">
       <Container fluid className="px-2 px-sm-5">
@@ -23,7 +22,7 @@ function NavbarComponent({ user: currentUser, categories, onCartBtnClick }: Prop
 
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
           <ProductSearchForm categories={categories} />
-          <NavbarNav user={currentUser} onCartBtnClick={onCartBtnClick} />
+          <NavbarNav user={currentUser} />
         </Navbar.Collapse>
       </Container>
     </Navbar>

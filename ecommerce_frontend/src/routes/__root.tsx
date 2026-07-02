@@ -33,22 +33,14 @@ const RootLayout = () => {
   const hideNavRoutes = ['/login', '/register'];
   const matchedNoNavRoute = hideNavRoutes.some((route) => matchRoute({ to: route }));
 
-  const [showCart, setShowCart] = useState(false);
-  const onCartBtnClick = () => {
-    setShowCart(true);
-  };
-  const onCartHide = () => {
-    setShowCart(false);
-  }
-
   return (
     <>
       <div className="d-flex flex-column min-vh-100">
-        {!matchedNoNavRoute && <NavbarComponent user={currentUser} categories={categories} onCartBtnClick={onCartBtnClick}/>}
+        {!matchedNoNavRoute && <NavbarComponent user={currentUser} categories={categories} />}
 
         <Container className="flex-grow-1 p-0 d-flex flex-column" fluid>
           <Outlet />
-          <ShoppingCartSidebar show={showCart} onHide={onCartHide} />
+          <ShoppingCartSidebar />
         </Container>
 
         <FooterComponent small={matchedNoNavRoute} />

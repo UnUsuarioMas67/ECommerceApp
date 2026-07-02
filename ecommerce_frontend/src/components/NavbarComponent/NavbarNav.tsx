@@ -1,18 +1,18 @@
 import { Link, useLocation, useNavigate, useRouter } from '@tanstack/react-router';
-import { BoxArrowRight, Cart4, Gear, PersonFill } from 'react-bootstrap-icons';
+import { BoxArrowRight, Gear, PersonFill } from 'react-bootstrap-icons';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import type { User } from '../../api/types';
 import { useAuth } from '../AuthProvider/AuthContext';
 import { postLogout } from '../../api/user';
 import { useAxios } from '../../hooks/use-axios';
+import ViewCartButton from './ViewCartButton';
 
 type Props = {
   user: User | null;
-  onCartBtnClick?: () => void;
 };
 
-function NavbarNav({ user: currentUser, onCartBtnClick }: Props) {
+function NavbarNav({ user: currentUser }: Props) {
   const { clearCredentials } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -57,9 +57,7 @@ function NavbarNav({ user: currentUser, onCartBtnClick }: Props) {
         </>
       )}
 
-      <Nav.Link className="ms-2" onClick={onCartBtnClick}>
-        <Cart4 size={24} title="View cart" />
-      </Nav.Link>
+      <ViewCartButton />
     </Nav>
   );
 }
