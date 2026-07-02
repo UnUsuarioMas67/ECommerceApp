@@ -7,7 +7,7 @@ import ProductImage from './ProductImage';
 function ProductCard({ product }: { product: Product }) {
   return (
     <Card>
-      <div className="d-flex">
+      <div className="d-flex flex-column align-items-center flex-sm-row">
         <ProductImage
           productSrc={product.imageUrl ?? ''}
           fallback="https://placehold.co/180"
