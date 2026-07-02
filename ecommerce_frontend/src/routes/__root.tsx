@@ -10,6 +10,8 @@ import Container from 'react-bootstrap/esm/Container';
 import FooterComponent from '../components/FooterComponent';
 import ErrorPage from './-error-page';
 import NotFoundPage from './-not-found';
+import { useState } from 'react';
+import ShoppingCartSidebar from '../components/ShoppingCartSidebar';
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -23,7 +25,7 @@ const RootLayout = () => {
   const { data: categories } = useSuspenseQuery({
     queryKey: ['categories'],
     queryFn: () => fetchCategories(axiosInstance),
-    staleTime: Infinity
+    staleTime: Infinity,
   });
 
   // hide navbar in login and register pages
@@ -31,16 +33,25 @@ const RootLayout = () => {
   const hideNavRoutes = ['/login', '/register'];
   const matchedNoNavRoute = hideNavRoutes.some((route) => matchRoute({ to: route }));
 
+  const [showCart, setShowCart] = useState(false);
+  const onCartBtnClick = () => {
+    setShowCart(true);
+  };
+  const onCartHide = () => {
+    setShowCart(false);
+  }
+
   return (
     <>
       <div className="d-flex flex-column min-vh-100">
-        {!matchedNoNavRoute && <NavbarComponent user={currentUser} categories={categories} />}
+        {!matchedNoNavRoute && <NavbarComponent user={currentUser} categories={categories} onCartBtnClick={onCartBtnClick}/>}
 
         <Container className="flex-grow-1 p-0 d-flex flex-column" fluid>
           <Outlet />
+          <ShoppingCartSidebar show={showCart} onHide={onCartHide} />
         </Container>
 
-        <FooterComponent small={ matchedNoNavRoute } />
+        <FooterComponent small={matchedNoNavRoute} />
       </div>
 
       <TanStackRouterDevtools />
