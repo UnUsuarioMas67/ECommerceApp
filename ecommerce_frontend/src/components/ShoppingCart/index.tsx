@@ -70,7 +70,7 @@ function ShoppingCart() {
 
             <div className="px-4">
               <Button className="w-100" variant="success">
-                Pay: ${totalCost}
+                Pay: <strong>${totalCost}</strong> 
               </Button>
             </div>
           </>
