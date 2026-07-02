@@ -36,13 +36,12 @@ function NavbarNav({ user: currentUser }: Props) {
     <Nav className="flex-shrink-0 align-items-center">
       {!currentUser ? (
         <>
-          <Nav.Link onClick={() => navigate({ to: '/login', search: { redirect: location.href } })}>Sign In</Nav.Link>
-          <Button
-            variant="outline-light"
-            className="mx-1"
-            onClick={() => navigate({ to: '/register', search: { redirect: location.href } })}>
+          <Link className="nav-link" to="/login" search={{ redirect: location.href }}>
+            Sign In
+          </Link>
+          <Link className="mx-1 btn btn-outline-light" to="/register" search={{ redirect: location.href }}>
             Sign Up
-          </Button>
+          </Link>
         </>
       ) : (
         <>
