@@ -10,7 +10,6 @@ import Container from 'react-bootstrap/esm/Container';
 import FooterComponent from '../components/FooterComponent';
 import ErrorPage from './-error-page';
 import NotFoundPage from './-not-found';
-import { useState } from 'react';
 import ShoppingCartSidebar from '../components/ShoppingCartSidebar';
 
 type RouterContext = {
