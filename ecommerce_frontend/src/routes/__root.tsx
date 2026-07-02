@@ -10,7 +10,7 @@ import Container from 'react-bootstrap/esm/Container';
 import FooterComponent from '../components/FooterComponent';
 import ErrorPage from './-error-page';
 import NotFoundPage from './-not-found';
-import ShoppingCartSidebar from '../components/ShoppingCartSidebar';
+import ShoppingCart from '../components/ShoppingCart';
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -40,7 +40,7 @@ const RootLayout = () => {
 
         <Container className="flex-grow-1 p-0 d-flex flex-column" fluid>
           <Outlet />
-          <ShoppingCartSidebar />
+          <ShoppingCart />
         </Container>
 
         <FooterComponent small={matchedNoNavRoute} />

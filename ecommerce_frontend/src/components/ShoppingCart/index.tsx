@@ -8,7 +8,7 @@ import { fetchProduct } from '../../api/products';
 import LoadingSpinner from '../LoadingSpinner';
 import { Trash } from 'react-bootstrap-icons';
 
-function ShoppingCartSidebar() {
+function ShoppingCart() {
   const { isCartOpen, closeCart, items, totalItems, getItemQuantity, clearCart } = useCart();
   const axiosInstance = useAxios();
   const { products, isPending, hasErrors } = useQueries({
@@ -31,7 +31,8 @@ function ShoppingCartSidebar() {
 
   const totalCost = products
     .map((product) => product.price * getItemQuantity(product.id))
-    .reduce((prev, curr) => prev + curr, 0).toFixed(2);
+    .reduce((prev, curr) => prev + curr, 0)
+    .toFixed(2);
 
   return (
     <Offcanvas show={isCartOpen} onHide={closeCart} placement="end" scroll>
@@ -79,4 +80,4 @@ function ShoppingCartSidebar() {
   );
 }
 
-export default ShoppingCartSidebar;
+export default ShoppingCart;
