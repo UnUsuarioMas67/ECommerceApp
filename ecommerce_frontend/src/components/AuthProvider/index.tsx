@@ -27,13 +27,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const setCredentials = useCallback(
     (auth: UserAuth) => {
       setRefreshToken(auth.refreshToken);
-      setAuth({ token: auth.accessToken, user: auth.user, expiresAt: Date.parse(auth.expiresAt) });
+      setAuth(() => ({ token: auth.accessToken, user: auth.user, expiresAt: Date.parse(auth.expiresAt) }));
     },
     [setRefreshToken],
   );
 
   const clearCredentials = useCallback(() => {
-    setAuth(null);
+    setAuth(() => null);
     localStorage.removeItem('refreshToken');
   }, []);
 
