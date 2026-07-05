@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import type { Product } from '../api/types';
-import { Plus, Dash, Trash } from 'react-bootstrap-icons';
+import { Plus, Dash, Trash, CartPlusFill } from 'react-bootstrap-icons';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { useCart } from './CartProvider/CartContext';
 
@@ -12,7 +12,7 @@ type Props = {
 function AddToCartButton({ product, disabled }: Props) {
   const { getItemQuantity, increaseItemQuantity, decreaseItemQuantity } = useCart();
 
-  const style = { maxWidth: '144px', width: '100%' };
+  const style = { maxWidth: '144px', width: '100%', height: '40px' };
   const quantity = getItemQuantity(product.id);
 
   return quantity <= 0 ? (
@@ -21,7 +21,13 @@ function AddToCartButton({ product, disabled }: Props) {
       variant="primary"
       onClick={() => increaseItemQuantity(product.id)}
       style={style}>
-      {product.stock > 0 ? 'Add to cart' : 'Out of stock'}
+      {product.stock > 0 ? (
+        <span className="d-inline-flex align-items-center gap-2">
+          <CartPlusFill /> Add to cart
+        </span>
+      ) : (
+        'Out of stock'
+      )}
     </Button>
   ) : (
     <>
@@ -30,7 +36,9 @@ function AddToCartButton({ product, disabled }: Props) {
           {quantity > 1 ? <Dash /> : <Trash />}
         </Button>
 
-        <InputGroup.Text id="basic-addon2" className='flex-sm-grow-1 justify-content-center'>{getItemQuantity(product.id)}</InputGroup.Text>
+        <InputGroup.Text id="basic-addon2" className="flex-sm-grow-1 justify-content-center">
+          {getItemQuantity(product.id)}
+        </InputGroup.Text>
 
         <Button variant="primary" onClick={() => increaseItemQuantity(product.id)} disabled={product.stock <= quantity}>
           <Plus />
