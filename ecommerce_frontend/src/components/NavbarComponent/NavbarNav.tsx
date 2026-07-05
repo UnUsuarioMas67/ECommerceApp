@@ -1,5 +1,5 @@
-import { Link, useLocation, useNavigate, useRouter } from '@tanstack/react-router';
-import { BoxArrowRight, Gear, PersonFill } from 'react-bootstrap-icons';
+import { Link, useLocation, useRouter } from '@tanstack/react-router';
+import { BoxArrowRight, Gear, PersonFill, GeoAlt, CartCheck } from 'react-bootstrap-icons';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import type { User } from '../../api/types';
@@ -14,14 +14,12 @@ type Props = {
 
 function NavbarNav({ user: currentUser }: Props) {
   const { clearCredentials } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const { invalidate: invalidateRouter } = useRouter();
   const axiosInstance = useAxios();
 
   const onSignOutClick = async () => {
     postLogout(axiosInstance);
-    navigate({ to: '/login', search: { redirect: location.href } });
     clearCredentials();
     invalidateRouter();
   };
@@ -47,11 +45,37 @@ function NavbarNav({ user: currentUser }: Props) {
         <>
           <NavDropdown title={userDropdownTitle} align="end" id="basic-nav-dropdown" data-bs-theme="light">
             <NavDropdown.Item>
-              <Gear size={18} className="me-2" /> Account Settings
+              <Link className="text-body text-decoration-none d-inline-flex align-items-center" to="/account">
+                <CartCheck size={18} className="me-3" />
+                Your orders
+              </Link>
             </NavDropdown.Item>
+
+            <NavDropdown.Item>
+              <Link className="text-body text-decoration-none d-inline-flex align-items-center" to="/account/addresses">
+                <GeoAlt size={18} className="me-3" />
+                Your addresses
+              </Link>
+            </NavDropdown.Item>
+
+            <NavDropdown.Item>
+              <Link className="text-body text-decoration-none d-inline-flex align-items-center" to="/account/settings">
+                <Gear size={18} className="me-3" />
+                Account settings
+              </Link>
+            </NavDropdown.Item>
+
             <NavDropdown.Divider />
+
             <NavDropdown.Item onClick={onSignOutClick}>
-              <BoxArrowRight size={18} className="me-2" /> Sign Out
+              <Link
+                className="text-body text-decoration-none d-inline-flex align-items-center"
+                to="/login"
+                search={{ redirect: location.href }}
+                onClick={onSignOutClick}>
+                <BoxArrowRight size={18} className="me-3" />
+                Sign out
+              </Link>
             </NavDropdown.Item>
           </NavDropdown>
         </>
