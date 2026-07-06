@@ -16,9 +16,9 @@ import { Route as ProductsIndexRouteImport } from './routes/_products/index'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthenticatedAccountRouteRouteImport } from './routes/_authenticated/account/route'
-import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
 import { Route as ProductsProductsProductIdRouteImport } from './routes/_products/products/$productId'
 import { Route as AuthenticatedAccountSettingsRouteImport } from './routes/_authenticated/account/settings'
+import { Route as AuthenticatedAccountOrdersRouteImport } from './routes/_authenticated/account/orders'
 import { Route as AuthenticatedAccountAddressesRouteImport } from './routes/_authenticated/account/addresses'
 
 const ProductsRouteRoute = ProductsRouteRouteImport.update({
@@ -54,12 +54,6 @@ const AuthenticatedAccountRouteRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAccountIndexRoute =
-  AuthenticatedAccountIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedAccountRouteRoute,
-  } as any)
 const ProductsProductsProductIdRoute =
   ProductsProductsProductIdRouteImport.update({
     id: '/products/$productId',
@@ -70,6 +64,12 @@ const AuthenticatedAccountSettingsRoute =
   AuthenticatedAccountSettingsRouteImport.update({
     id: '/settings',
     path: '/settings',
+    getParentRoute: () => AuthenticatedAccountRouteRoute,
+  } as any)
+const AuthenticatedAccountOrdersRoute =
+  AuthenticatedAccountOrdersRouteImport.update({
+    id: '/orders',
+    path: '/orders',
     getParentRoute: () => AuthenticatedAccountRouteRoute,
   } as any)
 const AuthenticatedAccountAddressesRoute =
@@ -85,18 +85,19 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/account/addresses': typeof AuthenticatedAccountAddressesRoute
+  '/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/account/settings': typeof AuthenticatedAccountSettingsRoute
   '/products/$productId': typeof ProductsProductsProductIdRoute
-  '/account/': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof ProductsIndexRoute
+  '/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/account/addresses': typeof AuthenticatedAccountAddressesRoute
+  '/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/account/settings': typeof AuthenticatedAccountSettingsRoute
   '/products/$productId': typeof ProductsProductsProductIdRoute
-  '/account': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -108,9 +109,9 @@ export interface FileRoutesById {
   '/_auth/register': typeof AuthRegisterRoute
   '/_products/': typeof ProductsIndexRoute
   '/_authenticated/account/addresses': typeof AuthenticatedAccountAddressesRoute
+  '/_authenticated/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/_authenticated/account/settings': typeof AuthenticatedAccountSettingsRoute
   '/_products/products/$productId': typeof ProductsProductsProductIdRoute
-  '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,18 +121,19 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/account/addresses'
+    | '/account/orders'
     | '/account/settings'
     | '/products/$productId'
-    | '/account/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/login'
     | '/register'
     | '/account/addresses'
+    | '/account/orders'
     | '/account/settings'
     | '/products/$productId'
-    | '/account'
   id:
     | '__root__'
     | '/_auth'
@@ -142,9 +144,9 @@ export interface FileRouteTypes {
     | '/_auth/register'
     | '/_products/'
     | '/_authenticated/account/addresses'
+    | '/_authenticated/account/orders'
     | '/_authenticated/account/settings'
     | '/_products/products/$productId'
-    | '/_authenticated/account/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -204,13 +206,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/account/': {
-      id: '/_authenticated/account/'
-      path: '/'
-      fullPath: '/account/'
-      preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
-      parentRoute: typeof AuthenticatedAccountRouteRoute
-    }
     '/_products/products/$productId': {
       id: '/_products/products/$productId'
       path: '/products/$productId'
@@ -223,6 +218,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/account/settings'
       preLoaderRoute: typeof AuthenticatedAccountSettingsRouteImport
+      parentRoute: typeof AuthenticatedAccountRouteRoute
+    }
+    '/_authenticated/account/orders': {
+      id: '/_authenticated/account/orders'
+      path: '/orders'
+      fullPath: '/account/orders'
+      preLoaderRoute: typeof AuthenticatedAccountOrdersRouteImport
       parentRoute: typeof AuthenticatedAccountRouteRoute
     }
     '/_authenticated/account/addresses': {
@@ -251,15 +253,15 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 interface AuthenticatedAccountRouteRouteChildren {
   AuthenticatedAccountAddressesRoute: typeof AuthenticatedAccountAddressesRoute
+  AuthenticatedAccountOrdersRoute: typeof AuthenticatedAccountOrdersRoute
   AuthenticatedAccountSettingsRoute: typeof AuthenticatedAccountSettingsRoute
-  AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
 }
 
 const AuthenticatedAccountRouteRouteChildren: AuthenticatedAccountRouteRouteChildren =
   {
     AuthenticatedAccountAddressesRoute: AuthenticatedAccountAddressesRoute,
+    AuthenticatedAccountOrdersRoute: AuthenticatedAccountOrdersRoute,
     AuthenticatedAccountSettingsRoute: AuthenticatedAccountSettingsRoute,
-    AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
   }
 
 const AuthenticatedAccountRouteRouteWithChildren =

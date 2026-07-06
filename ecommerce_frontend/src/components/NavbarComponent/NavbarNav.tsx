@@ -45,7 +45,7 @@ function NavbarNav({ user: currentUser }: Props) {
         <>
           <NavDropdown title={userDropdownTitle} align="end" id="basic-nav-dropdown" data-bs-theme="light">
             <NavDropdown.Item>
-              <Link className="text-body text-decoration-none d-inline-flex align-items-center" to="/account">
+              <Link className="text-body text-decoration-none d-inline-flex align-items-center" to="/account/orders">
                 <CartCheck size={18} className="me-3" />
                 Your orders
               </Link>
