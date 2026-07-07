@@ -18,7 +18,7 @@ public interface IAddressesService
     Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto, int clientId);
     Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto, int? clientId = null);
     Task<AddressResponseDto?> DeleteAsync(int addressId, int? clientId = null);
-    Task<string?> GetCountryNameAsync(string cca2);
+    Task<IEnumerable<Country>> GetAllCountriesAsync();
 }
 
 public class AddressesService(ECommerceContext context, IValidator<Address> validator, AddressMapper mapper)
@@ -96,7 +96,7 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
 
     public async Task<AddressResponseDto?> DeleteAsync(int addressId, int? clientId = null)
     {
-        var query = context.Addresses.Where(a => a.Id == addressId);
+        var query = context.Addresses.Include(a => a.Country).Where(a => a.Id == addressId);
 
         if (clientId.HasValue)
             query = query.Where(a => a.ClientId == clientId.Value);
@@ -109,6 +109,9 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
         await context.SaveChangesAsync();
         return mapper.MapToDto(address);
     }
+
+    public async Task<IEnumerable<Country>> GetAllCountriesAsync()
+        => await context.Countries.ToListAsync();
 
     public async Task<string?> GetCountryNameAsync(string cca2)
         => await context.Countries

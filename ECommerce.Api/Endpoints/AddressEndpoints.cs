@@ -1,6 +1,7 @@
 ﻿using ECommerce.Api.DTOs.Address;
 using ECommerce.Api.DTOs.Error;
 using ECommerce.Api.DTOs.Shared;
+using ECommerce.Api.Entities;
 using ECommerce.Api.Errors;
 using ECommerce.Api.Services.DataAccess;
 using ECommerce.Api.Shared;
@@ -28,13 +29,23 @@ public static class AddressEndpoints
             .WithSummary("Get authenticated Client's Addresses");
         group.MapGet("{id:int}", GetAddressById)
             .WithSummary("Get Address by Id");
+        
+        endpoints.MapGet("api/countries", GetAllCountries)
+            .WithTags("Address")
+            .WithSummary("Get all Countries")
+            .RequireAuthorization(UserRoles.Client);
 
         // group.MapGet("country/{countryCode}", GetAddressesByCountry);
 
         return endpoints;
     }
 
-
+    private static async Task<Ok<IEnumerable<Country>>> GetAllCountries(IAddressesService addressesService)
+    {
+        var countries = await addressesService.GetAllCountriesAsync();
+        return TypedResults.Ok(countries);
+    }
+    
     private static async Task<Results<Created<AddressResponseDto>, BadRequest<ErrorDto>,
             UnauthorizedHttpResult, UnprocessableEntity<ErrorDto>>>
         AddAddress(
