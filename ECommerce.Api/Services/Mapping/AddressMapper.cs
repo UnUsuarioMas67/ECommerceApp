@@ -21,7 +21,8 @@ public class AddressMapper(ECommerceContext context)
             PostalCode = address.PostalCode,
             Region = address.Region,
             ClientId = address.ClientId,
-            Country = address.Country!.Name
+            Country = address.Country.Name,
+            CountryCode = address.CountryCca2
         };
     }
 
