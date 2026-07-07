@@ -7,16 +7,11 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { isAxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { useAxios } from '../../hooks/use-axios';
-import type { User } from '../../api/types';
+import type { Api422ErrorBody, User } from '../../api/types';
 import { registerSchema, type RegisterRequest } from '../../schemas/auth';
 import { postRegister } from '../../api/user';
 import Col from 'react-bootstrap/esm/Col';
 import Row from 'react-bootstrap/esm/Row';
-
-type Api422ErrorBody = {
-  errorType: 'email_already_used' | 'phone_already_used';
-  message: string;
-};
 
 function handleRegisterErrorMsg(error: Error): string | Api422ErrorBody {
   if (isAxiosError(error)) {

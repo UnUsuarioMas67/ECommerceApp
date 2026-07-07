@@ -93,3 +93,8 @@ export type CheckoutSession = {
   expiresAt: string;
   order: Order;
 };
+
+export type Api422ErrorBody = {
+  errorType: 'email_already_used' | 'phone_already_used' | 'invalid_country_code';
+  message: string;
+};
