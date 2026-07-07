@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Search } from 'react-bootstrap-icons';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { searchSchema, type ProductSearch } from '../../schemas';
+import { searchSchema, type ProductSearch } from '../../schemas/search';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import type { Category } from '../../api/types';
@@ -16,7 +16,7 @@ type Props = {
 
 function ProductSearchForm({ categories }: Props) {
   const { register, handleSubmit } = useForm<ProductSearch>({ resolver: zodResolver(searchSchema) });
-  const { searchTerm, category } = useLocation({select: (state) => state.search});
+  const { searchTerm, category } = useLocation({ select: (state) => state.search });
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<ProductSearch> = (data) => {

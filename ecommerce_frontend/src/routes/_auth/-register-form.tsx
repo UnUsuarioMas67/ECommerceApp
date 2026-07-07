@@ -8,7 +8,7 @@ import { isAxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { useAxios } from '../../hooks/use-axios';
 import type { User } from '../../api/types';
-import { registerSchema, type RegisterRequest } from '../../schemas';
+import { registerSchema, type RegisterRequest } from '../../schemas/auth';
 import { postRegister } from '../../api/user';
 import Col from 'react-bootstrap/esm/Col';
 import Row from 'react-bootstrap/esm/Row';
@@ -35,10 +35,10 @@ function handleRegisterErrorMsg(error: Error): string | Api422ErrorBody {
 }
 
 type Props = {
-  onSubmitSuccessful: (user: User) => void
-}
+  onSubmitSuccessful: (user: User) => void;
+};
 
-function RegisterForm({onSubmitSuccessful}: Props) {
+function RegisterForm({ onSubmitSuccessful }: Props) {
   const axiosInstance = useAxios();
 
   const {
@@ -53,7 +53,7 @@ function RegisterForm({onSubmitSuccessful}: Props) {
   const { mutate, isPending } = useMutation<User, Error, RegisterRequest>({
     mutationFn: (data) => postRegister(axiosInstance, data),
     onSuccess: (data) => {
-      onSubmitSuccessful(data)
+      onSubmitSuccessful(data);
     },
     onError: (error) => {
       const registerError = handleRegisterErrorMsg(error);
@@ -74,7 +74,7 @@ function RegisterForm({onSubmitSuccessful}: Props) {
       {errors.root && <Alert variant="danger">{errors.root.message}</Alert>}
 
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Row className='g-3'>
+        <Row className="g-3">
           <Col md>
             <FloatingLabel controlId="floatingFirstName" label="First name" className="mb-3">
               <Form.Control placeholder="Your first name" {...register('firstName')} isInvalid={!!errors.firstName} />
@@ -100,7 +100,7 @@ function RegisterForm({onSubmitSuccessful}: Props) {
           <Form.Control.Feedback type="invalid">{errors.email?.message}</Form.Control.Feedback>
         </FloatingLabel>
 
-        <FloatingLabel controlId="floatingTel" label="Phone number" className='mb-3'>
+        <FloatingLabel controlId="floatingTel" label="Phone number" className="mb-3">
           <Form.Control
             type="tel"
             placeholder="Phone number"
@@ -110,7 +110,7 @@ function RegisterForm({onSubmitSuccessful}: Props) {
           <Form.Control.Feedback type="invalid">{errors.phoneNumber?.message}</Form.Control.Feedback>
         </FloatingLabel>
 
-        <FloatingLabel controlId="floatingDate" label="Birth date" className='mb-3'>
+        <FloatingLabel controlId="floatingDate" label="Birth date" className="mb-3">
           <Form.Control
             type="date"
             placeholder="Birth date"
@@ -119,14 +119,14 @@ function RegisterForm({onSubmitSuccessful}: Props) {
           />
           <Form.Control.Feedback type="invalid">{errors.birthDate?.message}</Form.Control.Feedback>
         </FloatingLabel>
-        
-        <FloatingLabel controlId="floatingPassword" label="Password" className='mb-3'>
+
+        <FloatingLabel controlId="floatingPassword" label="Password" className="mb-3">
           <Form.Control
             type="password"
             placeholder="Password"
             {...register('password')}
             isInvalid={!!errors.password}
-            autoComplete='new-password'
+            autoComplete="new-password"
           />
           <Form.Control.Feedback type="invalid">{errors.password?.message}</Form.Control.Feedback>
         </FloatingLabel>
@@ -137,7 +137,7 @@ function RegisterForm({onSubmitSuccessful}: Props) {
             placeholder="Confirm password"
             {...register('passwordConfirm')}
             isInvalid={!!errors.passwordConfirm}
-            autoComplete='off'
+            autoComplete="off"
           />
           <Form.Control.Feedback type="invalid">{errors.passwordConfirm?.message}</Form.Control.Feedback>
         </FloatingLabel>

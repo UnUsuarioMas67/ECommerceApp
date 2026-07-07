@@ -42,10 +42,3 @@ export const registerSchema = z
   );
 
 export type RegisterRequest = z.infer<typeof registerSchema>;
-
-export const searchSchema = z.object({
-  searchTerm: z.string().optional(),
-  category: z.string().optional(),
-});
-
-export type ProductSearch = z.infer<typeof searchSchema>;

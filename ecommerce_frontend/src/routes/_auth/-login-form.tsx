@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/esm/Button';
 import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
 import Form from 'react-bootstrap/esm/Form';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { type LoginRequest, loginSchema } from '../../schemas';
+import { type LoginRequest, loginSchema } from '../../schemas/auth';
 import { isAxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { postLogin } from '../../api/user';
@@ -28,10 +28,10 @@ function handleLoginErrorMsg(error: Error): string {
 }
 
 type Props = {
-  onSubmitSuccessful: (auth: UserAuth) => void
-}
+  onSubmitSuccessful: (auth: UserAuth) => void;
+};
 
-function LoginForm({onSubmitSuccessful}: Props) {
+function LoginForm({ onSubmitSuccessful }: Props) {
   const axiosInstance = useAxios();
 
   const {
@@ -46,7 +46,7 @@ function LoginForm({onSubmitSuccessful}: Props) {
   const { mutate, isPending } = useMutation<UserAuth, Error, LoginRequest>({
     mutationFn: (data) => postLogin(axiosInstance, data),
     onSuccess: (auth) => {
-      onSubmitSuccessful(auth)
+      onSubmitSuccessful(auth);
     },
     onError: (error) => {
       setError('root', { message: handleLoginErrorMsg(error) });

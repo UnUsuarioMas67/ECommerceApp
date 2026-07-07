@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import ProductCard from '../../components/ProductCard';
 import { fetchCategory } from '../../api/categories';
 import { fetchProducts } from '../../api/products';
-import { searchSchema } from '../../schemas';
+import { searchSchema } from '../../schemas/search';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -28,7 +28,7 @@ export const Route = createFileRoute('/_products/')({
         initialPageParam: 1,
         pages: 1,
         getNextPageParam: (lastPage) => lastPage.nextPage,
-        staleTime: 1000 * 60
+        staleTime: 1000 * 60,
       }),
     ]);
   },
@@ -48,7 +48,7 @@ function RouteComponent() {
     queryFn: ({ pageParam }) => fetchProducts(axiosInstance, { category, searchTerm, pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage,
-    staleTime: 1000 * 60
+    staleTime: 1000 * 60,
   });
 
   const { data: categoryObj, isError: categoryError } = useSuspenseQuery({
@@ -67,8 +67,7 @@ function RouteComponent() {
   if (searchTerm) title = `'${searchTerm}' - ECommerce`;
   else if (categoryObj) title = `${categoryObj.name} - ECommerce`;
 
-  if (status === 'error')
-    console.log(error)
+  if (status === 'error') console.log(error);
 
   return status === 'error' || categoryError ? (
     <p className="text-danger">Oops! Something went wrong.</p>
