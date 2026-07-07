@@ -33,12 +33,18 @@ export type Category = {
   name: string;
 };
 
+export type Country = {
+  name: string;
+  cca2: string
+}
+
 export type Address = {
   id: number;
   clientId: number;
   addressLine1: string;
   addressLine2: string;
   country: string;
+  countryCode: string;
   region: string;
   city: string;
   postalCode: string;
