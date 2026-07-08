@@ -1,30 +1,42 @@
 import z from 'zod';
-import { required, lengthError } from './helpers';
+import { required, lengthError, invalid } from './helpers';
+
+const email = z.email({ error: (iss) => (iss.input === '' ? required('Email') : invalid('Email address')) });
+const loginPassword = z.string().min(1, required('Password'));
+
+const firstName = z
+  .string()
+  .min(1, required('First name'))
+  .max(50, lengthError('First name', 50, 'max'));
+const lastName = z
+  .string()
+  .min(1, required('Last name'))
+  .max(50, lengthError('Last name', 50, 'max'));
+
+const phoneNumber = z.e164({ error: (iss) => (iss.input === '' ? required('Phone number') : invalid('Phone number')) });
+const birthDate = z.iso.date({ error: (iss) => (iss.input === '' ? required('Birth date') : invalid('Birth date')) });
+
+const password = z
+  .string()
+  .min(8, { error: (iss) => (iss.input === '' ? required('Password') : lengthError('Password', 8, 'min')) });
+const passwordConfirm = z.string().min(1, { error: required('Confirm password') });
 
 export const loginSchema = z.object({
-  email: z.email({ error: (iss) => (iss.input === '' ? 'Email is required' : 'Invalid email address') }),
-  password: z.string().min(1, 'Password is required'),
+  email,
+  password: loginPassword,
 });
 
 export type LoginRequest = z.infer<typeof loginSchema>;
 
 export const registerSchema = z
   .object({
-    firstName: z
-      .string()
-      .min(1, required('First name'))
-      .max(50, lengthError('First name', 50, 'max')),
-    lastName: z
-      .string()
-      .min(1, required('Last name'))
-      .max(50, lengthError('Last name', 50, 'max')),
-    email: z.email({ error: (iss) => (iss.input === '' ? required('Email') : 'Invalid email address') }),
-    password: z
-      .string()
-      .min(8, { error: (iss) => (iss.input === '' ? 'Password is required' : lengthError('Password', 8, 'min')) }),
-    passwordConfirm: z.string().min(1, {error: required('Confirm password')}),
-    phoneNumber: z.e164({ error: (iss) => (iss.input === '' ? required('Phone number') : 'Invalid phone number') }),
-    birthDate: z.iso.date({ error: (iss) => (iss.input === '' ? 'Birth date is required' : 'Invalid date') }),
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    birthDate,
+    password,
+    passwordConfirm,
   })
   .refine((data) => data.password === data.passwordConfirm, {
     error: "Passwords don't match",

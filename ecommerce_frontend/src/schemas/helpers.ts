@@ -6,3 +6,7 @@ export function lengthError(prop: string, amount: number, type: 'min' | 'max') {
 export function required(prop: string) {
   return `${prop} is required`;
 }
+
+export function invalid(prop: string) {
+  return `${prop} is invalid`;
+}

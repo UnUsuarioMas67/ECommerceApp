@@ -23,7 +23,7 @@ const postalCode = z
   .min(1, { error: required('Postal code') })
   .max(10, { error: lengthError('Postal code', 10, 'max') });
 
-const countryCode = z.string().length(2, { error: 'Country is required' });
+const countryCode = z.string().length(2, { error: required('Country') });
 
 export const addressCreateSchema = z.object({
   addressLine1,
