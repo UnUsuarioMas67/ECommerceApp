@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type { LoginRequest, RegisterRequest } from '../schemas/auth';
+import type { LoginRequest, RegisterRequest } from '../schemas/user';
 import type { UserAuth, User } from './types';
 
 export async function postLogin(axiosInstance: AxiosInstance, data: LoginRequest) {

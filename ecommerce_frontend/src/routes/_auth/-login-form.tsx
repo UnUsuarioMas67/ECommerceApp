@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/esm/Button';
 import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
 import Form from 'react-bootstrap/esm/Form';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { type LoginRequest, loginSchema } from '../../schemas/auth';
+import { type LoginRequest, loginSchema } from '../../schemas/user';
 import { isAxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { postLogin } from '../../api/user';

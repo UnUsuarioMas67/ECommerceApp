@@ -8,7 +8,7 @@ import { isAxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { useAxios } from '../../hooks/use-axios';
 import type { Api422ErrorBody, User } from '../../api/types';
-import { registerSchema, type RegisterRequest } from '../../schemas/auth';
+import { registerSchema, type RegisterRequest } from '../../schemas/user';
 import { postRegister } from '../../api/user';
 import Col from 'react-bootstrap/esm/Col';
 import Row from 'react-bootstrap/esm/Row';
