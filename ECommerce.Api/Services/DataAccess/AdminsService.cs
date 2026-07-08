@@ -58,6 +58,13 @@ public class AdminsService(ECommerceContext context, IValidator<Admin> validator
         var admin = await context.Admins.FirstOrDefaultAsync(a => a.Id == adminId);
         if (admin == null)
             return new NotFoundError();
+        
+        if (dto.PasswordUpdate != null)
+        {
+            var passwordValid = BCrypt.Net.BCrypt.Verify(dto.PasswordUpdate.OldPassword, admin.PasswordHash);
+            if (!passwordValid)
+                return new IncorrectPasswordError();
+        }
 
         mapper.ApplyUpdate(admin, dto);
 

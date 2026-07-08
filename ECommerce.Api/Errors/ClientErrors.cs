@@ -30,3 +30,5 @@ public record DuplicatePhoneNumberError(string PhoneNumber, int? ClientId)
         }
     };
 }
+
+public record IncorrectPasswordError() : Error("Old password is incorrect", "password_update");

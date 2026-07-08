@@ -58,6 +58,13 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         if (updated == null)
             return new NotFoundError();
 
+        if (dto.PasswordUpdate != null)
+        {
+            var passwordValid = BCrypt.Net.BCrypt.Verify(dto.PasswordUpdate.OldPassword, updated.PasswordHash);
+            if (!passwordValid)
+                return new IncorrectPasswordError();
+        }
+
         mapper.ApplyUpdate(updated, dto);
 
         var verification = await VerifyClient(updated);
@@ -90,18 +97,17 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
             return new DuplicateEmailError(client.Email, client.Id > 0 ? client.Id : null);
         if (!await PhoneNumberIsUnique(client))
             return new DuplicatePhoneNumberError(client.PhoneNumber, client.Id > 0 ? client.Id : null);
-        
+
         var validation = await validator.ValidateAsync(client);
         if (!validation.IsValid)
             return new ValidationError(validation.ToDictionary());
-        
+
         return Result.Success();
     }
 
     private async Task<bool> EmailIsUnique(Client client)
         => !await context.Clients.AnyAsync(c => c.Email == client.Email && c != client);
-    
+
     private async Task<bool> PhoneNumberIsUnique(Client client)
         => !await context.Clients.AnyAsync(c => c.PhoneNumber == client.PhoneNumber && c != client);
 }
-

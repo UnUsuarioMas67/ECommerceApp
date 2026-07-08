@@ -47,9 +47,9 @@ public class ClientMapper
         if (DateOnly.TryParseExact(dto.BirthDate, "yyyy-MM-dd", out var birthDate) && birthDate != toUpdate.BirthDate)
             toUpdate.BirthDate = birthDate;
 
-        if (!string.IsNullOrWhiteSpace(dto.Password))
+        if (dto.PasswordUpdate != null)
         {
-            var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.PasswordUpdate.NewPassword);
             if (newPasswordHash != toUpdate.PasswordHash)
                 toUpdate.PasswordHash = newPasswordHash;
         }
