@@ -41,9 +41,7 @@ function ShoppingCart() {
       </Offcanvas.Header>
       <Offcanvas.Body>
         {isPending ? (
-          <div className="d-flex justify-content-center">
-            <LoadingSpinner />
-          </div>
+          <LoadingSpinner />
         ) : products.length === 0 ? (
           <span className="text-body-tertiary">No items in the cart.</span>
         ) : hasErrors ? (
@@ -70,7 +68,7 @@ function ShoppingCart() {
 
             <div className="px-4">
               <Button className="w-100" variant="success">
-                Pay: <strong>${totalCost}</strong> 
+                Pay: <strong>${totalCost}</strong>
               </Button>
             </div>
           </>

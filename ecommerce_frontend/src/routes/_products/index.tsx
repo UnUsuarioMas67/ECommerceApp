@@ -32,11 +32,7 @@ export const Route = createFileRoute('/_products/')({
       }),
     ]);
   },
-  pendingComponent: () => (
-    <Row className="justify-content-center mt-5">
-      <LoadingSpinner />
-    </Row>
-  ),
+  pendingComponent: LoadingSpinner,
 });
 
 function RouteComponent() {
@@ -95,7 +91,7 @@ function RouteComponent() {
             ))}
       </Row>
 
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '100px' }} ref={ref}>
+      <div style={{ height: '100px' }} ref={ref}>
         {isFetchingNextPage && <LoadingSpinner />}
       </div>
     </>

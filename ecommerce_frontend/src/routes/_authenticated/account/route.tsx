@@ -4,9 +4,11 @@ import Col from 'react-bootstrap/esm/Col';
 import Container from 'react-bootstrap/esm/Container';
 import Nav from 'react-bootstrap/esm/Nav';
 import Row from 'react-bootstrap/esm/Row';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 export const Route = createFileRoute('/_authenticated/account')({
   component: RouteComponent,
+  pendingComponent: LoadingSpinner,
 });
 
 function RouteComponent() {
@@ -14,7 +16,7 @@ function RouteComponent() {
     <Container className='flex-grow-1'>
       <Row className='h-100'>
         <Col xs={3} as="aside">
-          <Nav defaultActiveKey="/home" className="flex-column" variant="underline">
+          <Nav defaultActiveKey="/home" className="flex-column" variant="pills">
             <Link className="nav-link text-decoration-none d-inline-flex align-items-center" to="/account/orders">
               <CartCheck size={18} className="me-3" />
               Your orders

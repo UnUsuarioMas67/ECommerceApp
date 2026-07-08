@@ -25,11 +25,7 @@ export const Route = createFileRoute('/_products/products/$productId')({
     });
   },
   notFoundComponent: () => <Navigate to="/" />,
-  pendingComponent: () => (
-    <Row className="justify-content-center mt-5">
-      <LoadingSpinner />
-    </Row>
-  ),
+  pendingComponent: LoadingSpinner,
 });
 
 function RouteComponent() {
