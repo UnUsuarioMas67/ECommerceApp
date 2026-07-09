@@ -12,9 +12,12 @@ import CreateAddressModal from '../../../components/Addresses/CreateAddressModal
 import Alert from 'react-bootstrap/esm/Alert';
 import DeleteAddressModal from '../../../components/Addresses/DeleteAddressModal';
 import UpdateAddressModal from '../../../components/Addresses/UpdateAddressModal';
+import Container from 'react-bootstrap/esm/Container';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 export const Route = createFileRoute('/_authenticated/account/addresses')({
   component: RouteComponent,
+  pendingComponent: LoadingSpinner,
   loader: ({ context: { axiosInstance, queryClient } }) => {
     queryClient.ensureQueryData({
       queryKey: ['countries'],
@@ -61,7 +64,7 @@ function RouteComponent() {
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <>
+    <Container>
       <h1 className="mb-4">Adresses</h1>
 
       {error && (
@@ -106,6 +109,6 @@ function RouteComponent() {
           onError={() => setError('Could not delete the address due to an error')}
         />
       )}
-    </>
+    </Container>
   );
 }
