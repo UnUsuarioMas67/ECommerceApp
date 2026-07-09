@@ -95,6 +95,6 @@ export type CheckoutSession = {
 };
 
 export type Api422ErrorBody = {
-  errorType: 'email_already_used' | 'phone_already_used' | 'invalid_country_code';
+  errorType: 'email_already_used' | 'phone_already_used' | 'invalid_country_code' | 'password_update';
   message: string;
 };
