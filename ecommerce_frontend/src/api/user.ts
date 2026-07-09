@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import type { LoginRequest, RegisterRequest } from '../schemas/user';
+import type { LoginRequest, RegisterRequest, UserDataUpdate, UserPasswordUpdate } from '../schemas/user';
 import type { UserAuth, User } from './types';
 
 export async function postLogin(axiosInstance: AxiosInstance, data: LoginRequest) {
@@ -8,7 +8,7 @@ export async function postLogin(axiosInstance: AxiosInstance, data: LoginRequest
 }
 
 export async function postLogout(axiosInstance: AxiosInstance) {
-  await axiosInstance.post('clients/logout');
+  await axiosInstance.post('/clients/logout');
 }
 
 export async function postRegister(axiosInstance: AxiosInstance, data: RegisterRequest) {
@@ -18,5 +18,10 @@ export async function postRegister(axiosInstance: AxiosInstance, data: RegisterR
 
 export async function fetchCurrentUser(axiosInstance: AxiosInstance) {
   const response = await axiosInstance.get<User>('/clients/me');
+  return response.data;
+}
+
+export async function updateUser(axiosInstance: AxiosInstance, data: UserDataUpdate | UserPasswordUpdate) {
+  const response = await axiosInstance.put<User>('/clients', data)
   return response.data;
 }

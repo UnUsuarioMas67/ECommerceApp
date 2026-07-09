@@ -54,3 +54,36 @@ export const registerSchema = z
   );
 
 export type RegisterRequest = z.infer<typeof registerSchema>;
+
+export const userPasswordUpdateSchema = z.object({
+  passwordUpdate: z
+    .object({ oldPassword: loginPassword, newPassword: password, passwordConfirm })
+    .refine((data) => data.newPassword === data.passwordConfirm, {
+      error: "Passwords don't match",
+      path: ['passwordConfirm'],
+    }),
+});
+
+export type UserPasswordUpdate = z.infer<typeof userPasswordUpdateSchema>;
+
+export const userDataUpdateSchema = z
+  .object({
+    firstName,
+    lastName,
+    phoneNumber,
+    birthDate,
+  })
+  .refine(
+    (data) => {
+      if (!data.birthDate) return true;
+
+      const parsedDate = Date.parse(data.birthDate);
+      return parsedDate < Date.now();
+    },
+    {
+      error: "Birth date can't be in the future",
+      path: ['birthDate'],
+    },
+  );
+
+export type UserDataUpdate = z.infer<typeof userDataUpdateSchema>;
