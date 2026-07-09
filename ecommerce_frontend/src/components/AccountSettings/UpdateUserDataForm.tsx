@@ -49,7 +49,7 @@ function UpdateUserDataForm({ user, onSubmitSuccessful }: Props) {
     resolver: zodResolver(userDataUpdateSchema), defaultValues: user
   });
 
-  const { mutate, isPending } = useMutation<User, Error, UserDataUpdate>({
+  const { mutate, isPending, isSuccess } = useMutation<User, Error, UserDataUpdate>({
     mutationFn: (data) => updateUser(axiosInstance, data),
     onSuccess: (data) => {
       onSubmitSuccessful?.(data);
@@ -80,6 +80,7 @@ function UpdateUserDataForm({ user, onSubmitSuccessful }: Props) {
         </Button>
       )}
 
+      {isSuccess && <Alert variant='success'>Account successfully updated</Alert>}
       {errors.root && <Alert variant="danger">{errors.root.message}</Alert>}
 
       <Form onSubmit={handleSubmit(onSubmit)}>
