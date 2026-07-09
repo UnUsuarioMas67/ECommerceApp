@@ -30,7 +30,7 @@ function handleRegisterErrorMsg(error: Error): string | Api422ErrorBody {
 }
 
 type Props = {
-  onSubmitSuccessful: (user: User) => void;
+  onSubmitSuccessful?: (user: User) => void;
 };
 
 function RegisterForm({ onSubmitSuccessful }: Props) {
@@ -48,7 +48,7 @@ function RegisterForm({ onSubmitSuccessful }: Props) {
   const { mutate, isPending } = useMutation<User, Error, RegisterRequest>({
     mutationFn: (data) => postRegister(axiosInstance, data),
     onSuccess: (data) => {
-      onSubmitSuccessful(data);
+      onSubmitSuccessful?.(data);
     },
     onError: (error) => {
       const registerError = handleRegisterErrorMsg(error);
