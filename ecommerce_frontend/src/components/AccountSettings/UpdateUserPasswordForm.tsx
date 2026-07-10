@@ -4,20 +4,13 @@ import { useMutation } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import Alert from 'react-bootstrap/esm/Alert';
 import Button from 'react-bootstrap/esm/Button';
-import Col from 'react-bootstrap/esm/Col';
-import Row from 'react-bootstrap/esm/Row';
 import Form from 'react-bootstrap/esm/Form';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { updateUser } from '../../api/user';
 import { useAxios } from '../../hooks/use-axios';
-import {
-  userDataUpdateSchema,
-  userPasswordUpdateSchema,
-  type UserDataUpdate,
-  type UserPasswordUpdate,
-} from '../../schemas/user';
+import { userPasswordUpdateSchema, type UserPasswordUpdate } from '../../schemas/user';
 import { PencilFill } from 'react-bootstrap-icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 function handleErrorMessage(error: Error): string | Api422ErrorBody {
   if (isAxiosError(error)) {
@@ -80,7 +73,7 @@ function UpdateUserPasswordForm({ onSubmitSuccessful }: Props) {
         </Button>
       )}
 
-      {isSuccess && <Alert variant='success'>Password successfully changed</Alert>}
+      {isSuccess && <Alert variant="success">Password successfully changed</Alert>}
       {errors.root && <Alert variant="danger">{errors.root.message}</Alert>}
 
       <Form onSubmit={handleSubmit(onSubmit)}>
@@ -91,7 +84,7 @@ function UpdateUserPasswordForm({ onSubmitSuccessful }: Props) {
               type="password"
               {...register('passwordUpdate.oldPassword')}
               isInvalid={!!errors.passwordUpdate?.oldPassword}
-              autoComplete='off'
+              autoComplete="off"
             />
             <Form.Control.Feedback type="invalid">{errors.passwordUpdate?.oldPassword?.message}</Form.Control.Feedback>
           </Form.Group>
@@ -102,7 +95,7 @@ function UpdateUserPasswordForm({ onSubmitSuccessful }: Props) {
               type="password"
               {...register('passwordUpdate.newPassword')}
               isInvalid={!!errors.passwordUpdate?.newPassword}
-              autoComplete='off'
+              autoComplete="off"
             />
             <Form.Control.Feedback type="invalid">{errors.passwordUpdate?.newPassword?.message}</Form.Control.Feedback>
           </Form.Group>
@@ -113,9 +106,11 @@ function UpdateUserPasswordForm({ onSubmitSuccessful }: Props) {
               type="password"
               {...register('passwordUpdate.passwordConfirm')}
               isInvalid={!!errors.passwordUpdate?.passwordConfirm}
-              autoComplete='off'
+              autoComplete="off"
             />
-            <Form.Control.Feedback type="invalid">{errors.passwordUpdate?.passwordConfirm?.message}</Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">
+              {errors.passwordUpdate?.passwordConfirm?.message}
+            </Form.Control.Feedback>
           </Form.Group>
 
           {!disabled && (
