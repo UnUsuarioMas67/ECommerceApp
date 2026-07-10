@@ -11,6 +11,7 @@ import FooterComponent from '../components/FooterComponent';
 import ErrorPage from './-error-page';
 import NotFoundPage from './-not-found';
 import ShoppingCart from '../components/ShoppingCart';
+import { fetchCurrentUser } from '../api/user';
 
 type RouterContext = {
   queryClient: QueryClient;
@@ -20,7 +21,11 @@ type RouterContext = {
 
 const RootLayout = () => {
   const axiosInstance = useAxios();
-  const { currentUser } = useAuth();
+  const { data: currentUser } = useSuspenseQuery({
+    queryKey: ['users', 'me'],
+    queryFn: () => fetchCurrentUser(axiosInstance),
+    staleTime: Infinity,
+  });
   const { data: categories } = useSuspenseQuery({
     queryKey: ['categories'],
     queryFn: () => fetchCategories(axiosInstance),
@@ -55,8 +60,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
   notFoundComponent: NotFoundPage,
   errorComponent: ErrorPage,
-  beforeLoad: async ({ context: { authContext } }) => {
+  beforeLoad: async ({ context: { authContext, queryClient, axiosInstance } }) => {
     await authContext.ensureLoggedIn();
+    queryClient.ensureQueryData({
+      queryKey: ['users', 'me'],
+      queryFn: () => fetchCurrentUser(axiosInstance),
+      staleTime: Infinity,
+    });
   },
   loader: ({ context: { queryClient, axiosInstance } }) => {
     queryClient.ensureQueryData({
