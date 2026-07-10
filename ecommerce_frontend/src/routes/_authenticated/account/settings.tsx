@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_authenticated/account/settings')({
   component: RouteComponent,
   pendingComponent: LoadingSpinner,
   loader: ({ context: { axiosInstance, queryClient } }) => {
-    queryClient.prefetchQuery({
+    queryClient.ensureQueryData({
       queryKey: ['users', 'me'],
       queryFn: () => fetchCurrentUser(axiosInstance),
     });
@@ -33,7 +33,7 @@ function RouteComponent() {
   };
 
   return (
-    <Container className='mb-4'>
+    <Container className="mb-4">
       <h1 className="mb-4">Account settings</h1>
 
       <Row>
