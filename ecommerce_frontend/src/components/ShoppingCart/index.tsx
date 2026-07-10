@@ -7,6 +7,7 @@ import { useAxios } from '../../hooks/use-axios';
 import { fetchProduct } from '../../api/products';
 import LoadingSpinner from '../LoadingSpinner';
 import { Trash } from 'react-bootstrap-icons';
+import { useEffect } from 'react';
 
 function ShoppingCart() {
   const { isCartOpen, closeCart, items, totalItems, getItemQuantity, clearCart } = useCart();
@@ -28,6 +29,11 @@ function ShoppingCart() {
       };
     },
   });
+
+  useEffect(() => {
+    if (items.length === 0)
+      closeCart()
+  }, [items, closeCart])
 
   const totalCost = products
     .map((product) => product.price * getItemQuantity(product.id))
