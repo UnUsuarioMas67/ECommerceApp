@@ -76,7 +76,7 @@ function RouteComponent() {
       <Row className="g-3" xs={1} md={2} lg={3}>
         <Col>
           <Button
-            variant="secondary"
+            variant="outline-primary"
             className="d-inline-block w-100 h-100"
             size="lg"
             onClick={() => openModal({ modal: 'add' })}>
