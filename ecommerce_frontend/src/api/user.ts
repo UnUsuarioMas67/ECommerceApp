@@ -17,11 +17,16 @@ export async function postRegister(axiosInstance: AxiosInstance, data: RegisterR
 }
 
 export async function fetchCurrentUser(axiosInstance: AxiosInstance) {
-  const response = await axiosInstance.get<User>('/clients/me');
+  const response = await axiosInstance.get<User>('/clients/me', {
+    validateStatus: (status) => status === 200 || status === 401,
+  });
+
+  if (response.status === 401) return null;
+  
   return response.data;
 }
 
 export async function updateUser(axiosInstance: AxiosInstance, data: UserDataUpdate | UserPasswordUpdate) {
-  const response = await axiosInstance.put<User>('/clients', data)
+  const response = await axiosInstance.put<User>('/clients', data);
   return response.data;
 }

@@ -38,7 +38,7 @@ const RootLayout = () => {
   // hide navbar in login and register pages
   const matchRoute = useMatchRoute();
   const hideNavRoutes = ['/login', '/register'];
-  const matchedNoNavRoute = hideNavRoutes.some((route) => matchRoute({ to: route }));
+  const matchedNoNavRoute = hideNavRoutes.some((route) => matchRoute({ to: route, fuzzy: true }));
 
   return (
     <>
@@ -62,15 +62,16 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
   notFoundComponent: NotFoundPage,
   errorComponent: ErrorPage,
-  beforeLoad: async ({ context: { authContext, queryClient, axiosInstance } }) => {
+  beforeLoad: async ({ context: { authContext } }) => {
     await authContext.ensureLoggedIn();
+    
+  },
+  loader: ({ context: { queryClient, axiosInstance } }) => {
     queryClient.ensureQueryData({
       queryKey: ['users', 'me'],
       queryFn: () => fetchCurrentUser(axiosInstance),
       staleTime: Infinity,
     });
-  },
-  loader: ({ context: { queryClient, axiosInstance } }) => {
     queryClient.ensureQueryData({
       queryKey: ['categories'],
       queryFn: () => fetchCategories(axiosInstance),

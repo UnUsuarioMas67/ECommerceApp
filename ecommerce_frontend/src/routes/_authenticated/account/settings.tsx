@@ -38,7 +38,7 @@ function RouteComponent() {
 
       <Row>
         <h3>User data</h3>
-        <UpdateUserDataForm user={user} onSubmitSuccessful={onUpdateUserDataSubmitSuccessful} />
+        <UpdateUserDataForm user={user!} onSubmitSuccessful={onUpdateUserDataSubmitSuccessful} />
       </Row>
 
       <hr className="my-5" />
