@@ -3,7 +3,7 @@ using ECommerce.Api.DTOs.Error;
 
 namespace ECommerce.Api.Errors;
 
-public record CartNotFoundError(int CartId)
+public record CartNotFoundError(int? CartId)
     : Error("Could not find cart", "cart_not_found")
 {
     public override ErrorDto ToDto() => new()
@@ -17,7 +17,7 @@ public record CartNotFoundError(int CartId)
     };
 }
 
-public record CartIsEmptyError(int CartId)
+public record CartIsEmptyError(int? CartId)
     : Error("Cart cannot be empty", "cart_empty")
 {
     public override ErrorDto ToDto() => new()

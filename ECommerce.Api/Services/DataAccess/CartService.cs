@@ -16,6 +16,7 @@ public interface ICartsService
     Task<IEnumerable<CartResponseDto>> GetManyAsync(PaginationQuery pagination);
     Task<IEnumerable<CartResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
     Task<Result<CartResponseDto>> CreateAsync(CartRequestDto dto, int clientId);
+    Task<Result<Cart>> CreateNoSave(CartRequestDto dto, int clientId);
     Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartRequestDto dto, int? clientId = null);
     Task<CartResponseDto?> DeleteAsync(int cartId, int? clientId = null);
 }
@@ -71,6 +72,17 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         await context.SaveChangesAsync();
 
         return mapper.MapToDto(created);
+    }
+
+    public async Task<Result<Cart>> CreateNoSave(CartRequestDto dto, int clientId)
+    {
+        var created = await mapper.MapToEntityAsync(dto, clientId);
+
+        var verification = await VerifyCart(created);
+        if (!verification.IsSuccess)
+            return verification.Error;
+
+        return created;
     }
 
     public async Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartRequestDto dto, int? clientId = null)

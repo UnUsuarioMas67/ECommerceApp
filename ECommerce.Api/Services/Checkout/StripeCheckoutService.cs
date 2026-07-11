@@ -2,6 +2,7 @@ using ECommerce.Api.DTOs.Checkout;
 using ECommerce.Api.EF;
 using ECommerce.Api.Entities;
 using ECommerce.Api.Errors;
+using ECommerce.Api.Services.DataAccess;
 using ECommerce.Api.Services.Mapping;
 using ECommerce.Api.Settings;
 using ECommerce.Api.Shared;
@@ -27,6 +28,7 @@ public class StripeCheckoutService : IStripeCheckoutService
     private readonly StripeSettings _stripeSettings;
     private readonly OrderExpirySettings _orderExpirySettings;
     private readonly ILogger<StripeCheckoutService> _logger;
+    private readonly ICartsService _cartsService;
 
     public StripeCheckoutService(
         ECommerceContext context,
@@ -34,13 +36,14 @@ public class StripeCheckoutService : IStripeCheckoutService
         IOptions<StripeSettings> stripeSettings,
         OrderMapper orderMapper,
         ILogger<StripeCheckoutService> logger,
-        IOptions<OrderExpirySettings> orderSettings)
+        IOptions<OrderExpirySettings> orderSettings, ICartsService cartsService)
     {
         _context = context;
         _sessionService = sessionService;
         _orderMapper = orderMapper;
         _stripeSettings = stripeSettings.Value;
         _logger = logger;
+        _cartsService = cartsService;
         _orderExpirySettings = orderSettings.Value;
     }
 
@@ -61,12 +64,30 @@ public class StripeCheckoutService : IStripeCheckoutService
         if (client == null)
             return new ClientNotExistsError(clientId, null);
 
-        var cart = client.Carts.FirstOrDefault(c => c.Id == request.CartId);
-        if (cart == null)
-            return new CartNotFoundError(request.CartId);
+        Cart? cart;
+
+        if (request.CartId.HasValue)
+        {
+            cart = client.Carts.FirstOrDefault(c => c.Id == request.CartId.Value);
+            if (cart == null)
+                return new CartNotFoundError(request.CartId.Value);
+        }
+        else if (request.Cart != null)
+        {
+            var cartResult = await _cartsService.CreateNoSave(request.Cart, clientId);
+            if (!cartResult.IsSuccess)
+                return cartResult.Error;
+
+            cart = cartResult.Value;
+        }
+        else
+        {
+            throw new InvalidOperationException("Either CartId or Cart must be specified in CheckoutRequestDto object");
+        }
+
         if (cart.Items.Count == 0)
             return new CartIsEmptyError(request.CartId);
-        
+
         var address = client.Addresses.FirstOrDefault(a => a.Id == request.AddressId);
         if (address == null)
             return new AddressNotFoundError(request.AddressId);
@@ -88,7 +109,10 @@ public class StripeCheckoutService : IStripeCheckoutService
         }
 
         await _context.ShopOrders.AddAsync(order);
-        _context.Carts.Remove(cart);
+
+        if (cart.Id > 0)
+            _context.Carts.Remove(cart);
+
         await _context.SaveChangesAsync();
 
         var session = await CreateStripeSessionAsync(request, order);
@@ -172,7 +196,7 @@ public class StripeCheckoutService : IStripeCheckoutService
         {
             ClientId = cart.ClientId,
             Client = client,
-            
+
             AddressId = address.Id,
             Address = address,
 
@@ -187,7 +211,7 @@ public class StripeCheckoutService : IStripeCheckoutService
                 Quantity = item.Quantity,
                 UnitPrice = item.Product.Price
             }).ToList(),
-            
+
             StatusId = OrderStatuses.Pending,
         };
 
