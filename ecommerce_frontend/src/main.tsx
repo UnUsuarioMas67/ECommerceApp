@@ -12,6 +12,7 @@ import { routeTree } from './routeTree.gen';
 import { useAuth } from './components/AuthProvider/AuthContext';
 import { useAxios } from './hooks/use-axios';
 import CartProvider from './components/CartProvider';
+import { useCart } from './components/CartProvider/CartContext';
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const router = createRouter({
     queryClient: undefined!,
     authContext: undefined!,
     axiosInstance: undefined!,
+    cartContext: undefined!
   },
 });
 
@@ -53,5 +55,6 @@ if (!rootElement.innerHTML) {
 function App() {
   const authContext = useAuth();
   const axiosInstance = useAxios();
-  return <RouterProvider router={router} context={{ queryClient, authContext, axiosInstance }} />;
+  const cartContext = useCart();
+  return <RouterProvider router={router} context={{ queryClient, authContext, axiosInstance, cartContext }} />;
 }

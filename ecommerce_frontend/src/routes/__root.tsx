@@ -12,11 +12,13 @@ import ErrorPage from './-error-page';
 import NotFoundPage from './-not-found';
 import ShoppingCart from '../components/ShoppingCart';
 import { fetchCurrentUser } from '../api/user';
+import type { useCart } from '../components/CartProvider/CartContext';
 
 type RouterContext = {
   queryClient: QueryClient;
-  authContext: ReturnType<typeof useAuth>;
   axiosInstance: AxiosInstance;
+  authContext: ReturnType<typeof useAuth>;
+  cartContext: ReturnType<typeof useCart>
 };
 
 const RootLayout = () => {
