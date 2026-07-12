@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 import { X } from 'react-bootstrap-icons';
 import Button from 'react-bootstrap/esm/Button';
-import ShoppingCartItemQuantitySelector from './ShoppingCartItemQuantitySelector';
+import CartItemQuantitySelector from '../CartItemQuantitySelector';
 import type { Product } from '../../api/types';
 
 type Props = {
@@ -34,7 +34,7 @@ function ShoppingCartItem({ product }: Props) {
 
             <Card.Text className="fw-bold d-flex align-items-center gap-2">
               ${product.price}
-              <ShoppingCartItemQuantitySelector product={product} />
+              <CartItemQuantitySelector product={product} />
             </Card.Text>
           </Card.Body>
         </Col>
