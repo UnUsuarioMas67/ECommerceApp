@@ -1,12 +1,8 @@
 import { createContext, useContext } from 'react';
-
-export type CartItem = {
-  productId: number;
-  quantity: number;
-};
+import type { CartItemRequest } from '../../schemas/checkout';
 
 type CartContextType = {
-  items: CartItem[];
+  items: CartItemRequest[];
   getItemQuantity: (productId: number) => number;
   increaseItemQuantity: (productId: number) => void;
   decreaseItemQuantity: (productId: number) => void;

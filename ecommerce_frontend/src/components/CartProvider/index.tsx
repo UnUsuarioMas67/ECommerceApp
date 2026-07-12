@@ -1,13 +1,14 @@
-import { CartContext, type CartItem } from './CartContext';
+import { CartContext } from './CartContext';
 import { useLocalStorage } from '../../hooks/use-localstorage';
 import { useState } from 'react';
+import type { CartItemRequest } from '../../schemas/checkout';
 
 type Props = {
   children: React.ReactNode;
 };
 
 function CartProvider({ children }: Props) {
-  const [cartItems, setCartItems] = useLocalStorage<CartItem[]>('shoppingCart', []);
+  const [cartItems, setCartItems] = useLocalStorage<CartItemRequest[]>('shoppingCart', []);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const getItemQuantity = (productId: number) => {
