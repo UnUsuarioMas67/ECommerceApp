@@ -8,10 +8,12 @@ import { fetchProduct } from '../../api/products';
 import LoadingSpinner from '../LoadingSpinner';
 import { Trash } from 'react-bootstrap-icons';
 import { useEffect } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
 function ShoppingCart() {
   const { isCartOpen, closeCart, items, totalItems, getItemQuantity, clearCart } = useCart();
   const axiosInstance = useAxios();
+  const navigate = useNavigate();
   const { products, isPending, hasErrors } = useQueries({
     queries: items.map((item) =>
       queryOptions({
@@ -31,14 +33,18 @@ function ShoppingCart() {
   });
 
   useEffect(() => {
-    if (items.length === 0)
-      closeCart()
-  }, [items, closeCart])
+    if (items.length === 0) closeCart();
+  }, [items, closeCart]);
 
   const totalCost = products
     .map((product) => product.price * getItemQuantity(product.id))
     .reduce((prev, curr) => prev + curr, 0)
     .toFixed(2);
+
+  const onPayBtnClick = () => {
+    closeCart();
+    navigate({ to: '/checkout' });
+  };
 
   return (
     <Offcanvas show={isCartOpen} onHide={closeCart} placement="end" scroll>
@@ -73,7 +79,7 @@ function ShoppingCart() {
             </div>
 
             <div className="px-4">
-              <Button className="w-100" variant="success">
+              <Button className="w-100" variant="success" onClick={onPayBtnClick}>
                 Pay: <strong>${totalCost}</strong>
               </Button>
             </div>
