@@ -35,8 +35,8 @@ export type Category = {
 
 export type Country = {
   name: string;
-  cca2: string
-}
+  cca2: string;
+};
 
 export type Address = {
   id: number;
@@ -94,7 +94,15 @@ export type CheckoutSession = {
   order: Order;
 };
 
+type ErrorType =
+  | 'email_already_used'
+  | 'phone_already_used'
+  | 'invalid_country_code'
+  | 'password_update'
+  | 'insufficient_stock';
+
 export type Api422ErrorBody = {
-  errorType: 'email_already_used' | 'phone_already_used' | 'invalid_country_code' | 'password_update';
+  errorType: ErrorType;
   message: string;
+  details: unknown;
 };
