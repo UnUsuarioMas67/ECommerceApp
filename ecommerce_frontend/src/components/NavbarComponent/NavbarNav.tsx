@@ -1,4 +1,4 @@
-import { Link, useLocation, useRouter } from '@tanstack/react-router';
+import { Link, useLocation, useMatchRoute, useRouter } from '@tanstack/react-router';
 import { BoxArrowRight, Gear, PersonFill, GeoAlt, CartCheck } from 'react-bootstrap-icons';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
@@ -23,6 +23,10 @@ function NavbarNav({ user: currentUser }: Props) {
     clearCredentials();
     invalidateRouter();
   };
+
+  const matchRoute = useMatchRoute();
+
+  const showCartBtn = !matchRoute({to: '/checkout', fuzzy: true})
 
   const userDropdownTitle = (
     <>
@@ -81,7 +85,7 @@ function NavbarNav({ user: currentUser }: Props) {
         </>
       )}
 
-      <ViewCartButton />
+      {showCartBtn && <ViewCartButton />}
     </Nav>
   );
 }
