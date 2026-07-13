@@ -1,7 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
+import LoadingSpinner from '../../../components/LoadingSpinner'
 
 export const Route = createFileRoute('/_authenticated/account/orders')({
   component: RouteComponent,
+  pendingComponent: LoadingSpinner,
+
 })
 
 function RouteComponent() {

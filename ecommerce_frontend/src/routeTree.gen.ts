@@ -15,8 +15,12 @@ import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as ProductsIndexRouteImport } from './routes/_products/index'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AuthenticatedCheckoutRouteRouteImport } from './routes/_authenticated/checkout/route'
 import { Route as AuthenticatedAccountRouteRouteImport } from './routes/_authenticated/account/route'
+import { Route as AuthenticatedCheckoutIndexRouteImport } from './routes/_authenticated/checkout/index'
 import { Route as ProductsProductsProductIdRouteImport } from './routes/_products/products/$productId'
+import { Route as AuthenticatedCheckoutSuccessRouteImport } from './routes/_authenticated/checkout/success'
+import { Route as AuthenticatedCheckoutErrorRouteImport } from './routes/_authenticated/checkout/error'
 import { Route as AuthenticatedAccountSettingsRouteImport } from './routes/_authenticated/account/settings'
 import { Route as AuthenticatedAccountOrdersRouteImport } from './routes/_authenticated/account/orders'
 import { Route as AuthenticatedAccountAddressesRouteImport } from './routes/_authenticated/account/addresses'
@@ -48,17 +52,41 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthenticatedCheckoutRouteRoute =
+  AuthenticatedCheckoutRouteRouteImport.update({
+    id: '/checkout',
+    path: '/checkout',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAccountRouteRoute =
   AuthenticatedAccountRouteRouteImport.update({
     id: '/account',
     path: '/account',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCheckoutIndexRoute =
+  AuthenticatedCheckoutIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedCheckoutRouteRoute,
+  } as any)
 const ProductsProductsProductIdRoute =
   ProductsProductsProductIdRouteImport.update({
     id: '/products/$productId',
     path: '/products/$productId',
     getParentRoute: () => ProductsRouteRoute,
+  } as any)
+const AuthenticatedCheckoutSuccessRoute =
+  AuthenticatedCheckoutSuccessRouteImport.update({
+    id: '/success',
+    path: '/success',
+    getParentRoute: () => AuthenticatedCheckoutRouteRoute,
+  } as any)
+const AuthenticatedCheckoutErrorRoute =
+  AuthenticatedCheckoutErrorRouteImport.update({
+    id: '/error',
+    path: '/error',
+    getParentRoute: () => AuthenticatedCheckoutRouteRoute,
   } as any)
 const AuthenticatedAccountSettingsRoute =
   AuthenticatedAccountSettingsRouteImport.update({
@@ -82,12 +110,16 @@ const AuthenticatedAccountAddressesRoute =
 export interface FileRoutesByFullPath {
   '/': typeof ProductsIndexRoute
   '/account': typeof AuthenticatedAccountRouteRouteWithChildren
+  '/checkout': typeof AuthenticatedCheckoutRouteRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/account/addresses': typeof AuthenticatedAccountAddressesRoute
   '/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/account/settings': typeof AuthenticatedAccountSettingsRoute
+  '/checkout/error': typeof AuthenticatedCheckoutErrorRoute
+  '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/products/$productId': typeof ProductsProductsProductIdRoute
+  '/checkout/': typeof AuthenticatedCheckoutIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof ProductsIndexRoute
@@ -97,7 +129,10 @@ export interface FileRoutesByTo {
   '/account/addresses': typeof AuthenticatedAccountAddressesRoute
   '/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/account/settings': typeof AuthenticatedAccountSettingsRoute
+  '/checkout/error': typeof AuthenticatedCheckoutErrorRoute
+  '/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/products/$productId': typeof ProductsProductsProductIdRoute
+  '/checkout': typeof AuthenticatedCheckoutIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -105,25 +140,33 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_products': typeof ProductsRouteRouteWithChildren
   '/_authenticated/account': typeof AuthenticatedAccountRouteRouteWithChildren
+  '/_authenticated/checkout': typeof AuthenticatedCheckoutRouteRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_products/': typeof ProductsIndexRoute
   '/_authenticated/account/addresses': typeof AuthenticatedAccountAddressesRoute
   '/_authenticated/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/_authenticated/account/settings': typeof AuthenticatedAccountSettingsRoute
+  '/_authenticated/checkout/error': typeof AuthenticatedCheckoutErrorRoute
+  '/_authenticated/checkout/success': typeof AuthenticatedCheckoutSuccessRoute
   '/_products/products/$productId': typeof ProductsProductsProductIdRoute
+  '/_authenticated/checkout/': typeof AuthenticatedCheckoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/account'
+    | '/checkout'
     | '/login'
     | '/register'
     | '/account/addresses'
     | '/account/orders'
     | '/account/settings'
+    | '/checkout/error'
+    | '/checkout/success'
     | '/products/$productId'
+    | '/checkout/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,20 +176,27 @@ export interface FileRouteTypes {
     | '/account/addresses'
     | '/account/orders'
     | '/account/settings'
+    | '/checkout/error'
+    | '/checkout/success'
     | '/products/$productId'
+    | '/checkout'
   id:
     | '__root__'
     | '/_auth'
     | '/_authenticated'
     | '/_products'
     | '/_authenticated/account'
+    | '/_authenticated/checkout'
     | '/_auth/login'
     | '/_auth/register'
     | '/_products/'
     | '/_authenticated/account/addresses'
     | '/_authenticated/account/orders'
     | '/_authenticated/account/settings'
+    | '/_authenticated/checkout/error'
+    | '/_authenticated/checkout/success'
     | '/_products/products/$productId'
+    | '/_authenticated/checkout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -199,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_authenticated/checkout': {
+      id: '/_authenticated/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof AuthenticatedCheckoutRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/account': {
       id: '/_authenticated/account'
       path: '/account'
@@ -206,12 +263,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/checkout/': {
+      id: '/_authenticated/checkout/'
+      path: '/'
+      fullPath: '/checkout/'
+      preLoaderRoute: typeof AuthenticatedCheckoutIndexRouteImport
+      parentRoute: typeof AuthenticatedCheckoutRouteRoute
+    }
     '/_products/products/$productId': {
       id: '/_products/products/$productId'
       path: '/products/$productId'
       fullPath: '/products/$productId'
       preLoaderRoute: typeof ProductsProductsProductIdRouteImport
       parentRoute: typeof ProductsRouteRoute
+    }
+    '/_authenticated/checkout/success': {
+      id: '/_authenticated/checkout/success'
+      path: '/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof AuthenticatedCheckoutSuccessRouteImport
+      parentRoute: typeof AuthenticatedCheckoutRouteRoute
+    }
+    '/_authenticated/checkout/error': {
+      id: '/_authenticated/checkout/error'
+      path: '/error'
+      fullPath: '/checkout/error'
+      preLoaderRoute: typeof AuthenticatedCheckoutErrorRouteImport
+      parentRoute: typeof AuthenticatedCheckoutRouteRoute
     }
     '/_authenticated/account/settings': {
       id: '/_authenticated/account/settings'
@@ -269,12 +347,32 @@ const AuthenticatedAccountRouteRouteWithChildren =
     AuthenticatedAccountRouteRouteChildren,
   )
 
+interface AuthenticatedCheckoutRouteRouteChildren {
+  AuthenticatedCheckoutErrorRoute: typeof AuthenticatedCheckoutErrorRoute
+  AuthenticatedCheckoutSuccessRoute: typeof AuthenticatedCheckoutSuccessRoute
+  AuthenticatedCheckoutIndexRoute: typeof AuthenticatedCheckoutIndexRoute
+}
+
+const AuthenticatedCheckoutRouteRouteChildren: AuthenticatedCheckoutRouteRouteChildren =
+  {
+    AuthenticatedCheckoutErrorRoute: AuthenticatedCheckoutErrorRoute,
+    AuthenticatedCheckoutSuccessRoute: AuthenticatedCheckoutSuccessRoute,
+    AuthenticatedCheckoutIndexRoute: AuthenticatedCheckoutIndexRoute,
+  }
+
+const AuthenticatedCheckoutRouteRouteWithChildren =
+  AuthenticatedCheckoutRouteRoute._addFileChildren(
+    AuthenticatedCheckoutRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccountRouteRoute: typeof AuthenticatedAccountRouteRouteWithChildren
+  AuthenticatedCheckoutRouteRoute: typeof AuthenticatedCheckoutRouteRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccountRouteRoute: AuthenticatedAccountRouteRouteWithChildren,
+  AuthenticatedCheckoutRouteRoute: AuthenticatedCheckoutRouteRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
