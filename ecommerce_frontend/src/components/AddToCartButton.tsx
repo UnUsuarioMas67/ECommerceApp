@@ -7,15 +7,16 @@ import { useCart } from './CartProvider/CartContext';
 type Props = {
   product: Product;
   disabled?: boolean;
+  quantityOnly?: boolean
 };
 
-function AddToCartButton({ product, disabled }: Props) {
+function AddToCartButton({ product, disabled, quantityOnly }: Props) {
   const { getItemQuantity, increaseItemQuantity, decreaseItemQuantity } = useCart();
 
   const style = { maxWidth: '144px', width: '100%', height: '40px' };
   const quantity = getItemQuantity(product.id);
 
-  return quantity <= 0 ? (
+  return quantity <= 0 && !quantityOnly ? (
     <Button
       disabled={product.stock == 0 || disabled}
       variant="primary"
@@ -32,8 +33,8 @@ function AddToCartButton({ product, disabled }: Props) {
   ) : (
     <>
       <InputGroup style={style}>
-        <Button variant="primary" onClick={() => decreaseItemQuantity(product.id)}>
-          {quantity > 1 ? <Dash /> : <Trash />}
+        <Button variant="primary" onClick={() => decreaseItemQuantity(product.id)} disabled={quantity === 1 && quantityOnly}>
+          {quantity > 1 || quantityOnly ? <Dash /> : <Trash />}
         </Button>
 
         <InputGroup.Text id="basic-addon2" className="flex-sm-grow-1 justify-content-center">

@@ -3,8 +3,20 @@ import type { Product } from '../api/types';
 import { Link } from '@tanstack/react-router';
 import AddToCartButton from './AddToCartButton';
 import ProductImage from './ProductImage';
+import { useCart } from './CartProvider/CartContext';
 
-function ProductCard({ product }: { product: Product }) {
+type Props = {
+  product: Product;
+  subtotal?: boolean;
+  disableLink?: boolean;
+  quantityOnly?: boolean;
+  noInput?: boolean;
+};
+
+function ProductCard({ product, subtotal, disableLink, quantityOnly, noInput }: Props) {
+  const { getItemQuantity } = useCart();
+  const quantityInCart = getItemQuantity(product.id);
+
   return (
     <Card>
       <div className="d-flex flex-column align-items-center flex-sm-row">
@@ -16,16 +28,23 @@ function ProductCard({ product }: { product: Product }) {
         />
         <Card.Body className="h-100">
           <Card.Title>
-            <Link to="/products/$productId" params={{ productId: product.id.toString() }} title={product.name}>
-              {product.name}
-            </Link>
+            {disableLink ? (
+              product.name
+            ) : (
+              <Link to="/products/$productId" params={{ productId: product.id.toString() }} title={product.name}>
+                {product.name}
+              </Link>
+            )}
           </Card.Title>
 
           <Card.Subtitle className="mb-2 fw-normal text-body-secondary">{product.category?.name}</Card.Subtitle>
 
-          <Card.Text className="fs-4 fw-bold">${product.price}</Card.Text>
+          <Card.Text className="fs-4 fw-bold">
+            $ {product.price}{' '}
+            {subtotal && quantityInCart > 1 && `x${quantityInCart} = $ ${quantityInCart * product.price}`}
+          </Card.Text>
 
-          <AddToCartButton product={product} />
+          {!noInput && <AddToCartButton product={product} quantityOnly={quantityOnly} />}
         </Card.Body>
       </div>
     </Card>
