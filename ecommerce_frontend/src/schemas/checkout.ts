@@ -12,7 +12,8 @@ const cartSchema = z.object({
 export const checkoutSchema = z.object({
   addressId: z.int().positive(),
   cart: cartSchema,
+  successUrl: z.url(),
 });
 
 export type CheckoutRequest = z.infer<typeof checkoutSchema>;
-export type CartItemRequest = z.infer<typeof cartItemSchema>
+export type CartItemRequest = z.infer<typeof cartItemSchema>;

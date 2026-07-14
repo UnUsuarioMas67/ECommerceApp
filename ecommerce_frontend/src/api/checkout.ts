@@ -4,11 +4,7 @@ import type { Api422ErrorBody } from './types';
 
 export async function createCheckoutSession(axiosInstance: AxiosInstance, data: CheckoutRequest) {
   try {
-    const response = await axiosInstance.post('/checkout/session', {
-      ...data,
-      successUrl: 'http://localhost:5173',
-      cancelUrl: '',
-    });
+    const response = await axiosInstance.post('/checkout/session', data);
     return response.data;
   } catch (error) {
     if (isAxiosError(error)) {

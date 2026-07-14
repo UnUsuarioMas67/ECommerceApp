@@ -119,7 +119,11 @@ function RouteComponent() {
   const onPayBtnClick = () => {
     if (!selectedAddress) return;
 
-    const data: CheckoutRequest = { addressId: selectedAddress, cart: { items } };
+    const data: CheckoutRequest = {
+      addressId: selectedAddress,
+      cart: { items },
+      successUrl: `${window.location.origin}/checkout/success`,
+    };
     const schema = checkoutSchema.parse(data);
 
     setBtnPressed(true);
