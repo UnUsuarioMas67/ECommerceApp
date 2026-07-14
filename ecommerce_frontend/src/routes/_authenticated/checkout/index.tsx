@@ -20,12 +20,7 @@ import type { AxiosInstance } from 'axios';
 import { checkoutSchema, type CartItemRequest, type CheckoutRequest } from '../../../schemas/checkout';
 import Col from 'react-bootstrap/esm/Col';
 import type { CheckoutSession } from '../../../api/types';
-import {
-  createCheckoutSession,
-  isProductsStockError,
-  ProductsStockError,
-  type ProductsStockErrorItem,
-} from '../../../api/checkout';
+import { createCheckoutSession, isProductsStockError } from '../../../api/checkout';
 import Spinner from 'react-bootstrap/esm/Spinner';
 import ProductCard from '../../../components/ProductCard';
 import { useCheckoutError } from '../../../components/CheckoutErrorProvider/CheckoutErrorContext';
@@ -73,7 +68,7 @@ export const Route = createFileRoute('/_authenticated/checkout/')({
 });
 
 function RouteComponent() {
-  const { items, getItemQuantity } = useCart();
+  const { items, getItemQuantity, clearCart } = useCart();
   const navigate = Route.useNavigate();
   const [showModal, setShowModal] = useState(false);
   const { setError, setProducts: setErrorProducts } = useCheckoutError();
@@ -100,6 +95,7 @@ function RouteComponent() {
   const { mutate, isPending: mutationPending } = useMutation({
     ...checkoutMutation(axiosInstance),
     onSuccess: (result) => {
+      clearCart();
       navigate({ href: result.url });
     },
     onError: (error) => {
@@ -154,8 +150,8 @@ function RouteComponent() {
           <h3>Products overview</h3>
           <Row xs={1} className="g-3">
             {products.map((product) => (
-              <Col>
-                <ProductCard product={product} key={product.id} subtotal disableLink quantityOnly />
+              <Col key={product.id}>
+                <ProductCard product={product} subtotal disableLink quantityOnly />
               </Col>
             ))}
           </Row>
