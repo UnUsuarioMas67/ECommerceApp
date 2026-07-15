@@ -72,6 +72,8 @@ export type OrderItem = {
   subtotal: number;
 };
 
+export type OrderStatus = 'PENDING' | 'PAID' | 'EXPIRED'
+
 export type Order = {
   id: number;
   clientId: number | null;
@@ -80,7 +82,7 @@ export type Order = {
   address: Address;
   orderDate: string;
   items: OrderItem;
-  status: string;
+  status: OrderStatus;
   totalPrice: number;
   totalProducts: number;
 };
