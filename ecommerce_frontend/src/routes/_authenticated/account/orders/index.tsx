@@ -1,14 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
-import LoadingSpinner from '../../../components/LoadingSpinner';
+import LoadingSpinner from '../../../../components/LoadingSpinner';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import type { AxiosInstance } from 'axios';
-import { fetchOrders } from '../../../api/orders';
-import type { Order } from '../../../api/types';
-import { useAxios } from '../../../hooks/use-axios';
+import { fetchOrders } from '../../../../api/orders';
+import type { Order } from '../../../../api/types';
+import { useAxios } from '../../../../hooks/use-axios';
 import Container from 'react-bootstrap/esm/Container';
 import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
-import OrdersTable from '../../../components/OrdersTable';
+import OrdersTable from '../../../../components/OrdersTable';
 
 const ordersQuery = (axiosInstance: AxiosInstance) =>
   queryOptions<Order[]>({
@@ -17,7 +17,7 @@ const ordersQuery = (axiosInstance: AxiosInstance) =>
     staleTime: 1000 * 60 * 10,
   });
 
-export const Route = createFileRoute('/_authenticated/account/orders')({
+export const Route = createFileRoute('/_authenticated/account/orders/')({
   component: RouteComponent,
   pendingComponent: LoadingSpinner,
   loader: ({ context: { axiosInstance, queryClient } }) => {
