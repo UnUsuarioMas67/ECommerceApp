@@ -32,10 +32,10 @@ function ShoppingCartItem({ product }: Props) {
 
             <Card.Subtitle className="mb-2 small fw-normal text-body-secondary">{product.category?.name}</Card.Subtitle>
 
-            <Card.Text className="fw-bold d-flex align-items-center gap-2">
-              ${product.price}
+            <div className="d-flex align-items-center gap-2">
+              <Card.Text className="fw-bold mb-0">${product.price}</Card.Text>
               <CartItemQuantitySelector product={product} />
-            </Card.Text>
+            </div>
           </Card.Body>
         </Col>
         <Col className="d-flex align-items-center justify-content-center" xs={2}>
