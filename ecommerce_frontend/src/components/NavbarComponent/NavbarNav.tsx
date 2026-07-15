@@ -7,6 +7,7 @@ import { useAuth } from '../AuthProvider/AuthContext';
 import { postLogout } from '../../api/user';
 import { useAxios } from '../../hooks/use-axios';
 import ViewCartButton from './ViewCartButton';
+import { useQueryClient } from '@tanstack/react-query';
 
 type Props = {
   user: User | null;
@@ -17,16 +18,18 @@ function NavbarNav({ user: currentUser }: Props) {
   const location = useLocation();
   const { invalidate: invalidateRouter } = useRouter();
   const axiosInstance = useAxios();
+  const queryClient = useQueryClient();
 
   const onSignOutClick = async () => {
     postLogout(axiosInstance);
     clearCredentials();
+    queryClient.clear();
     invalidateRouter();
   };
 
   const matchRoute = useMatchRoute();
 
-  const showCartBtn = !matchRoute({to: '/checkout', fuzzy: true})
+  const showCartBtn = !matchRoute({ to: '/checkout', fuzzy: true });
 
   const userDropdownTitle = (
     <>

@@ -26,7 +26,6 @@ const RootLayout = () => {
   const { data: currentUser } = useSuspenseQuery({
     queryKey: ['users', 'me'],
     queryFn: () => fetchCurrentUser(axiosInstance),
-    staleTime: Infinity,
   });
   const { data: categories } = useSuspenseQuery({
     queryKey: ['categories'],
@@ -67,10 +66,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     
   },
   loader: ({ context: { queryClient, axiosInstance } }) => {
-    queryClient.ensureQueryData({
+    queryClient.prefetchQuery({
       queryKey: ['users', 'me'],
       queryFn: () => fetchCurrentUser(axiosInstance),
-      staleTime: Infinity,
     });
     queryClient.ensureQueryData({
       queryKey: ['categories'],
