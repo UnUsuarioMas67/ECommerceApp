@@ -81,7 +81,7 @@ export type Order = {
   clientName: string | null;
   address: Address;
   orderDate: string;
-  items: OrderItem;
+  items: OrderItem[];
   status: OrderStatus;
   totalPrice: number;
   totalProducts: number;
