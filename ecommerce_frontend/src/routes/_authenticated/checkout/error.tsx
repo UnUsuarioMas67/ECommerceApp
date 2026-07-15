@@ -23,7 +23,7 @@ const productsQuery = (axiosInstance: AxiosInstance, productId: number) =>
   });
 
 function RouteComponent() {
-  const { error, setError, products: invalidProducts, setProducts } = useCheckoutError();
+  const { error, products: invalidProducts } = useCheckoutError();
 
   const axiosInstance = useAxios();
   const { products } = useSuspenseQueries({
