@@ -15,7 +15,7 @@ public interface ICategoryService
     Task<CategoryResponseDto?> GetByIdAsync(int categoryId);
     Task<CategoryResponseDto?> GetBySlugAsync(string categorySlug);
 
-    Task<IEnumerable<CategoryResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
+    Task<IEnumerable<CategoryResponseDto>> GetManyAsync(string? search = null);
     Task<Result<CategoryResponseDto>> CreateAsync(CategoryCreateDto dto);
 
     Task<Result<CategoryResponseDto>> UpdateAsync(int categoryId, CategoryUpdateDto dto);
@@ -42,12 +42,11 @@ public class CategoryService(ECommerceContext context, IValidator<Category> vali
         return category != null ? mapper.MapToDto(category) : null;
     }
 
-    public async Task<IEnumerable<CategoryResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
+    public async Task<IEnumerable<CategoryResponseDto>> GetManyAsync(string? search = null)
     {
         var categories = await context.Categories
             .AsNoTracking()
             .Where(c => c.Name.Contains(search ?? "") || c.Slug.Contains(search ?? ""))
-            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(category => mapper.MapToDto(category))
             .ToListAsync();
 

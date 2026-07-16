@@ -104,10 +104,9 @@ public static class CategoryEndpoints
 
     private static async Task<Ok<IEnumerable<CategoryResponseDto>>> GetCategories(
         ICategoryService categoryService,
-        [AsParameters] PaginationQuery pagination,
         [FromQuery] string search = "")
     {
-        var categories = await categoryService.GetManyAsync(pagination, search);
+        var categories = await categoryService.GetManyAsync(search);
         return TypedResults.Ok(categories);
     }
 }

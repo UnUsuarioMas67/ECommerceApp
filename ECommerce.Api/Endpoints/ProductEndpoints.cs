@@ -72,7 +72,7 @@ public static class ProductEndpoints
     private static async Task<Ok<IEnumerable<string>>> GetCategoriesList(
         ICategoryService categoryService, [AsParameters] PaginationQuery pagination)
     {
-        var categories = await categoryService.GetManyAsync(pagination);
+        var categories = await categoryService.GetManyAsync();
         return TypedResults.Ok(categories.Select(c => c.Slug));
     }
 
