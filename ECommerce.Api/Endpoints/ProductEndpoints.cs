@@ -43,7 +43,7 @@ public static class ProductEndpoints
         return endpoints;
     }
 
-    private static async Task<Ok<IEnumerable<ProductResponseDto>>> GetProducts(
+    private static async Task<Ok<PaginatedResponse<ProductResponseDto>>> GetProducts(
         IProductService productService,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string? search)
@@ -52,13 +52,13 @@ public static class ProductEndpoints
         return TypedResults.Ok(products);
     }
 
-    private static async Task<Ok<IEnumerable<ProductResponseDto>>> GetProductsByCategory(
+    private static async Task<Ok<PaginatedResponse<ProductResponseDto>>> GetProductsByCategory(
         IProductService productService,
         [FromRoute] string category,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string? search)
     {
-        IEnumerable<ProductResponseDto> products;
+        PaginatedResponse<ProductResponseDto> products;
 
         if (int.TryParse(category, out var categoryId))
             products = await productService.GetByCategoryId(categoryId, pagination, search);

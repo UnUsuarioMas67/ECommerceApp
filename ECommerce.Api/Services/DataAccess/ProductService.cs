@@ -18,12 +18,12 @@ public interface IProductService
     Task<Result<ProductResponseDto>> UpdateAsync(int productId, ProductUpdateDto dto);
     Task<ProductResponseDto?> DeleteAsync(int productId);
 
-    Task<IEnumerable<ProductResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
+    Task<PaginatedResponse<ProductResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
 
-    Task<IEnumerable<ProductResponseDto>> GetByCategoryId(int categoryId, PaginationQuery pagination,
+    Task<PaginatedResponse<ProductResponseDto>> GetByCategoryId(int categoryId, PaginationQuery pagination,
         string? search = null);
 
-    Task<IEnumerable<ProductResponseDto>> GetByCategorySlug(string categorySlug, PaginationQuery pagination,
+    Task<PaginatedResponse<ProductResponseDto>> GetByCategorySlug(string categorySlug, PaginationQuery pagination,
         string? search = null);
 
     Task<Result<ProductResponseDto>> Restock(int productId, int amount);
@@ -118,41 +118,79 @@ public class ProductService(
         return mapper.MapToDto(product);
     }
 
-    public async Task<IEnumerable<ProductResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
-    {
-        var products = await context.Products
-            .AsNoTracking()
-            .Include(p => p.Category)
-            .Where(p => p.Name.Contains(search ?? ""))
-            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
-            .Select(product => mapper.MapToDto(product))
-            .ToListAsync();
-
-        return products;
-    }
-
-    public async Task<IEnumerable<ProductResponseDto>> GetByCategoryId(int categoryId, PaginationQuery pagination,
+    public async Task<PaginatedResponse<ProductResponseDto>> GetManyAsync(PaginationQuery pagination,
         string? search = null)
     {
-        return await context.Products
+        var query = context.Products
             .AsNoTracking()
             .Include(p => p.Category)
-            .Where(p => p.Name.Contains(search ?? "") && p.Category != null && p.Category.Id == categoryId)
+            .Where(p => p.Name.Contains(search ?? ""));
+
+        var products = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(product => mapper.MapToDto(product))
             .ToListAsync();
+
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<ProductResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = products,
+            TotalPages = totalPages
+        };
     }
 
-    public async Task<IEnumerable<ProductResponseDto>> GetByCategorySlug(string categorySlug,
-        PaginationQuery pagination, string? search = null)
+    public async Task<PaginatedResponse<ProductResponseDto>> GetByCategoryId(int categoryId, PaginationQuery pagination,
+        string? search = null)
     {
-        return await context.Products
+        var query = context.Products
             .AsNoTracking()
             .Include(p => p.Category)
-            .Where(p => p.Name.Contains(search ?? "") && p.Category != null && p.Category.Slug == categorySlug)
+            .Where(p => p.Name.Contains(search ?? "") && p.Category != null && p.Category.Id == categoryId);
+
+        var products = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(product => mapper.MapToDto(product))
             .ToListAsync();
+
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<ProductResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = products,
+            TotalPages = totalPages
+        };
+    }
+
+    public async Task<PaginatedResponse<ProductResponseDto>> GetByCategorySlug(string categorySlug,
+        PaginationQuery pagination, string? search = null)
+    {
+        var query = context.Products
+            .AsNoTracking()
+            .Include(p => p.Category)
+            .Where(p => p.Name.Contains(search ?? "") && p.Category != null && p.Category.Slug == categorySlug);
+
+        var products = await query
+            .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
+            .Select(product => mapper.MapToDto(product))
+            .ToListAsync();
+
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<ProductResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = products,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<Result<ProductResponseDto>> Restock(int productId, int amount)
