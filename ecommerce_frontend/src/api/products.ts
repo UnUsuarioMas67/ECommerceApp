@@ -1,5 +1,5 @@
 import type { AxiosInstance } from "axios";
-import type { Product } from "./types";
+import type { PaginatedResponse, Product } from "./types";
 
 type FetchProductOptions = {
   searchTerm?: string;
@@ -18,13 +18,9 @@ export async function fetchProducts(axiosInstance: AxiosInstance, options: Fetch
   if (searchTerm) url += `&search=${searchTerm}`;
   url += `&limit=${itemsPerPage ?? 16}`;
 
-  const data = (await axiosInstance.get<Product[]>(url)).data;
+  const response = await axiosInstance.get<PaginatedResponse<Product>>(url);
 
-  return {
-    data,
-    currentPage: pageParam,
-    nextPage: data.length > 0 ? pageParam + 1 : null,
-  };
+  return response.data;
 }
 
 export async function fetchProduct(axiosInstance: AxiosInstance, id: number) {

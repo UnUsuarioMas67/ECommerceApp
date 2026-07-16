@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useAxios } from '../../hooks/use-axios';
-import { useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { infiniteQueryOptions, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProductCard from '../../components/ProductCard';
@@ -10,6 +10,16 @@ import { searchSchema } from '../../schemas/search';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import type { AxiosInstance } from 'axios';
+
+const productsInfiniteQuery = (axiosInstance: AxiosInstance, category?: string, searchTerm?: string) =>
+  infiniteQueryOptions({
+    queryKey: ['products'],
+    queryFn: ({ pageParam }) => fetchProducts(axiosInstance, { category, searchTerm, pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => (lastPage.page < lastPage.totalPages ? lastPage.page + 1 : null),
+    staleTime: 1000 * 60,
+  });
 
 export const Route = createFileRoute('/_products/')({
   component: RouteComponent,
@@ -22,14 +32,7 @@ export const Route = createFileRoute('/_products/')({
         queryFn: () => (category ? fetchCategory(axiosInstance, category) : null),
         staleTime: Infinity,
       }),
-      queryClient.prefetchInfiniteQuery({
-        queryKey: ['products'],
-        queryFn: ({ pageParam }) => fetchProducts(axiosInstance, { category, searchTerm, pageParam }),
-        initialPageParam: 1,
-        pages: 1,
-        getNextPageParam: (lastPage) => lastPage.nextPage,
-        staleTime: 1000 * 60,
-      }),
+      queryClient.prefetchInfiniteQuery(productsInfiniteQuery(axiosInstance, category, searchTerm)),
     ]);
   },
   pendingComponent: LoadingSpinner,
@@ -39,13 +42,9 @@ function RouteComponent() {
   const { category, searchTerm } = Route.useSearch();
   const axiosInstance = useAxios();
 
-  const { data, error, status, fetchNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery({
-    queryKey: ['products'],
-    queryFn: ({ pageParam }) => fetchProducts(axiosInstance, { category, searchTerm, pageParam }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    staleTime: 1000 * 60,
-  });
+  const { data, error, status, fetchNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery(
+    productsInfiniteQuery(axiosInstance, category, searchTerm),
+  );
 
   const { data: categoryObj, isError: categoryError } = useSuspenseQuery({
     queryKey: ['categories', 'search'],
@@ -82,7 +81,7 @@ function RouteComponent() {
       <Row xs={1} lg={2} className="g-3">
         {data.pages &&
           data.pages
-            .map((page) => page.data)
+            .map((page) => page.items)
             .flat()
             .map((product) => (
               <Col key={product.id}>

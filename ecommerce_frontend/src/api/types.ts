@@ -108,3 +108,10 @@ export type Api422ErrorBody = {
   message: string;
   details: unknown;
 };
+
+export type PaginatedResponse<T> = {
+  limit: number;
+  page: number;
+  totalPages: number;
+  items: T[]
+}
