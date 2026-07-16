@@ -12,7 +12,7 @@ public class ProductService(ApiRequestService apiRequestService)
     private const string ProductsPath = "api/products";
     private const string AntiforgeryPath = "api/antiforgery";
 
-    public async Task<IEnumerable<ProductResponse>> GetProducts(
+    public async Task<PaginatedResponse<ProductResponse>> GetProducts(
         string? search = null,
         PaginationQuery? paginationQuery = null,
         string? category = null)
@@ -29,7 +29,7 @@ public class ProductService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<ProductResponse>>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<PaginatedResponse<ProductResponse>>(options);
     }
 
     public async Task<Result<ProductResponse>> GetProductById(int id)

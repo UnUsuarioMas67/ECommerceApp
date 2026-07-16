@@ -9,6 +9,8 @@ public class ProductListViewModel
 {
     public List<ProductResponse> Products { get; set; } = new List<ProductResponse>();
     public SelectList CategorySelect { get; set; } = new SelectList(new List<CategoryResponse>(), "Slug", "Name");
-    [FromQuery(Name = "category")] public string? Category { get; set; }
-    [FromQuery(Name = "searchTerm")] public string? SearchTerm { get; set; }
+    public string? Category { get; set; }
+    public string? SearchTerm { get; set; }
+    public required int Page { get; set; }
+    public required int TotalPages { get; set; }
 }

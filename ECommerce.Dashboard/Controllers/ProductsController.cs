@@ -18,7 +18,7 @@ public class ProductsController(ProductService productService, CategoryService c
 {
     public async Task<IActionResult> Index(int page = 1, string? searchTerm = null, string? category = null)
     {
-        var productTask = productService.GetProducts(searchTerm, new PaginationQuery(20, page), category);
+        var productTask = productService.GetProducts(searchTerm, new PaginationQuery(15, page), category);
         var categoryTask = categoryService.GetCategories();
 
         await Task.WhenAll(categoryTask, productTask);
@@ -28,9 +28,11 @@ public class ProductsController(ProductService productService, CategoryService c
         
         var viewModel = new ProductListViewModel
         {
-            Products = products.ToList(),
+            Products = products.Items,
             CategorySelect = new SelectList(categories, "Slug", "Name"),
-            SearchTerm = searchTerm
+            SearchTerm = searchTerm,
+            Page = products.Page,
+            TotalPages = products.TotalPages,
         };
 
         return View(viewModel);
