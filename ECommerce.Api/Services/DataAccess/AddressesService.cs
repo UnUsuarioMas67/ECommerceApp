@@ -14,7 +14,7 @@ public interface IAddressesService
 {
     Task<AddressResponseDto?> GetByIdAsync(int addressId);
     Task<IEnumerable<AddressResponseDto>> GetByClientAsync(int clientId);
-    Task<IEnumerable<AddressResponseDto>> GetByCountryAsync(string cca2, PaginationQuery pagination);
+    Task<PaginatedResponse<AddressResponseDto>> GetByCountryAsync(string cca2, PaginationQuery pagination);
     Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto, int clientId);
     Task<Result<AddressResponseDto>> UpdateAsync(int addressId, AddressUpdateDto dto, int? clientId = null);
     Task<AddressResponseDto?> DeleteAsync(int addressId, int? clientId = null);
@@ -41,15 +41,28 @@ public class AddressesService(ECommerceContext context, IValidator<Address> vali
             .Select(a => mapper.MapToDto(a))
             .ToListAsync();
 
-    public async Task<IEnumerable<AddressResponseDto>> GetByCountryAsync(string cca2, PaginationQuery pagination)
+    public async Task<PaginatedResponse<AddressResponseDto>> GetByCountryAsync(string cca2, PaginationQuery pagination)
     {
-        return await context.Addresses
+        var query = context.Addresses
             .AsNoTracking()
             .Include(a => a.Country)
-            .Where(a => a.Country!.Cca2 == cca2)
+            .Where(a => a.Country!.Cca2 == cca2);
+
+        var addresses = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(a => mapper.MapToDto(a))
             .ToListAsync();
+
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<AddressResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = addresses,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<Result<AddressResponseDto>> CreateAsync(AddressCreateDto dto, int clientId)

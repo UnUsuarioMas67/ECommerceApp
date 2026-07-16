@@ -14,7 +14,7 @@ public interface IAdminsService
 {
     Task<Result<UserResponseDto>> CreateAsync(UserCreateDto dto);
     Task<UserResponseDto?> GetByIdAsync(int adminId);
-    Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
+    Task<PaginatedResponse<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
     Task<Result<UserResponseDto>> UpdateAsync(int adminId, UserUpdateDto dto);
     Task<UserResponseDto?> DeleteAsync(int adminId);
 }
@@ -42,15 +42,28 @@ public class AdminsService(ECommerceContext context, IValidator<Admin> validator
         return admin != null ? mapper.MapToDto(admin) : null;
     }
 
-    public async Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
+    public async Task<PaginatedResponse<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
     {
-        return await context.Admins
+        var query = context.Admins
             .AsNoTracking()
-            .Where(a => (a.FirstName + " " + a.LastName).Contains(search ?? ""))
+            .Where(a => (a.FirstName + " " + a.LastName).Contains(search ?? ""));
+
+        var admins = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
             .Take(pagination.LimitOrDefault)
             .Select(a => mapper.MapToDto(a))
             .ToListAsync();
+
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<UserResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = admins,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<Result<UserResponseDto>> UpdateAsync(int adminId, UserUpdateDto dto)

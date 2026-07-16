@@ -43,14 +43,14 @@ public static class CartEndpoints
         return cart != null ? TypedResults.Ok(cart) : TypedResults.NotFound();
     }
 
-    private static async Task<Ok<IEnumerable<CartResponseDto>>> GetCarts(
+    private static async Task<Ok<PaginatedResponse<CartResponseDto>>> GetCarts(
         ICartsService cartsService, [AsParameters] PaginationQuery pagination)
     {
         var carts = await cartsService.GetManyAsync(pagination);
         return TypedResults.Ok(carts);
     }
 
-    private static async Task<Results<Ok<IEnumerable<CartResponseDto>>, UnauthorizedHttpResult>>
+    private static async Task<Results<Ok<PaginatedResponse<CartResponseDto>>, UnauthorizedHttpResult>>
         GetAuthClientCarts(
             HttpContext httpContext,
             ICartsService cartsService,
@@ -64,7 +64,7 @@ public static class CartEndpoints
         return TypedResults.Ok(carts);
     }
 
-    private static async Task<Ok<IEnumerable<CartResponseDto>>> GetCartsByClient(
+    private static async Task<Ok<PaginatedResponse<CartResponseDto>>> GetCartsByClient(
         ICartsService cartsService,
         int id,
         [AsParameters] PaginationQuery pagination)

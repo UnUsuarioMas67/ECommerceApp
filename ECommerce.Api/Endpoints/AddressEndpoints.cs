@@ -148,7 +148,7 @@ public static class AddressEndpoints
         return TypedResults.Ok(addresses);
     }
 
-    private static async Task<Ok<IEnumerable<AddressResponseDto>>> GetAddressesByCountry(
+    private static async Task<Ok<PaginatedResponse<AddressResponseDto>>> GetAddressesByCountry(
         IAddressesService addressesService,
         [FromRoute] string countryCode,
         [AsParameters] PaginationQuery pagination

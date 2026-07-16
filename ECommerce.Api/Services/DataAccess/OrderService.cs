@@ -11,9 +11,9 @@ namespace ECommerce.Api.Services.DataAccess;
 public interface IOrderService
 {
     Task<OrderResponseDto?> GetByIdAsync(int orderId, int? clientId = null);
-    Task<IEnumerable<OrderResponseDto>> GetManyAsync(PaginationQuery pagination);
-    Task<IEnumerable<OrderResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
-    Task<IEnumerable<OrderResponseDto>> GetByProductAsync(int productId, PaginationQuery pagination);
+    Task<PaginatedResponse<OrderResponseDto>> GetManyAsync(PaginationQuery pagination);
+    Task<PaginatedResponse<OrderResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
+    Task<PaginatedResponse<OrderResponseDto>> GetByProductAsync(int productId, PaginationQuery pagination);
     Task ExpireOrdersAsync();
     Task DeleteExpiredOrdersAsync();
 }
@@ -43,26 +43,37 @@ public class OrderService(
         return order != null ? mapper.MapToDto(order) : null;
     }
 
-    public async Task<IEnumerable<OrderResponseDto>> GetManyAsync(PaginationQuery pagination)
+    public async Task<PaginatedResponse<OrderResponseDto>> GetManyAsync(PaginationQuery pagination)
     {
-        var orders = await context.ShopOrders
+        var query = context.ShopOrders
             .AsNoTracking()
             .Include(o => o.Client)
             .Include(o => o.Address)
             .ThenInclude(a => a.Country)
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
-            .OrderByDescending(o => o.OrderDate)
+            .OrderByDescending(o => o.OrderDate);
+
+        var orders = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
             .Take(pagination.LimitOrDefault)
             .ToListAsync();
 
-        return orders.Select(mapper.MapToDto);
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<OrderResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = orders.Select(mapper.MapToDto).ToList(),
+            TotalPages = totalPages
+        };
     }
 
-    public async Task<IEnumerable<OrderResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination)
+    public async Task<PaginatedResponse<OrderResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination)
     {
-        var orders = await context.ShopOrders
+        var query = context.ShopOrders
             .AsNoTracking()
             .Include(o => o.Client)
             .Include(o => o.Address)
@@ -70,17 +81,28 @@ public class OrderService(
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Where(o => o.ClientId == clientId)
-            .OrderByDescending(o => o.OrderDate)
+            .OrderByDescending(o => o.OrderDate);
+
+        var orders = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
             .Take(pagination.LimitOrDefault)
             .ToListAsync();
 
-        return orders.Select(mapper.MapToDto);
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<OrderResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = orders.Select(mapper.MapToDto).ToList(),
+            TotalPages = totalPages
+        };
     }
 
-    public async Task<IEnumerable<OrderResponseDto>> GetByProductAsync(int productId, PaginationQuery pagination)
+    public async Task<PaginatedResponse<OrderResponseDto>> GetByProductAsync(int productId, PaginationQuery pagination)
     {
-        var orders = await context.ShopOrders
+        var query = context.ShopOrders
             .AsNoTracking()
             .Include(o => o.Client)
             .Include(o => o.Address)
@@ -88,12 +110,23 @@ public class OrderService(
             .Include(o => o.Items)
             .ThenInclude(i => i.Product)
             .Where(o => o.Items.Any(i => i.ProductId == productId))
-            .OrderByDescending(o => o.OrderDate)
+            .OrderByDescending(o => o.OrderDate);
+
+        var orders = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
             .Take(pagination.LimitOrDefault)
             .ToListAsync();
 
-        return orders.Select(mapper.MapToDto);
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<OrderResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = orders.Select(mapper.MapToDto).ToList(),
+            TotalPages = totalPages
+        };
     }
 
     public async Task ExpireOrdersAsync()

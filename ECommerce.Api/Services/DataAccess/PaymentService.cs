@@ -8,7 +8,7 @@ namespace ECommerce.Api.Services.DataAccess;
 public interface IPaymentService
 {
     Task<PaymentResultDto?> GetByIdAsync(int paymentId);
-    Task<IEnumerable<PaymentResultDto>> GetManyAsync(PaginationQuery pagination);
+    Task<PaginatedResponse<PaymentResultDto>> GetManyAsync(PaginationQuery pagination);
     Task<PaymentResultDto?> GetByShopOrderAsync(int orderId);
     Task<PaymentResultDto?> GetPaymentBySessionIdAsync(string sessionId, int? clientId);
 }
@@ -22,15 +22,26 @@ public class PaymentService(ECommerceContext context) : IPaymentService
         return payment != null ? MapToDto(payment) : null;
     }
 
-    public async Task<IEnumerable<PaymentResultDto>> GetManyAsync(PaginationQuery pagination)
+    public async Task<PaginatedResponse<PaymentResultDto>> GetManyAsync(PaginationQuery pagination)
     {
-        var payments = await context.Payments
-            .AsNoTracking()
+        var query = context.Payments
+            .AsNoTracking();
+
+        var payments = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1))
             .Take(pagination.LimitOrDefault)
             .ToListAsync();
 
-        return payments.Select(MapToDto);
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<PaymentResultDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = payments.Select(MapToDto).ToList(),
+            TotalPages = totalPages
+        };
     }
 
     public async Task<PaymentResultDto?> GetByShopOrderAsync(int orderId)

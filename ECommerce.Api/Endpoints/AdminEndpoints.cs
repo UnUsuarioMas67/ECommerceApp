@@ -32,7 +32,7 @@ public static class AdminEndpoints
         return endpoints;
     }
 
-    private static async Task<Ok<IEnumerable<UserResponseDto>>> GetAdmins(
+    private static async Task<Ok<PaginatedResponse<UserResponseDto>>> GetAdmins(
         IAdminsService adminsService,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string? search = null)

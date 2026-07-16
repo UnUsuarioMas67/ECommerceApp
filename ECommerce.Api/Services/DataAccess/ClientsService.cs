@@ -13,7 +13,7 @@ namespace ECommerce.Api.Services.DataAccess;
 public interface IClientsService
 {
     Task<UserResponseDto?> GetByIdAsync(int clientId);
-    Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
+    Task<PaginatedResponse<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null);
     Task<Result<UserResponseDto>> CreateAsync(UserCreateDto dto);
     Task<Result<UserResponseDto>> UpdateAsync(int clientId, UserUpdateDto dto);
     Task<UserResponseDto?> DeleteAsync(int clientId);
@@ -28,14 +28,27 @@ public class ClientsService(ECommerceContext context, IValidator<Client> validat
         return client != null ? mapper.MapToDto(client) : null;
     }
 
-    public async Task<IEnumerable<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
+    public async Task<PaginatedResponse<UserResponseDto>> GetManyAsync(PaginationQuery pagination, string? search = null)
     {
-        return await context.Clients
+        var query = context.Clients
             .AsNoTracking()
-            .Where(c => (c.FirstName + " " + c.LastName).Contains(search ?? ""))
+            .Where(c => (c.FirstName + " " + c.LastName).Contains(search ?? ""));
+
+        var clients = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(c => mapper.MapToDto(c)!)
             .ToListAsync();
+
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<UserResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = clients,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<Result<UserResponseDto>> CreateAsync(UserCreateDto dto)

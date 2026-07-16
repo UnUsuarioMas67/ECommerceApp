@@ -63,7 +63,7 @@ public static class ClientsEndpoints
     }
 
 
-    private static async Task<Ok<IEnumerable<UserResponseDto>>> GetClients(
+    private static async Task<Ok<PaginatedResponse<UserResponseDto>>> GetClients(
         IClientsService clientsService,
         [AsParameters] PaginationQuery pagination,
         [FromQuery] string? search = null)

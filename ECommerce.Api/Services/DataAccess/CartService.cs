@@ -13,8 +13,8 @@ namespace ECommerce.Api.Services.DataAccess;
 public interface ICartsService
 {
     Task<CartResponseDto?> GetByIdAsync(int cartId);
-    Task<IEnumerable<CartResponseDto>> GetManyAsync(PaginationQuery pagination);
-    Task<IEnumerable<CartResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
+    Task<PaginatedResponse<CartResponseDto>> GetManyAsync(PaginationQuery pagination);
+    Task<PaginatedResponse<CartResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination);
     Task<Result<CartResponseDto>> CreateAsync(CartRequestDto dto, int clientId);
     Task<Result<Cart>> CreateNoSave(CartRequestDto dto, int clientId);
     Task<Result<CartResponseDto>> UpdateAsync(int cartId, CartRequestDto dto, int? clientId = null);
@@ -35,29 +35,55 @@ public class CartsService(ECommerceContext context, IValidator<Cart> validator, 
         return cart != null ? mapper.MapToDto(cart) : null;
     }
 
-    public async Task<IEnumerable<CartResponseDto>> GetManyAsync(PaginationQuery pagination)
+    public async Task<PaginatedResponse<CartResponseDto>> GetManyAsync(PaginationQuery pagination)
     {
-        return await context.Carts
+        var query = context.Carts
             .AsNoTracking()
             .Include(cart => cart.Items)
             .ThenInclude(item => item.Product)
-            .ThenInclude(product => product.Category)
+            .ThenInclude(product => product.Category);
+
+        var carts = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(item => mapper.MapToDto(item))
             .ToListAsync();
+
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<CartResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = carts,
+            TotalPages = totalPages
+        };
     }
 
-    public async Task<IEnumerable<CartResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination)
+    public async Task<PaginatedResponse<CartResponseDto>> GetByClientAsync(int clientId, PaginationQuery pagination)
     {
-        return await context.Carts
+        var query = context.Carts
             .AsNoTracking()
             .Include(cart => cart.Items)
             .ThenInclude(item => item.Product)
             .ThenInclude(product => product.Category)
-            .Where(c => c.ClientId == clientId)
+            .Where(c => c.ClientId == clientId);
+
+        var carts = await query
             .Skip(pagination.LimitOrDefault * (pagination.PageOrDefault - 1)).Take(pagination.LimitOrDefault)
             .Select(item => mapper.MapToDto(item))
             .ToListAsync();
+
+        var count = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)count / pagination.LimitOrDefault);
+
+        return new PaginatedResponse<CartResponseDto>
+        {
+            Limit = pagination.LimitOrDefault,
+            Page = pagination.PageOrDefault,
+            Items = carts,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<Result<CartResponseDto>> CreateAsync(CartRequestDto dto, int clientId)

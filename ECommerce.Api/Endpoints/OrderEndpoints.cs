@@ -36,7 +36,7 @@ public static class OrderEndpoints
         return endpoints;
     }
 
-    private static async Task<Results<Ok<IEnumerable<OrderResponseDto>>, UnauthorizedHttpResult>> GetAuthClientOrders(
+    private static async Task<Results<Ok<PaginatedResponse<OrderResponseDto>>, UnauthorizedHttpResult>> GetAuthClientOrders(
         HttpContext httpContext,
         IOrderService orderService,
         [AsParameters] PaginationQuery pagination)
@@ -62,7 +62,7 @@ public static class OrderEndpoints
         return order != null ? TypedResults.Ok(order) : TypedResults.NotFound();
     }
 
-    private static async Task<Ok<IEnumerable<OrderResponseDto>>> GetOrders(
+    private static async Task<Ok<PaginatedResponse<OrderResponseDto>>> GetOrders(
         IOrderService orderService,
         [AsParameters] PaginationQuery pagination)
     {
@@ -78,7 +78,7 @@ public static class OrderEndpoints
         return order != null ? TypedResults.Ok(order) : TypedResults.NotFound();
     }
 
-    private static async Task<Ok<IEnumerable<OrderResponseDto>>> GetOrdersByClient(
+    private static async Task<Ok<PaginatedResponse<OrderResponseDto>>> GetOrdersByClient(
         IOrderService orderService,
         int clientId,
         [AsParameters] PaginationQuery pagination)
@@ -87,7 +87,7 @@ public static class OrderEndpoints
         return TypedResults.Ok(orders);
     }
 
-    private static async Task<Ok<IEnumerable<OrderResponseDto>>> GetOrdersByProduct(
+    private static async Task<Ok<PaginatedResponse<OrderResponseDto>>> GetOrdersByProduct(
         IOrderService orderService,
         int productId,
         [AsParameters] PaginationQuery pagination)
