@@ -15,12 +15,14 @@ public class OrdersController(OrderService orderService) : Controller
     {
         var orders = await orderService.GetOrders(new PaginationQuery(20, page));
         
-        var orderList = status != null ? orders.Where(o => o.Status == status).ToList() : orders.ToList();
+        var orderList = status != null ? orders.Items.Where(o => o.Status == status).ToList() : orders.Items.ToList();
 
         var viewModel = new OrderListViewModel
         {
             Orders = orderList,
             Status = status,
+            Page = orders.Page,
+            TotalPages = orders.TotalPages,
         };
 
         return View(viewModel);

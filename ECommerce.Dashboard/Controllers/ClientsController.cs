@@ -17,8 +17,10 @@ public class ClientsController(ClientService clientService) : Controller
 
         var viewModel = new ClientListViewModel
         {
-            Clients = clients.ToList(),
-            SearchTerm = searchTerm
+            Clients = clients.Items,
+            SearchTerm = searchTerm,
+            Page = clients.Page,
+            TotalPages = clients.TotalPages,
         };
 
         return View(viewModel);

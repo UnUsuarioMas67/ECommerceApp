@@ -10,7 +10,7 @@ public class OrderService(ApiRequestService apiRequestService)
 {
     private const string OrdersPath = "api/orders";
 
-    public async Task<IEnumerable<OrderResponse>> GetOrders(PaginationQuery? paginationQuery = null)
+    public async Task<PaginatedResponse<OrderResponse>> GetOrders(PaginationQuery? paginationQuery = null)
     {
         var query = new StringBuilder("?");
         if (paginationQuery != null)
@@ -22,7 +22,7 @@ public class OrderService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<OrderResponse>>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<PaginatedResponse<OrderResponse>>(options);
     }
 
     public async Task<Result<OrderResponse>> GetOrderById(int id)
@@ -36,7 +36,7 @@ public class OrderService(ApiRequestService apiRequestService)
         return await apiRequestService.SendAsync<OrderResponse>(options);
     }
 
-    public async Task<IEnumerable<OrderResponse>> GetOrdersByClient(
+    public async Task<PaginatedResponse<OrderResponse>> GetOrdersByClient(
         int clientId,
         PaginationQuery? paginationQuery = null)
     {
@@ -50,10 +50,10 @@ public class OrderService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<OrderResponse>>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<PaginatedResponse<OrderResponse>>(options);
     }
 
-    public async Task<IEnumerable<OrderResponse>> GetOrdersByProduct(
+    public async Task<PaginatedResponse<OrderResponse>> GetOrdersByProduct(
         int productId,
         PaginationQuery? paginationQuery = null)
     {
@@ -67,6 +67,6 @@ public class OrderService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<OrderResponse>>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<PaginatedResponse<OrderResponse>>(options);
     }
 }

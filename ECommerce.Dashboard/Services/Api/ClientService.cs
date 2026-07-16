@@ -21,7 +21,7 @@ public class ClientService(ApiRequestService apiRequestService)
         return await apiRequestService.SendAsync<ClientResponse>(options);
     }
 
-    public async Task<IEnumerable<ClientResponse>> GetClients(
+    public async Task<PaginatedResponse<ClientResponse>> GetClients(
         string? search = null,
         PaginationQuery? paginationQuery = null)
     {
@@ -35,6 +35,6 @@ public class ClientService(ApiRequestService apiRequestService)
             Method = HttpMethod.Get,
         };
 
-        return await apiRequestService.SendAlwaysSucceedAsync<IEnumerable<ClientResponse>>(options);
+        return await apiRequestService.SendAlwaysSucceedAsync<PaginatedResponse<ClientResponse>>(options);
     }
 }
