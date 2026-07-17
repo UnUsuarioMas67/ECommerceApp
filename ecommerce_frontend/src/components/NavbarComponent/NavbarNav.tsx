@@ -51,21 +51,21 @@ function NavbarNav({ user: currentUser }: Props) {
       ) : (
         <>
           <NavDropdown title={userDropdownTitle} align="end" id="basic-nav-dropdown" data-bs-theme="light">
-            <NavDropdown.Item>
+            <NavDropdown.Item as="span">
               <Link className="text-body text-decoration-none d-inline-flex align-items-center" to="/account/orders">
                 <CartCheck size={18} className="me-3" />
                 Your orders
               </Link>
             </NavDropdown.Item>
 
-            <NavDropdown.Item>
+            <NavDropdown.Item as="span">
               <Link className="text-body text-decoration-none d-inline-flex align-items-center" to="/account/addresses">
                 <GeoAlt size={18} className="me-3" />
                 Your addresses
               </Link>
             </NavDropdown.Item>
 
-            <NavDropdown.Item>
+            <NavDropdown.Item as="span">
               <Link className="text-body text-decoration-none d-inline-flex align-items-center" to="/account/settings">
                 <Gear size={18} className="me-3" />
                 Account settings
@@ -74,7 +74,7 @@ function NavbarNav({ user: currentUser }: Props) {
 
             <NavDropdown.Divider />
 
-            <NavDropdown.Item onClick={onSignOutClick}>
+            <NavDropdown.Item as="span">
               <Link
                 className="text-body text-decoration-none d-inline-flex align-items-center"
                 to="/login"
