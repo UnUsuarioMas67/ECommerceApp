@@ -4,7 +4,7 @@
     "name": "Intel Core i5-14600K",
     "description": "14th Gen Intel Core i5 desktop processor with 10 cores (6 P-cores + 4 E-cores) and 20 threads, unlocked for overclocking, up to 5.3 GHz turbo frequency.",
     "price": 319.99,
-    "imageUrl": "https://example.com/images/intel-i5-14600k.jpg",
+    "imageUrl": "CPU-INTEL-I5-14600K.jpg",
     "stock": 50,
     "categoryId": 1
   },
@@ -13,7 +13,7 @@
     "name": "Intel Core i7-14700K",
     "description": "14th Gen Intel Core i7 desktop processor with 20 cores (8 P-cores + 12 E-cores) and 28 threads, unlocked, up to 5.6 GHz turbo frequency.",
     "price": 429.99,
-    "imageUrl": "https://example.com/images/intel-i7-14700k.jpg",
+    "imageUrl": "CPU-INTEL-I7-14700K.jpg",
     "stock": 35,
     "categoryId": 1
   },
@@ -22,7 +22,7 @@
     "name": "AMD Ryzen 7 7800X3D",
     "description": "AMD Ryzen 7 7800X3D desktop processor with 8 cores and 16 threads, 3D V-Cache technology, up to 5.0 GHz max boost, AM5 socket.",
     "price": 449.99,
-    "imageUrl": "https://example.com/images/amd-r7-7800x3d.jpg",
+    "imageUrl": "CPU-AMD-R7-7800X3D.jpg",
     "stock": 40,
     "categoryId": 1
   },
@@ -31,7 +31,7 @@
     "name": "AMD Ryzen 5 7600X",
     "description": "AMD Ryzen 5 7600X desktop processor with 6 cores and 12 threads, up to 5.3 GHz max boost, AM5 socket, 65W TDP.",
     "price": 229.99,
-    "imageUrl": "https://example.com/images/amd-r5-7600x.jpg",
+    "imageUrl": "CPU-AMD-R5-7600X.jpg",
     "stock": 60,
     "categoryId": 1
   },
@@ -40,7 +40,7 @@
     "name": "ASUS ROG STRIX Z790-E",
     "description": "ASUS ROG STRIX Z790-E Gaming WiFi II motherboard, LGA1700 socket, DDR5, PCIe 5.0, WiFi 7, SupremeFX audio.",
     "price": 499.99,
-    "imageUrl": "https://example.com/images/asus-z790-e.jpg",
+    "imageUrl": "MB-ASUS-Z790-E.jpg",
     "stock": 20,
     "categoryId": 2
   },
@@ -49,7 +49,7 @@
     "name": "MSI MAG Z790 TOMAHAWK",
     "description": "MSI MAG Z790 TOMAHAWK WiFi motherboard, LGA1700 socket, DDR5, PCIe 5.0, WiFi 6E, 2.5G LAN.",
     "price": 299.99,
-    "imageUrl": "https://example.com/images/msi-z790-tomahawk.jpg",
+    "imageUrl": "MB-MSI-Z790-TOMAHAWK.jpg",
     "stock": 25,
     "categoryId": 2
   },
@@ -58,7 +58,7 @@
     "name": "Gigabyte X670E AORUS MASTER",
     "description": "Gigabyte X670E AORUS MASTER motherboard, AM5 socket, DDR5, PCIe 5.0, WiFi 6E, 10G LAN.",
     "price": 549.99,
-    "imageUrl": "https://example.com/images/gigabyte-x670e.jpg",
+    "imageUrl": "MB-GIGABYTE-X670E.jpg",
     "stock": 15,
     "categoryId": 2
   },
@@ -67,7 +67,7 @@
     "name": "ASRock B650E PG RIPTIDE",
     "description": "ASRock B650E PG RIPTIDE WiFi motherboard, AM5 socket, DDR5, PCIe 5.0, 2.5G LAN, Killer WiFi 6E.",
     "price": 229.99,
-    "imageUrl": "https://example.com/images/asrock-b650e.jpg",
+    "imageUrl": "MB-ASROCK-B650E.jpg",
     "stock": 30,
     "categoryId": 2
   },
@@ -76,7 +76,7 @@
     "name": "NVIDIA GeForce RTX 4080 Super",
     "description": "NVIDIA GeForce RTX 4080 Super 16GB GDDR6X, 10240 CUDA cores, DLSS 3.5, ray tracing, 256-bit memory bus.",
     "price": 999.99,
-    "imageUrl": "https://example.com/images/rtx-4080-super.jpg",
+    "imageUrl": "GPU-NVIDIA-RTX4080S.jpg",
     "stock": 10,
     "categoryId": 3
   },
@@ -85,7 +85,7 @@
     "name": "AMD Radeon RX 7900 XTX",
     "description": "AMD Radeon RX 7900 XTX 24GB GDDR6, 6144 stream processors, RDNA 3 architecture, 384-bit memory bus.",
     "price": 949.99,
-    "imageUrl": "https://example.com/images/rx-7900-xtx.jpg",
+    "imageUrl": "GPU-AMD-RX7900XTX.jpg",
     "stock": 12,
     "categoryId": 3
   },
@@ -94,7 +94,7 @@
     "name": "NVIDIA GeForce RTX 4070 Ti Super",
     "description": "NVIDIA GeForce RTX 4070 Ti Super 16GB GDDR6X, 8448 CUDA cores, DLSS 3.5, ray tracing, 256-bit memory bus.",
     "price": 799.99,
-    "imageUrl": "https://example.com/images/rtx-4070-ti-super.jpg",
+    "imageUrl": "GPU-NVIDIA-RTX4070TIS.jpg",
     "stock": 20,
     "categoryId": 3
   },
@@ -103,7 +103,7 @@
     "name": "AMD Radeon RX 7800 XT",
     "description": "AMD Radeon RX 7800 XT 16GB GDDR6, 3840 stream processors, RDNA 3 architecture, 256-bit memory bus.",
     "price": 499.99,
-    "imageUrl": "https://example.com/images/rx-7800-xt.jpg",
+    "imageUrl": "GPU-AMD-RX7800XT.jpg",
     "stock": 25,
     "categoryId": 3
   },
@@ -112,7 +112,7 @@
     "name": "Corsair Vengeance DDR5-6000 32GB",
     "description": "Corsair Vengeance 32GB (2x16GB) DDR5-6000MHz CL36 memory kit, Intel XMP 3.0 and AMD EXPO compatible, aluminum heatsink.",
     "price": 109.99,
-    "imageUrl": "https://example.com/images/corsair-vengeance-32gb.jpg",
+    "imageUrl": "RAM-CORSAIR-VENGEANCE-32GB.jpg",
     "stock": 80,
     "categoryId": 4
   },
@@ -121,7 +121,7 @@
     "name": "G.Skill Trident Z5 RGB DDR5-6400 32GB",
     "description": "G.Skill Trident Z5 RGB 32GB (2x16GB) DDR5-6400MHz CL32 memory kit, RGB lighting, Intel XMP 3.0 certified.",
     "price": 129.99,
-    "imageUrl": "https://example.com/images/gskill-trident-z5-32gb.jpg",
+    "imageUrl": "RAM-GSKILL-TRIDENT-Z5-32GB.jpg",
     "stock": 60,
     "categoryId": 4
   },
@@ -130,7 +130,7 @@
     "name": "Kingston Fury Beast DDR5-5600 16GB",
     "description": "Kingston Fury Beast 16GB (1x16GB) DDR5-5600MHz CL36 memory module, Plug and Play, aluminum heat spreader.",
     "price": 54.99,
-    "imageUrl": "https://example.com/images/kingston-fury-16gb.jpg",
+    "imageUrl": "RAM-KINGSTON-FURY-16GB.jpg",
     "stock": 100,
     "categoryId": 4
   },
@@ -139,7 +139,7 @@
     "name": "Crucial Pro DDR5-5200 32GB",
     "description": "Crucial Pro 32GB (2x16GB) DDR5-5200MHz CL42 memory kit, overclockable, XMP 3.0, AMD EXPO, limited lifetime warranty.",
     "price": 89.99,
-    "imageUrl": "https://example.com/images/crucial-pro-32gb.jpg",
+    "imageUrl": "RAM-CRUCIAL-PRO-32GB.jpg",
     "stock": 70,
     "categoryId": 4
   },
@@ -148,7 +148,7 @@
     "name": "Samsung 990 Pro 2TB NVMe SSD",
     "description": "Samsung 990 Pro 2TB PCIe 4.0 NVMe M.2 SSD, read 7450MB/s, write 6900MB/s, Samsung V-NAND and controller.",
     "price": 249.99,
-    "imageUrl": "https://example.com/images/samsung-990-pro-2tb.jpg",
+    "imageUrl": "SSD-SAMSUNG-990PRO-2TB.jpg",
     "stock": 40,
     "categoryId": 5
   },
@@ -157,7 +157,7 @@
     "name": "WD Black SN850X 1TB NVMe SSD",
     "description": "WD Black SN850X 1TB PCIe Gen4 NVMe M.2 SSD, read 7300MB/s, write 6300MB/s, Game Mode 2.0, heatsink option.",
     "price": 149.99,
-    "imageUrl": "https://example.com/images/wd-sn850x-1tb.jpg",
+    "imageUrl": "SSD-WD-SN850X-1TB.jpg",
     "stock": 45,
     "categoryId": 5
   },
@@ -166,7 +166,7 @@
     "name": "Crucial T700 1TB Gen5 NVMe SSD",
     "description": "Crucial T700 1TB PCIe 5.0 NVMe M.2 SSD, read 12400MB/s, write 11800MB/s, Micron 232-layer TLC NAND.",
     "price": 289.99,
-    "imageUrl": "https://example.com/images/crucial-t700-1tb.jpg",
+    "imageUrl": "SSD-CRUCIAL-T700-1TB.png",
     "stock": 20,
     "categoryId": 5
   },
@@ -175,7 +175,7 @@
     "name": "Seagate Barracuda 2TB HDD",
     "description": "Seagate Barracuda 2TB 3.5-inch SATA III hard drive, 7200 RPM, 256MB cache, up to 210MB/s transfer rate.",
     "price": 64.99,
-    "imageUrl": "https://example.com/images/seagate-barracuda-2tb.jpg",
+    "imageUrl": "HDD-SEAGATE-BARRACUDA-2TB.jpg",
     "stock": 90,
     "categoryId": 5
   },
@@ -184,7 +184,7 @@
     "name": "Corsair RM850x 850W 80+ Gold",
     "description": "Corsair RM850x 850W fully modular power supply, 80+ Gold certified, 135mm ML fan, zero RPM mode, Japanese capacitors.",
     "price": 139.99,
-    "imageUrl": "https://example.com/images/corsair-rm850x.jpg",
+    "imageUrl": "PSU-CORSAIR-RM850X.jpg",
     "stock": 35,
     "categoryId": 6
   },
@@ -193,7 +193,7 @@
     "name": "EVGA SuperNOVA 1000 G7 1000W",
     "description": "EVGA SuperNOVA 1000 G7 1000W fully modular power supply, 80+ Gold certified, 135mm FDB fan, 10-year warranty.",
     "price": 199.99,
-    "imageUrl": "https://example.com/images/evga-supernova-1000g7.jpg",
+    "imageUrl": "PSU-EVGA-SUPERNOVA-1000G7.jpg",
     "stock": 20,
     "categoryId": 6
   },
@@ -202,7 +202,7 @@
     "name": "Seasonic FOCUS GX-750 750W",
     "description": "Seasonic FOCUS GX-750 750W fully modular power supply, 80+ Gold certified, 120mm FDB fan, multi/hybrid protection.",
     "price": 119.99,
-    "imageUrl": "https://example.com/images/seasonic-focus-gx750.jpg",
+    "imageUrl": "PSU-SEASONIC-FOCUS-GX750.jpg",
     "stock": 45,
     "categoryId": 6
   },
@@ -211,7 +211,7 @@
     "name": "be quiet! Dark Power 13 1000W",
     "description": "be quiet! Dark Power 13 1000W fully modular power supply, 80+ Titanium certified, 135mm Silent Wings fan, overclocking key.",
     "price": 279.99,
-    "imageUrl": "https://example.com/images/bequiet-darkpower13.jpg",
+    "imageUrl": "PSU-BEQUIET-DARKPOWER13.jpg",
     "stock": 15,
     "categoryId": 6
   },
@@ -220,7 +220,7 @@
     "name": "Corsair 4000D Airflow",
     "description": "Corsair 4000D Airflow mid-tower ATX case, steel frame, tempered glass side panel, high-airflow mesh front, 2x120mm fans.",
     "price": 94.99,
-    "imageUrl": "https://example.com/images/corsair-4000d.jpg",
+    "imageUrl": "CASE-CORSAIR-4000D.jpg",
     "stock": 30,
     "categoryId": 7
   },
@@ -229,7 +229,7 @@
     "name": "Fractal Design North",
     "description": "Fractal Design North ATX case, walnut wood front panel, mesh side panel, 2x140mm fans, excellent airflow, whisper-quiet.",
     "price": 139.99,
-    "imageUrl": "https://example.com/images/fractal-north.jpg",
+    "imageUrl": "CASE-FRACTAL-NORTH.jpg",
     "stock": 25,
     "categoryId": 7
   },
@@ -238,7 +238,7 @@
     "name": "NZXT H7 Flow",
     "description": "NZXT H7 Flow mid-tower ATX case, perforated steel front panel, tempered glass, 3x120mm fans, tool-less cable management.",
     "price": 129.99,
-    "imageUrl": "https://example.com/images/nzxt-h7-flow.jpg",
+    "imageUrl": "CASE-NZXT-H7-FLOW.jpg",
     "stock": 22,
     "categoryId": 7
   },
@@ -247,7 +247,7 @@
     "name": "Lian Li O11 Dynamic EVO",
     "description": "Lian Li O11 Dynamic EVO mid-tower ATX case, dual-chamber design, tempered glass, supports up to 10 fans, reversible layout.",
     "price": 169.99,
-    "imageUrl": "https://example.com/images/lianli-o11d-evo.jpg",
+    "imageUrl": "CASE-LIANLI-O11D-EVO.jpg",
     "stock": 18,
     "categoryId": 7
   },
@@ -256,7 +256,7 @@
     "name": "Noctua NH-D15",
     "description": "Noctua NH-D15 dual-tower CPU air cooler, 2x140mm NF-A15 fans, 6 heat pipes, premium-grade, quiet operation.",
     "price": 119.99,
-    "imageUrl": "https://example.com/images/noctua-nh-d15.jpg",
+    "imageUrl": "COOLER-NOCTUA-NHD15.jpg",
     "stock": 30,
     "categoryId": 8
   },
@@ -265,7 +265,7 @@
     "name": "Corsair iCUE H150i Elite Capellix",
     "description": "Corsair iCUE H150i Elite Capellix 360mm AIO liquid cooler, 3x120mm RGB fans, Capellix LEDs, 360mm radiator, iCUE software.",
     "price": 199.99,
-    "imageUrl": "https://example.com/images/corsair-h150i.jpg",
+    "imageUrl": "COOLER-CORSAIR-H150I.jpg",
     "stock": 20,
     "categoryId": 8
   },
@@ -274,7 +274,7 @@
     "name": "Arctic Liquid Freezer III 360",
     "description": "Arctic Liquid Freezer III 360 AIO liquid cooler, 3x120mm P-fans, 360mm radiator, integrated VRM fan, high-performance.",
     "price": 139.99,
-    "imageUrl": "https://example.com/images/arctic-lf3-360.jpg",
+    "imageUrl": "COOLER-ARCTIC-LF3-360.jpg",
     "stock": 25,
     "categoryId": 8
   },
@@ -283,7 +283,7 @@
     "name": "be quiet! Dark Rock Pro 5",
     "description": "be quiet! Dark Rock Pro 5 dual-tower CPU air cooler, 135mm + 120mm Silent Wings fans, 7 heat pipes, virtually inaudible.",
     "price": 99.99,
-    "imageUrl": "https://example.com/images/bequiet-darkrock5.jpg",
+    "imageUrl": "COOLER-BEQUIET-DARKROCK5.jpg",
     "stock": 28,
     "categoryId": 8
   },
@@ -292,7 +292,7 @@
     "name": "Logitech G Pro X Superlight",
     "description": "Logitech G Pro X Superlight wireless gaming mouse, 63g ultra-lightweight, HERO 25K sensor, 70-hour battery, PTFE feet.",
     "price": 159.99,
-    "imageUrl": "https://example.com/images/logitech-gprox-sl.jpg",
+    "imageUrl": "PER-LOGITECH-GPROX-SL.jpg",
     "stock": 50,
     "categoryId": 9
   },
@@ -301,7 +301,7 @@
     "name": "Razer Huntsman V2",
     "description": "Razer Huntsman V2 analog optical keyboard, Razer analog optical switches, adjustable actuation, doubleshot PBT keycaps, USB-C.",
     "price": 249.99,
-    "imageUrl": "https://example.com/images/razer-huntsman-v2.jpg",
+    "imageUrl": "PER-RAZER-HUNTSMAN-V2.jpg",
     "stock": 30,
     "categoryId": 9
   },
@@ -310,7 +310,7 @@
     "name": "SteelSeries Arctis Nova Pro",
     "description": "SteelSeries Arctis Nova Pro wireless gaming headset, Sonar Audio, 360-degree spatial audio, ClearCast gen 2 mic, 2.4GHz + Bluetooth.",
     "price": 349.99,
-    "imageUrl": "https://example.com/images/steelseries-arctis-nova-pro.jpg",
+    "imageUrl": "PER-STEELSERIES-ARCTIS-NOVA-PRO.jpg",
     "stock": 20,
     "categoryId": 9
   },
@@ -319,7 +319,7 @@
     "name": "Keychron Q1 Pro",
     "description": "Keychron Q1 Pro QMK/VIA wireless mechanical keyboard, 75% layout, Gateron Jupiter switches, aluminum frame, PBT keycaps.",
     "price": 199.99,
-    "imageUrl": "https://example.com/images/keychron-q1-pro.jpg",
+    "imageUrl": "PER-KEYCHRON-Q1-PRO.jpg",
     "stock": 35,
     "categoryId": 9
   },
@@ -328,7 +328,7 @@
     "name": "Dell S2722QC 27 4K Monitor",
     "description": "Dell S2722QC 27-inch 4K UHD (3840x2160) IPS monitor, USB-C connectivity, 60Hz, built-in speakers, VESA compatible, 99% sRGB.",
     "price": 449.99,
-    "imageUrl": "https://example.com/images/dell-s2722qc.jpg",
+    "imageUrl": "MON-DELL-S2722QC.jpg",
     "stock": 25,
     "categoryId": 10
   },
@@ -337,7 +337,7 @@
     "name": "LG UltraGear 27GP950-B 4K Gaming Monitor",
     "description": "LG UltraGear 27-inch 4K UHD (3840x2160) Nano IPS gaming monitor, 160Hz, 1ms, HDMI 2.1, NVIDIA G-Sync, AMD FreeSync.",
     "price": 799.99,
-    "imageUrl": "https://example.com/images/lg-27gp950-b.jpg",
+    "imageUrl": "MON-LG-27GP950-B.jpg",
     "stock": 15,
     "categoryId": 10
   },
@@ -346,7 +346,7 @@
     "name": "Samsung Odyssey G7 32 Curved Monitor",
     "description": "Samsung Odyssey G7 32-inch WQHD (2560x1440) curved VA gaming monitor, 240Hz, 1ms, G-Sync compatible, 1000R curvature.",
     "price": 699.99,
-    "imageUrl": "https://example.com/images/samsung-odyssey-g7.jpg",
+    "imageUrl": "MON-SAMSUNG-ODYSSEY-G7.jpg",
     "stock": 20,
     "categoryId": 10
   },
@@ -355,7 +355,7 @@
     "name": "ASUS ProArt PA279CV 27 4K Monitor",
     "description": "ASUS ProArt PA279CV 27-inch 4K UHD (3840x2160) IPS monitor, factory-calibrated, 100% sRGB, USB-C 65W PD, Calman Verified.",
     "price": 529.99,
-    "imageUrl": "https://example.com/images/asus-proart-pa279cv.jpg",
+    "imageUrl": "MON-ASUS-PROART-PA279CV.jpg",
     "stock": 18,
     "categoryId": 10
   }
