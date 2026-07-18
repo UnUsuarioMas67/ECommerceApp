@@ -5,6 +5,7 @@ import LoginForm from './-login-form';
 import type { UserAuth } from '../../api/types';
 import { useAuth } from '../../components/AuthProvider/AuthContext';
 import Logo from '../../components/Logo';
+import Title from '../../components/Title';
 
 export const Route = createFileRoute('/_auth/login')({
   component: RouteComponent,
@@ -24,6 +25,8 @@ function RouteComponent() {
 
   return (
     <>
+      <Title text='Login'/>
+
       <Row className="justify-content-center flex-grow-1 g-0 align-items-stretch" as="main">
         <Col lg={8} className="bg-primary text-center pt-5 d-none d-lg-block">
           <Link className="h2 text-light text-decoration-none" to="/">

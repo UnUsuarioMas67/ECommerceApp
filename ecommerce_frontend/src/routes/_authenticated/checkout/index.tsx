@@ -24,6 +24,7 @@ import { createCheckoutSession, isProductsStockError } from '../../../api/checko
 import Spinner from 'react-bootstrap/esm/Spinner';
 import ProductCard from '../../../components/ProductCard';
 import { useCheckoutError } from '../../../components/CheckoutErrorProvider/CheckoutErrorContext';
+import Title from '../../../components/Title';
 
 const productsQuery = (axiosInstance: AxiosInstance, item: CartItemRequest) =>
   queryOptions({
@@ -127,61 +128,64 @@ function RouteComponent() {
   };
 
   return (
-    <Container className="px-md-5" as="main">
-      <Row className="mb-4">
-        <Col>
-          <h3>Delivery location</h3>
-          <Form.Group className="mb-3">
-            <Form.Label className="h5">Select an address</Form.Label>
-            <Form.Select onChange={(e) => setSelectedAddress(Number(e.target.value))} defaultValue={selectedAddress}>
-              {addresses.map((address) => (
-                <option key={address.id} value={address.id}>
-                  {`${address.addressLine1} ${address.addressLine2 ? ', ' + address.addressLine2 : ''}, ${address.city}, ${address.region}, ${address.country}, ${address.postalCode} `}
-                </option>
+    <>
+      <Title text="Checkout" />
+      <Container className="px-md-5" as="main">
+        <Row className="mb-4">
+          <Col>
+            <h3>Delivery location</h3>
+            <Form.Group className="mb-3">
+              <Form.Label className="h5">Select an address</Form.Label>
+              <Form.Select onChange={(e) => setSelectedAddress(Number(e.target.value))} defaultValue={selectedAddress}>
+                {addresses.map((address) => (
+                  <option key={address.id} value={address.id}>
+                    {`${address.addressLine1} ${address.addressLine2 ? ', ' + address.addressLine2 : ''}, ${address.city}, ${address.region}, ${address.country}, ${address.postalCode} `}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+            <Button onClick={() => setShowModal(true)}>Add an address</Button>
+          </Col>
+        </Row>
+
+        <Row className="mb-4">
+          <Col>
+            <h3>Products overview</h3>
+            <Row xs={1} className="g-3">
+              {products.map((product) => (
+                <Col key={product.id}>
+                  <ProductCard product={product} subtotal disableLink quantityOnly />
+                </Col>
               ))}
-            </Form.Select>
-          </Form.Group>
-          <Button onClick={() => setShowModal(true)}>Add an address</Button>
-        </Col>
-      </Row>
+            </Row>
+            <hr />
+            <div className="px-3 d-flex justify-content-between">
+              <p className="fs-5 fw-bold">Total:</p>
+              <p className="fs-5">$ {totalCost}</p>
+            </div>
+          </Col>
+        </Row>
 
-      <Row className="mb-4">
-        <Col>
-          <h3>Products overview</h3>
-          <Row xs={1} className="g-3">
-            {products.map((product) => (
-              <Col key={product.id}>
-                <ProductCard product={product} subtotal disableLink quantityOnly />
-              </Col>
-            ))}
-          </Row>
-          <hr />
-          <div className="px-3 d-flex justify-content-between">
-            <p className="fs-5 fw-bold">Total:</p>
-            <p className="fs-5">$ {totalCost}</p>
-          </div>
-        </Col>
-      </Row>
+        <Row className="mb-5">
+          <Col>
+            <Button
+              size="lg"
+              variant="success"
+              disabled={products.length === 0 || !selectedAddress || mutationPending || btnPressed}
+              onClick={onPayBtnClick}>
+              {mutationPending ? (
+                <>
+                  <Spinner size="sm" /> Processing payment
+                </>
+              ) : (
+                'Pay with Stripe'
+              )}
+            </Button>
+          </Col>
+        </Row>
 
-      <Row className="mb-5">
-        <Col>
-          <Button
-            size="lg"
-            variant="success"
-            disabled={products.length === 0 || !selectedAddress || mutationPending || btnPressed}
-            onClick={onPayBtnClick}>
-            {mutationPending ? (
-              <>
-                <Spinner size="sm" /> Processing payment
-              </>
-            ) : (
-              'Pay with Stripe'
-            )}
-          </Button>
-        </Col>
-      </Row>
-
-      <CreateAddressModal countries={countries} show={showModal} onHide={() => setShowModal(false)} />
-    </Container>
+        <CreateAddressModal countries={countries} show={showModal} onHide={() => setShowModal(false)} />
+      </Container>
+    </>
   );
 }

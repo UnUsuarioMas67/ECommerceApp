@@ -10,6 +10,7 @@ import Col from 'react-bootstrap/esm/Col';
 import OrdersTable from '../../../../components/OrdersTable';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
+import Title from '../../../../components/Title';
 
 const ordersQuery = (axiosInstance: AxiosInstance) =>
   infiniteQueryOptions({
@@ -44,22 +45,26 @@ function RouteComponent() {
   const orders = data.pages.map((page) => page.items).flat();
 
   return (
-    <Container>
-      <Row>
-        <Col>
-          <h1 className="mb-4">Orders</h1>
+    <>
+      <Title text="Your orders" />
 
-          {orders.length > 0 ? (
-            <OrdersTable orders={orders} />
-          ) : (
-            <p className="text-body-secondary">No orders have been made yet.</p>
-          )}
+      <Container>
+        <Row>
+          <Col>
+            <h1 className="mb-4">Orders</h1>
 
-          <div style={{ height: '100px' }} ref={ref}>
-            {isFetchingNextPage && <LoadingSpinner />}
-          </div>
-        </Col>
-      </Row>
-    </Container>
+            {orders.length > 0 ? (
+              <OrdersTable orders={orders} />
+            ) : (
+              <p className="text-body-secondary">No orders have been made yet.</p>
+            )}
+
+            <div style={{ height: '100px' }} ref={ref}>
+              {isFetchingNextPage && <LoadingSpinner />}
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 }

@@ -10,6 +10,7 @@ import Row from 'react-bootstrap/esm/Row';
 import Col from 'react-bootstrap/esm/Col';
 import OrderStatusBadge from '../../../../components/OrdersTable/OrderStatusBadge';
 import OrderItemsTable from '../../../../components/OrderItemsTable';
+import Title from '../../../../components/Title';
 
 const orderQuery = (axiosInstance: AxiosInstance, id: number) =>
   queryOptions<Order>({
@@ -38,36 +39,40 @@ function RouteComponent() {
   const { addressLine1, addressLine2, city, country, postalCode, region } = order.address;
 
   return (
-    <Container>
-      <Row>
-        <Col>
-          <dl>
-            <dt>Order Id</dt>
-            <dd>{order.id}</dd>
+    <>
+      <Title text="Order details" />
 
-            <dt>Date</dt>
-            <dd>{order.orderDate}</dd>
+      <Container>
+        <Row>
+          <Col>
+            <dl>
+              <dt>Order Id</dt>
+              <dd>{order.id}</dd>
 
-            <dt>Total</dt>
-            <dd>${order.totalPrice}</dd>
+              <dt>Date</dt>
+              <dd>{order.orderDate}</dd>
 
-            <dt>Address</dt>
-            <dd>{`${addressLine1} ${addressLine2 ? ', ' + addressLine2 : ''}, ${city}, ${region}, ${country}, ${postalCode} `}</dd>
+              <dt>Total</dt>
+              <dd>${order.totalPrice}</dd>
 
-            <dt>Status</dt>
-            <dd>
-              <OrderStatusBadge status={order.status} />
-            </dd>
-          </dl>
-        </Col>
-      </Row>
+              <dt>Address</dt>
+              <dd>{`${addressLine1} ${addressLine2 ? ', ' + addressLine2 : ''}, ${city}, ${region}, ${country}, ${postalCode} `}</dd>
 
-      <Row>
-        <Col>
-          <h3>Products overview</h3>
-          <OrderItemsTable items={order.items} />
-        </Col>
-      </Row>
-    </Container>
+              <dt>Status</dt>
+              <dd>
+                <OrderStatusBadge status={order.status} />
+              </dd>
+            </dl>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col>
+            <h3>Products overview</h3>
+            <OrderItemsTable items={order.items} />
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 }

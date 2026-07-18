@@ -8,6 +8,7 @@ import Row from 'react-bootstrap/esm/Row';
 import ProductImage from '../../../components/ProductImage';
 import AddToCartButton from '../../../components/AddToCartButton';
 import LoadingSpinner from '../../../components/LoadingSpinner';
+import Title from '../../../components/Title';
 
 export const Route = createFileRoute('/_products/products/$productId')({
   component: RouteComponent,
@@ -39,6 +40,8 @@ function RouteComponent() {
 
   return (
     <>
+      <Title text={product.name} />
+
       <Row className="g-5 mb-5 justify-content-center">
         <Col xs={12} md={6} xl={5}>
           <ProductImage

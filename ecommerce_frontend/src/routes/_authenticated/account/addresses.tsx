@@ -14,6 +14,7 @@ import DeleteAddressModal from '../../../components/Addresses/DeleteAddressModal
 import UpdateAddressModal from '../../../components/Addresses/UpdateAddressModal';
 import Container from 'react-bootstrap/esm/Container';
 import LoadingSpinner from '../../../components/LoadingSpinner';
+import Title from '../../../components/Title';
 
 export const Route = createFileRoute('/_authenticated/account/addresses')({
   component: RouteComponent,
@@ -64,51 +65,60 @@ function RouteComponent() {
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <Container>
-      <h1 className="mb-4">Adresses</h1>
+    <>
+      <Title text="Your addresses" />
 
-      {error && (
-        <Alert variant="danger" onClose={() => setError(null)} dismissible>
-          {error}
-        </Alert>
-      )}
+      <Container>
+        <h1 className="mb-4">Addresses</h1>
 
-      <Row className="g-3" xs={1} md={2} lg={3}>
-        <Col>
-          <Button
-            variant="outline-primary"
-            className="d-inline-block w-100 h-100"
-            size="lg"
-            onClick={() => openModal({ modal: 'add' })}>
-            <PlusLg size={32} />
-            <br />
-            <span className="fs-5">Add address</span>
-          </Button>
-        </Col>
+        {error && (
+          <Alert variant="danger" onClose={() => setError(null)} dismissible>
+            {error}
+          </Alert>
+        )}
 
-        {addresses.map((address) => (
-          <Col key={address.id}>
-            <AddressCard
-              address={address}
-              onDeleteClick={() => openModal({ modal: 'delete', id: address.id })}
-              onEditClick={() => openModal({ modal: 'update', id: address.id })}
-            />
+        <Row className="g-3" xs={1} md={2} lg={3}>
+          <Col>
+            <Button
+              variant="outline-primary"
+              className="d-inline-block w-100 h-100"
+              size="lg"
+              onClick={() => openModal({ modal: 'add' })}>
+              <PlusLg size={32} />
+              <br />
+              <span className="fs-5">Add address</span>
+            </Button>
           </Col>
-        ))}
-      </Row>
 
-      <CreateAddressModal show={modal === 'add'} onHide={closeModal} countries={countries} />
-      {updatedId && (
-        <UpdateAddressModal addressId={updatedId} countries={countries} show={modal === 'update'} onHide={closeModal} />
-      )}
-      {deletedId && (
-        <DeleteAddressModal
-          addressId={deletedId}
-          show={modal === 'delete'}
-          onHide={closeModal}
-          onError={() => setError('Could not delete the address due to an error')}
-        />
-      )}
-    </Container>
+          {addresses.map((address) => (
+            <Col key={address.id}>
+              <AddressCard
+                address={address}
+                onDeleteClick={() => openModal({ modal: 'delete', id: address.id })}
+                onEditClick={() => openModal({ modal: 'update', id: address.id })}
+              />
+            </Col>
+          ))}
+        </Row>
+
+        <CreateAddressModal show={modal === 'add'} onHide={closeModal} countries={countries} />
+        {updatedId && (
+          <UpdateAddressModal
+            addressId={updatedId}
+            countries={countries}
+            show={modal === 'update'}
+            onHide={closeModal}
+          />
+        )}
+        {deletedId && (
+          <DeleteAddressModal
+            addressId={deletedId}
+            show={modal === 'delete'}
+            onHide={closeModal}
+            onError={() => setError('Could not delete the address due to an error')}
+          />
+        )}
+      </Container>
+    </>
   );
 }

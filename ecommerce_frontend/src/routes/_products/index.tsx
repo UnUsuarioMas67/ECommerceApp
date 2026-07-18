@@ -11,6 +11,7 @@ import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import type { AxiosInstance } from 'axios';
+import Title from '../../components/Title';
 
 const productsInfiniteQuery = (axiosInstance: AxiosInstance, category?: string, searchTerm?: string) =>
   infiniteQueryOptions({
@@ -59,8 +60,8 @@ function RouteComponent() {
   }, [inView, fetchNextPage]);
 
   let title: string | undefined;
-  if (searchTerm) title = `'${searchTerm}' - ECommerce`;
-  else if (categoryObj) title = `${categoryObj.name} - ECommerce`;
+  if (searchTerm) title = `'${searchTerm}'`;
+  else if (categoryObj) title = `${categoryObj.name}`;
 
   if (status === 'error') console.log(error);
 
@@ -68,7 +69,7 @@ function RouteComponent() {
     <p className="text-danger">Oops! Something went wrong.</p>
   ) : (
     <>
-      {title && <title>{title}</title>}
+      <Title text={title} />
 
       {searchTerm && (
         <p className="text-secondary bg-body-tertiary p-1 px-3 small rounded-3">

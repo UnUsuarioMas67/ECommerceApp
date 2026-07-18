@@ -8,6 +8,7 @@ import UpdateUserDataForm from '../../../components/AccountSettings/UpdateUserDa
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import type { User } from '../../../api/types';
 import UpdateUserPasswordForm from '../../../components/AccountSettings/UpdateUserPasswordForm';
+import Title from '../../../components/Title';
 
 export const Route = createFileRoute('/_authenticated/account/settings')({
   component: RouteComponent,
@@ -33,20 +34,23 @@ function RouteComponent() {
   };
 
   return (
-    <Container className="mb-4">
-      <h1 className="mb-4">Account settings</h1>
+    <>
+      <Title text="Account settings" />
+      <Container className="mb-4">
+        <h1 className="mb-4">Account settings</h1>
 
-      <Row>
-        <h3>User data</h3>
-        <UpdateUserDataForm user={user!} onSubmitSuccessful={onUpdateUserDataSubmitSuccessful} />
-      </Row>
+        <Row>
+          <h3>User data</h3>
+          <UpdateUserDataForm user={user!} onSubmitSuccessful={onUpdateUserDataSubmitSuccessful} />
+        </Row>
 
-      <hr className="my-5" />
+        <hr className="my-5" />
 
-      <Row>
-        <h3>Password</h3>
-        <UpdateUserPasswordForm />
-      </Row>
-    </Container>
+        <Row>
+          <h3>Password</h3>
+          <UpdateUserPasswordForm />
+        </Row>
+      </Container>
+    </>
   );
 }
