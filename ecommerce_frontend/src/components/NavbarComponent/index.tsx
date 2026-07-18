@@ -4,6 +4,7 @@ import type { Category, User } from '../../api/types';
 import ProductSearchForm from './ProductSearchForm';
 import NavbarNav from './NavbarNav';
 import { Link } from '@tanstack/react-router';
+import Logo from '../Logo';
 
 type Props = {
   user: User | null;
@@ -15,7 +16,7 @@ function NavbarComponent({ user: currentUser, categories }: Props) {
     <Navbar sticky="top" expand="lg" className="bg-primary mb-4" data-bs-theme="dark">
       <Container fluid className="px-2 px-sm-5">
         <Navbar.Brand as={Link} className="fw-bold text-white" to="/" reloadDocument>
-          ECommerce
+          <Logo />
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
