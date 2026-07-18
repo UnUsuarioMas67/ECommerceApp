@@ -5,16 +5,18 @@ import Container from 'react-bootstrap/esm/Container';
 import Nav from 'react-bootstrap/esm/Nav';
 import Row from 'react-bootstrap/esm/Row';
 import LoadingSpinner from '../../../components/LoadingSpinner';
+import NotFoundPage from '../../-not-found';
 
 export const Route = createFileRoute('/_authenticated/account')({
   component: RouteComponent,
   pendingComponent: LoadingSpinner,
+  notFoundComponent: NotFoundPage,
 });
 
 function RouteComponent() {
   return (
-    <Container className='flex-grow-1'>
-      <Row className='h-100'>
+    <Container className="flex-grow-1">
+      <Row className="h-100">
         <Col xs={12} md={3} as="aside">
           <Nav defaultActiveKey="/home" className="flex-row flex-md-column pb-5 pb-md-0" variant="pills">
             <Link className="nav-link text-decoration-none d-inline-flex align-items-center" to="/account/orders">
