@@ -1,17 +1,12 @@
-import type { Order, PaginatedResponse } from '../../api/types';
+import type { Order } from '../../api/types';
 import Table from 'react-bootstrap/esm/Table';
 import OrderTableRow from './OrderTableRow';
-import type { InfiniteData } from '@tanstack/react-query';
-import type { useInView } from 'react-intersection-observer';
-import LoadingSpinner from '../LoadingSpinner';
 
 type Props = {
-  data: InfiniteData<PaginatedResponse<Order>>;
-  ref: ReturnType<typeof useInView>['ref'];
-  isFetchingNextPage: boolean
+  orders: Order[];
 };
 
-function OrdersTable({ data, ref, isFetchingNextPage }: Props) {
+function OrdersTable({ orders }: Props) {
   return (
     <>
       <Table responsive striped bordered hover>
@@ -26,17 +21,11 @@ function OrdersTable({ data, ref, isFetchingNextPage }: Props) {
           </tr>
         </thead>
         <tbody>
-          {
-            data.pages
-              .map((page) => page.items)
-              .flat()
-              .map((order) => <OrderTableRow order={order} key={order.id} />)}
+          {orders.map((order) => (
+            <OrderTableRow order={order} key={order.id} />
+          ))}
         </tbody>
       </Table>
-
-      <div style={{ height: '100px' }} ref={ref}>
-        {isFetchingNextPage && <LoadingSpinner />}
-      </div>
     </>
   );
 }

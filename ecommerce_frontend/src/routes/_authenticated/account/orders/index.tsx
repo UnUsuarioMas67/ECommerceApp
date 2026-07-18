@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 
 const ordersQuery = (axiosInstance: AxiosInstance) =>
   infiniteQueryOptions({
-    queryKey: ['products'],
+    queryKey: ['orders'],
     queryFn: ({ pageParam }) => fetchOrders(axiosInstance, { pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => (lastPage.page < lastPage.totalPages ? lastPage.page + 1 : null),
@@ -37,19 +37,27 @@ function RouteComponent() {
     if (inView) fetchNextPage();
   }, [inView, fetchNextPage]);
 
-  return status === 'error' ? (
-    <p className="text-danger">Oops! Something went wrong.</p>
-  ) : (
+  if (status === 'error') {
+    return <p className="text-danger">Oops! Something went wrong.</p>;
+  }
+
+  const orders = data.pages.map((page) => page.items).flat();
+
+  return (
     <Container>
       <Row>
         <Col>
           <h1 className="mb-4">Orders</h1>
 
-          {data.pages.length > 0 ? (
-            <OrdersTable data={data} ref={ref} isFetchingNextPage={isFetchingNextPage} />
+          {orders.length > 0 ? (
+            <OrdersTable orders={orders} />
           ) : (
             <p className="text-body-secondary">No orders have been made yet.</p>
           )}
+
+          <div style={{ height: '100px' }} ref={ref}>
+            {isFetchingNextPage && <LoadingSpinner />}
+          </div>
         </Col>
       </Row>
     </Container>
