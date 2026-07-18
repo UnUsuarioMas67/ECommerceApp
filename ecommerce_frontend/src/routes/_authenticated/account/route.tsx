@@ -15,8 +15,8 @@ function RouteComponent() {
   return (
     <Container className='flex-grow-1'>
       <Row className='h-100'>
-        <Col xs={3} as="aside">
-          <Nav defaultActiveKey="/home" className="flex-column" variant="pills">
+        <Col xs={12} md={3} as="aside">
+          <Nav defaultActiveKey="/home" className="flex-row flex-md-column pb-5 pb-md-0" variant="pills">
             <Link className="nav-link text-decoration-none d-inline-flex align-items-center" to="/account/orders">
               <CartCheck size={18} className="me-3" />
               Your orders
