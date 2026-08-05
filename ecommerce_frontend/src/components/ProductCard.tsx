@@ -24,7 +24,7 @@ function ProductCard({ product, subtotal, disableLink, quantityOnly, noInput }: 
           productSrc={product.imageUrl ?? ''}
           fallback="https://placehold.co/180"
           className="rounded-start"
-          style={{ height: '180px', width: '180px' }}
+          style={{ height: '180px', width: '180px', objectFit: 'contain' }}
         />
         <Card.Body className="h-100">
           <Card.Title>
